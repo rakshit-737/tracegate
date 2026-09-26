@@ -22,7 +22,7 @@ All numbers below come from the committed runs in [`results/`](results/). You ca
 | Question | Data | TRACEGATE | Best baseline |
 | --- | --- | --- | --- |
 | Finding -> introducing commit (backtrack accuracy) | 365 pinned packages over 36 historical snapshots of 3 real repos (healthchecks, netbox, pypi/warehouse) | **97.5%** (356/365) | 17.3% "last manifest commit"; 9.3% "first pickaxe mention"; 0% scanner-only |
-| Cross-tool identity (Trivy finding -> Syft SBOM node) | 507 Trivy findings on 7 real official images | **100%** matched | 11.6% with raw purl string equality |
+| Cross-tool identity (Trivy finding -> Syft SBOM node) | 507 Trivy findings on 7 real official images | **100%** matched | 100% with naive `name@version`; 11.6% with raw purl string equality |
 | Reachability: how many high/critical findings stay actionable | 829 high+ OSV findings across the same 36 snapshots | **704 actionable (-15.1%)** | 829 (raw scanner output) |
 | Typosquat detection, PyPI (test half) | 5,952 OSV `MAL-*` names vs 4,969 legitimate packages ranked 5k-15k | P **0.84** / FPR **1.7%** (th 0.54); F1 **0.159** at matched FPR | Levenshtein <= 1: P 0.75 / FPR 3.3%, F1 0.153 |
 | Base-image blast radius | 7 official Alpine-3.14 images | 1 shared base layer -> 7 images / 7 services; 43 findings in that layer; each OpenSSL CVE reaches 7 services | n/a (per-image scanners report the same CVE 7 times) |
@@ -34,6 +34,7 @@ What the numbers mean, stated plainly:
 
 - 3 are merge commits (`Merge pull request #1044 ...`). Blame credits the merge, while TRACEGATE credits the commit on the branch that changed the pin. Both answers can be defended.
 - 6 are cases where blame credits a later commit that *rewrote the line without changing the version* (for example, `Bump boto3 ... (#4934)` re-emitted the hashes for `celery`, `jinja2` and `mako`). TRACEGATE tracks version changes, not text changes, so its answer is arguably the right one.
+- **Cross-tool identity is table stakes on these images, not a win over every baseline.** A naive `name@version` join also matches all 507 findings on these images. The canonical purl only beats raw purl string equality (Syft and Trivy emit different qualifiers). Its value is that the same key merges manifest, Syft and Trivy nodes and keeps ecosystems apart, which a bare `name@version` join cannot guarantee.
 - **Reachability cuts about 15% of high/critical alerts, but there is no exploitability ground truth.** On the netbox snapshots, the downgraded findings include `pycrypto`, `paramiko` and `ecdsa` pins that the app never imports. Older snapshots are analysed against HEAD sources, which is an approximation and is flagged in the output. At netbox HEAD, 6 of 45 pins are "unreached". Four of them (mkdocs*, django-rich) are correctly docs/dev-only. `tablib` is probably a miss: netbox's own code never imports it, so it is most likely loaded by django-tables2's export feature, and the `# via` data needed to see that edge is not in netbox's plain `requirements.txt`.
 - **Typosquat recall is low for every detector.** This is expected: most `MAL-*` records are random names, dependency-confusion names or spam, not look-alikes of popular packages. On the subset whose advisory text says "typosquat", recall is 10.5% at the default threshold and 14.1% at matched FPR. TRACEGATE's advantage over plain Levenshtein is **half the false-positive rate for about the same F1**. It is not a big recall gain. On npm, all detectors are near zero recall (F1 0.005), because the npm `MAL-*` set (~109k names) is mostly spam.
 
@@ -173,6 +174,7 @@ Small fixtures derived from real tool output (`tests/fixtures/alpine.syft.json`,
 
 ```bash
 python scripts/download_data.py all      # make data   (OSV, popularity lists, tools, repos)
+trivy image --download-db-only --cache-dir <data>/trivy-cache   # Trivy vuln DB (not fetched by the script)
 python scripts/scan_real.py all          # make scans  (real Syft + Trivy over images and repos)
 python benchmarks/typosquat_eval.py      # -> results/typosquat_{pypi,npm}.json, typosquat_pr.png
 python benchmarks/lineage_eval.py --snapshots 12   # -> results/lineage_real_repos.json
@@ -180,6 +182,8 @@ python benchmarks/images_eval.py         # -> results/images_real.json
 python benchmarks/scale_eval.py          # -> results/scale_synthetic.json
 python -m pytest -q -m realdata          # real-data tests (need the datasets)
 ```
+
+OSV dumps, popularity lists and the Trivy DB are live feeds, so a re-run on a later date can shift finding counts and typosquat numbers; the sha256 of what was used is in `MANIFEST.json`. Re-running `images_eval.py` on the same data reproduced every count in `results/images_real.json` exactly (only latency changed).
 
 Evaluation design, including the splits, ground truth and why download counts are *not* used as a typosquat feature, is in [ADR 0005](docs/adr/0005-real-data-evaluation-design.md).
 
@@ -206,6 +210,7 @@ SBOMs, scanning and attestation formats are not novel. The contribution is the i
 - **Signing uses Ed25519 or HMAC keys, not Sigstore keyless.** There is no Rekor transparency log.
 - **Warden is a stand-in.** The HTTP contract to the real Warden service (`GET /score`) is assumed.
 - **Typosquat recall is low in absolute terms** (see above). Treat it as one signal, not a malware detector.
+- **SAST is an event schema only.** The collector accepts `sast` stage events, but there is no SARIF / Semgrep / Bandit adapter yet.
 - Image deployments in the image benchmark are synthetic (one service per image).
 
 ## Roadmap

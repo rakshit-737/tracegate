@@ -14,6 +14,7 @@ from tracegate.gitlineage import (
     commit_events,
     direct_deps_from_pip_compile,
     manifest_history,
+    materialize,
     parse_requirements,
 )
 from tracegate.ids import canonical_purl, dep_id, dep_id_from_purl
@@ -179,6 +180,35 @@ def test_manifest_history_and_backtrack_matches_blame(repo, osv):
     assert blame_introducers(repo, "requirements.txt")["pyyaml"] == story["introduced_by"]["sha"]
 
 
+def test_manifest_history_follows_rename(repo):
+    (repo / "requirements").mkdir()
+    _git(repo, "mv", "requirements.txt", "requirements/main.txt")
+    _git(repo, "commit", "-q", "-m", "move manifest (#6)")
+    (repo / "requirements" / "main.txt").write_text("flask==2.0.1" + chr(10) + "pyyaml==6.0" + chr(10))
+    _git(repo, "commit", "-qam", "bump pyyaml (#7)")
+    hist = manifest_history(repo, "requirements/main.txt")
+    # pre-rename history is kept; the pure move changes no pin
+    assert [h.pr for h in hist] == [1, 2, 4, 5, 7]
+    assert blame_introducers(repo, "requirements/main.txt")["pyyaml"] == hist[-1].sha
+
+
+def test_materialize_writes_snapshot_sources(repo, tmp_path):
+    (repo / "app").mkdir()
+    (repo / "app" / "main.py").write_text("import yaml" + chr(10))
+    (repo / "app" / "notes.txt").write_text("x")
+    (repo / "Dockerfile").write_text("FROM python:3.12" + chr(10))
+    _git(repo, "add", "-A")
+    _git(repo, "commit", "-qm", "add app")
+    sha = subprocess.run(["git", "-C", str(repo), "rev-parse", "HEAD"], capture_output=True,
+                         text=True, check=True).stdout.strip()
+    (repo / "app" / "main.py").write_text("import flask" + chr(10))
+    _git(repo, "commit", "-qam", "switch")
+    out = tmp_path / "snap"
+    assert materialize(repo, sha, ["app"], out) == 2
+    assert (out / "app" / "main.py").read_text() == "import yaml" + chr(10)
+    assert not (out / "app" / "notes.txt").exists() and (out / "Dockerfile").exists()
+
+
 def test_parse_requirements_and_pip_compile():
     text = ("django==4.2.1 \\\n    --hash=sha256:abc\n    # via -r requirements/main.in\n"
             "asgiref==3.7.2\n    # via django\nPyYAML[extra]==6.0 ; python_version>'3'\n-r other.txt\n")
@@ -201,6 +231,21 @@ def test_static_reachability(tmp_path):
     assert rep.status == {"django": "imported", "asgiref": "transitive", "pyyaml": "imported",
                           "gunicorn": "entrypoint", "djangorestframework": "imported", "lxml": "unreached"}
     assert "yaml" in import_names("PyYAML") and "django.db" in app_imports([src])
+
+
+def test_static_reachability_implied_and_referenced(tmp_path):
+    (tmp_path / "settings.py").write_text(
+        "from google.cloud import storage" + chr(10)
+        + "ENGINE = 'django.db.backends.postgresql'" + chr(10)
+        + "SCHEMES = ['argon2', 'bcrypt']" + chr(10))
+    pins = {"django": "4.2", "psycopg2-binary": "2.9", "google-cloud-storage": "2.0",
+            "argon2-cffi": "23.1", "lxml": "4.9"}
+    rep = static_reachability(pins, [tmp_path], tmp_path)
+    assert rep.status["django"] == "imported"
+    assert rep.status["google-cloud-storage"] == "imported"
+    assert rep.status["psycopg2-binary"] == "transitive"
+    assert rep.status["argon2-cffi"] == "referenced"
+    assert rep.status["lxml"] == "unreached"
 
 
 def test_static_reachability_downgrades_block_to_warn(tmp_path, osv):

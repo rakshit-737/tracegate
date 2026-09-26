@@ -117,6 +117,7 @@ def main(argv: list[str] | None = None) -> int:
     ing.add_argument("--syft", help="syft -o syft-json output (or CycloneDX with --cyclonedx)")
     ing.add_argument("--cyclonedx", action="store_true")
     ing.add_argument("--trivy", action="append", default=[], help="trivy --format json output")
+    ing.add_argument("--sarif", action="append", default=[], help="SARIF 2.1.0 (Semgrep/Bandit/CodeQL)")
     ing.add_argument("--commit")
     ing.add_argument("--build-id", default=None)
     ing.add_argument("--run-id", default=None)
@@ -167,6 +168,11 @@ def main(argv: list[str] | None = None) -> int:
             bid = a.build_id or f"build-{Path(a.syft).stem}"
             conv = cyclonedx_to_build if a.cyclonedx else syft_json_to_build
             evs.append(StageEvent("build", run_id, conv(a.syft, bid, commit=a.commit)))
+        if a.sarif:
+            from .sarif import sarif_to_sast
+            if not a.commit:
+                ap.error("--sarif needs --commit")
+            evs.extend(StageEvent("sast", run_id, sarif_to_sast(s, a.commit)) for s in a.sarif)
         for t in a.trivy:
             evs.append(StageEvent("scan", run_id, trivy_json_to_scan(t)))
         sg = _signer()

@@ -1,0 +1,12 @@
+{"version":"2.1.0","runs":[{"tool":{"driver":{"name":"Bandit","rules":[
+ {"id":"B602","defaultConfiguration":{"level":"error"},"shortDescription":{"text":"subprocess with shell=True"}},
+ {"id":"B101","defaultConfiguration":{"level":"note"}}]}},
+ "results":[
+ {"ruleId":"B602","level":"error","message":{"text":"subprocess call with shell=True identified, security issue."},
+  "locations":[{"physicalLocation":{"artifactLocation":{"uri":"app/run.py"},"region":{"startLine":12}}}]},
+ {"ruleId":"B101","level":"note","message":{"text":"Use of assert detected."},
+  "locations":[{"physicalLocation":{"artifactLocation":{"uri":"tests/test_x.py"}}}]},
+ {"ruleId":"py/sql-injection","properties":{"security-severity":"9.8"},"message":{"text":"SQL built from user input"},
+  "locations":[{"physicalLocation":{"artifactLocation":{"uri":"file:///app/db.py"}}}]},
+ {"ruleId":"B101","kind":"pass","message":{"text":"ok"}}
+]}]}

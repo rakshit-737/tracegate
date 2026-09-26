@@ -96,7 +96,8 @@ def eval_repo(name: str, osv: OsvIndex, n_snap: int, warden: HeuristicWarden) ->
     rows = {"tracegate": [0, 0], "last-manifest-commit": [0, 0], "pickaxe-first": [0, 0]}
     disagreements, gate_ms, per_snapshot, reach_rows = [], [], [], []
     pick_cache: dict[str, str | None] = {}
-    mods = app_imports([repo / s for s in srcs])  # HEAD sources, parsed once per repo
+    strings: set[str] = set()
+    mods = app_imports([repo / s for s in srcs], strings)  # HEAD sources, parsed once per repo
     ep = entrypoint_text(repo)
     head_stats = {}
     for k in idx:
@@ -148,7 +149,8 @@ def eval_repo(name: str, osv: OsvIndex, n_snap: int, warden: HeuristicWarden) ->
         # Static reachability. Only HEAD sources are checked out (blobless clone), so older
         # snapshots are analysed against HEAD's import set: an approximation, flagged in output.
         req_text = _git(repo, "show", f"{mc.sha}:{manifest}")
-        rep = static_reachability(pins, [repo / s for s in srcs], repo, req_text, mods=mods, ep=ep)
+        rep = static_reachability(pins, [repo / s for s in srcs], repo, req_text, mods=mods, ep=ep,
+                                  strings=strings)
         scan_f = [f for f in res.graph.findings if f.source in ("osv", "trivy")]
         hi = [f for f in scan_f if f.severity.rank >= Severity.HIGH.rank]
         enrich_static_reachability(res, rep)
@@ -164,7 +166,7 @@ def eval_repo(name: str, osv: OsvIndex, n_snap: int, warden: HeuristicWarden) ->
             head_stats = {
                 "sha": mc.sha[:12], "pins": len(pins),
                 "reach_status_counts": {st: list(rep.status.values()).count(st)
-                                        for st in ("imported", "entrypoint", "transitive", "unreached")},
+                                        for st in ("imported", "entrypoint", "referenced", "transitive", "unreached")},
                 "unreached": sorted(d for d, st in rep.status.items() if st == "unreached"),
                 "direct_deps": None if direct is None else len(direct),
                 "direct_deps_marked_unreached": sorted(d for d in (direct or set())

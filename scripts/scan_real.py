@@ -71,11 +71,22 @@ def _safe_extract(tar_gz: Path, dest: Path) -> None:
     import re
     import tarfile
     bad = re.compile(r'[<>:"|?*\x00-\x1f]')
+    import posixpath
+    import shutil
     dest.mkdir(parents=True, exist_ok=True)
+    links: list[tuple[str, str]] = []
     with tarfile.open(tar_gz, "r:*") as t:
         for m in t:
             name = m.name.lstrip("./")
             if not name or ".." in Path(name).parts or bad.search(name) or Path(name).name.startswith(".wh."):
+                continue
+            if m.issym() or m.islnk():
+                # Windows cannot create symlinks unprivileged: materialise them as copies
+                # afterwards (matters for e.g. /etc/os-release -> ../usr/lib/os-release,
+                # which Syft needs to build apk/deb purls).
+                tgt = m.linkname.lstrip("/") if m.islnk() or m.linkname.startswith("/") \
+                    else posixpath.normpath(posixpath.join(posixpath.dirname(name), m.linkname))
+                links.append((name, tgt.lstrip("./")))
                 continue
             if not (m.isfile() or m.isdir()):
                 continue
@@ -84,6 +95,15 @@ def _safe_extract(tar_gz: Path, dest: Path) -> None:
                 t.extract(m, dest, filter="data")
             except (OSError, tarfile.TarError):
                 continue
+    for name, tgt in links:
+        src, dst = dest / tgt, dest / name
+        if tgt.startswith("..") or not src.is_file() or dst.exists():
+            continue
+        try:
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(src, dst)
+        except OSError:
+            continue
 
 
 def syft_per_layer(oci_dir: Path, ref: str, out: Path) -> None:
@@ -101,6 +121,7 @@ def syft_per_layer(oci_dir: Path, ref: str, out: Path) -> None:
     diff_ids = config["rootfs"]["diff_ids"]
     history = [h for h in config.get("history", []) if not h.get("empty_layer")]
     arts, seen, version = [], set(), None
+    distro: tuple[str, str] | None = None
     work = out.parent / (out.stem + ".work")
     for i, (layer, diff_id) in enumerate(zip(manifest["layers"], diff_ids)):
         ldir = work / f"layer{i}"
@@ -109,7 +130,20 @@ def syft_per_layer(oci_dir: Path, ref: str, out: Path) -> None:
         subprocess.run([str(SYFT), f"dir:{ldir}", "-q", "-o", f"syft-json={lj}"], check=True)
         doc = json.loads(lj.read_text(encoding="utf-8"))
         version = (doc.get("descriptor") or {}).get("version")
+        osr = ldir / "etc" / "os-release"
+        if osr.is_file():
+            kv = dict(ln.split("=", 1) for ln in osr.read_text(errors="replace").splitlines() if "=" in ln)
+            distro = (kv.get("ID", "").strip('"'), kv.get("VERSION_ID", "").strip('"'))
         for a in doc.get("artifacts", []):
+            if a.get("type") == "apk" and not a.get("purl") and distro:
+                # Syft's Windows dir scan cannot resolve the distro, so apk purls come back
+                # empty; rebuild them in Syft's own format (pkg:apk/<id>/<name>@<ver>?arch&upstream&distro).
+                md = a.get("metadata") or {}
+                q = [f"arch={md['architecture']}"] if md.get("architecture") else []
+                if md.get("originPackage"):
+                    q.append(f"upstream={md['originPackage']}")
+                q.append(f"distro={distro[0]}-{distro[1]}")
+                a["purl"] = f"pkg:apk/{distro[0]}/{a['name']}@{a['version']}?" + "&".join(q)
             key = a.get("purl") or f"{a.get('name')}@{a.get('version')}"
             if key in seen:
                 continue

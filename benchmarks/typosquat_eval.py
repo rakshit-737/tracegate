@@ -59,6 +59,40 @@ def evaluate(flag: dict[str, bool], pos: set[str], neg: set[str], typo_subset: s
     return res
 
 
+def bootstrap_ci(flags: dict[str, dict[str, bool]], pos: set[str], neg: set[str], ref: str,
+                 n_boot: int = 1000, seed: int = 0) -> dict:
+    """Stratified bootstrap (positives and negatives resampled separately, seeded) of the
+    test-half metrics: 95% percentile CIs per method, plus the paired F1 difference vs `ref`."""
+    import numpy as np
+    rng = np.random.default_rng(seed)
+    P, N = sorted(pos), sorted(neg)
+    fp_ = {m: np.array([fl[n] for n in P], dtype=np.int64) for m, fl in flags.items()}
+    fn_ = {m: np.array([fl[n] for n in N], dtype=np.int64) for m, fl in flags.items()}
+    samples: dict[str, dict[str, list[float]]] = {m: {"precision": [], "recall": [], "f1": [], "fpr": []}
+                                                   for m in flags}
+    diffs: dict[str, list[float]] = {m: [] for m in flags if m != ref}
+    for _ in range(n_boot):
+        wp = rng.multinomial(len(P), np.full(len(P), 1 / len(P)))
+        wn = rng.multinomial(len(N), np.full(len(N), 1 / len(N)))
+        f1s = {}
+        for m in flags:
+            tp, fp = int(wp @ fp_[m]), int(wn @ fn_[m])
+            r = prf(tp, fp, len(P) - tp, len(N) - fp)
+            for k in samples[m]:
+                samples[m][k].append(r[k])
+            f1s[m] = r["f1"]
+        for m in diffs:
+            diffs[m].append(f1s[m] - f1s[ref])
+
+    def ci(xs: list[float]) -> list[float]:
+        xs = sorted(xs)
+        return [round(xs[int(0.025 * len(xs))], 4), round(xs[int(0.975 * len(xs)) - 1], 4)]
+    return {"n_boot": n_boot, "seed": seed, "method": "stratified percentile bootstrap, 95%",
+            "ci": {m: {k: ci(v) for k, v in d.items()} for m, d in samples.items()},
+            "f1_diff_vs_" + ref: {m: {"ci": ci(v), "p_le_0": round(sum(x <= 0 for x in v) / len(v), 4)}
+                                  for m, v in diffs.items()}}
+
+
 def run(eco: str, ref_n: int, neg_hi: int, out: Path) -> dict:
     root = data_root()
     if eco == "PyPI":
@@ -84,16 +118,19 @@ def run(eco: str, ref_n: int, neg_hi: int, out: Path) -> dict:
           f"test negatives={len(neg)}")
 
     results: dict[str, dict] = {}
+    flags_by: dict[str, dict[str, bool]] = {}
     # --- baseline 0: the MVP heuristic --------------------------------------
     mvp = DifflibWarden(popular=POPULAR if eco == "PyPI" else ref[:14])
     t0 = time.perf_counter()
     flag = {n: mvp.score(n, "0").risk >= 0.5 for n in names}
+    flags_by["mvp-difflib (14 names)"] = flag
     results["mvp-difflib (14 names)"] = {**evaluate(flag, pos, neg, typo_subset),
                                          "ms_per_name": round(1000 * (time.perf_counter() - t0) / len(names), 4)}
     # --- baseline 1: Levenshtein<=1 against the same reference --------------
     lev = TyposquatDetector(ref, long_name=10**9, enabled={"typo1"})
     t0 = time.perf_counter()
     flag = {n: lev.score(n).score > 0 for n in names}
+    flags_by["lev1 (top-5k)"] = flag
     results["lev1 (top-5k)"] = {**evaluate(flag, pos, neg, typo_subset),
                                 "ms_per_name": round(1000 * (time.perf_counter() - t0) / len(names), 4)}
     # --- tracegate: full detector, threshold sweep --------------------------
@@ -110,11 +147,13 @@ def run(eco: str, ref_n: int, neg_hi: int, out: Path) -> dict:
     ok = [c for c in dev_curve if c["fpr"] <= 0.02] or dev_curve
     default_th = max(ok, key=lambda c: (c["f1"], c["threshold"]))["threshold"]
     flag = {n: m.score >= default_th for n, m in scored.items()}
+    flags_by[f"tracegate (th={default_th})"] = flag
     results[f"tracegate (th={default_th})"] = {**evaluate(flag, pos, neg, typo_subset), "ms_per_name": ms}
     # same detector at the dev threshold whose FPR matches the lev1 baseline's dev FPR
     lev_dev_fpr = evaluate({n: lev.score(n).score > 0 for n in dev_pos | dev_neg}, dev_pos, dev_neg, dev_typo)["fpr"]
     th_m = min((c for c in dev_curve if c["fpr"] <= lev_dev_fpr), key=lambda c: c["threshold"])["threshold"]
     flag = {n: m.score >= th_m for n, m in scored.items()}
+    flags_by[f"tracegate (th={th_m}, FPR-matched to lev1)"] = flag
     results[f"tracegate (th={th_m}, FPR-matched to lev1)"] = {**evaluate(flag, pos, neg, typo_subset), "ms_per_name": ms}
     # --- ablation: one technique at a time -----------------------------------
     ablation = {}
@@ -136,6 +175,7 @@ def run(eco: str, ref_n: int, neg_hi: int, out: Path) -> dict:
               "chosen_threshold": default_th, "dev_positives": len(dev_pos), "dev_negatives": len(dev_neg),
               "positives": len(pos), "negatives": len(neg),
               "typo_labelled_positives": len(typo_subset), "results": results, "curve": curve,
+              "bootstrap": bootstrap_ci(flags_by, pos, neg, "lev1 (top-5k)"),
               "ablation": ablation, "by_technique": by_tech, "examples_tp": tps, "examples_fp": fps,
               "sources": {"malicious": "OSV MAL-* (ossf/malicious-packages) via osv-vulnerabilities bulk dump",
                           "popular": "hugovk/top-pypi-packages" if eco == "PyPI" else "wooorm/npm-high-impact"}}
@@ -143,7 +183,9 @@ def run(eco: str, ref_n: int, neg_hi: int, out: Path) -> dict:
     (out / f"typosquat_{eco.lower()}.json").write_text(json.dumps(report, indent=1))
     for k, v in results.items():
         print(f"  {k:26s} P={v['precision']:.3f} R={v['recall']:.3f} F1={v['f1']:.3f} "
-              f"FPR={v['fpr']:.4f} R(typo-labelled)={v['recall_typo_labelled']:.3f}")
+              f"FPR={v['fpr']:.4f} R(typo-labelled)={v['recall_typo_labelled']:.3f} "
+              f"F1 95%CI={report['bootstrap']['ci'][k]['f1']}")
+    print("  paired F1 diff vs lev1:", report["bootstrap"]["f1_diff_vs_lev1 (top-5k)"])
     return report
 
 

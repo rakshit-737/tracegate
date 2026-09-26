@@ -19,7 +19,7 @@
    "f1": 0.0004,
    "fpr": 0.0012,
    "recall_typo_labelled": 0.0014,
-   "ms_per_name": 5.9724
+   "ms_per_name": 4.616
   },
   "lev1 (top-5k)": {
    "tp": 272,
@@ -31,7 +31,7 @@
    "f1": 0.005,
    "fpr": 0.0272,
    "recall_typo_labelled": 0.0099,
-   "ms_per_name": 0.2106
+   "ms_per_name": 0.174
   },
   "tracegate (th=0.52)": {
    "tp": 209,
@@ -43,7 +43,7 @@
    "f1": 0.0038,
    "fpr": 0.0176,
    "recall_typo_labelled": 0.0099,
-   "ms_per_name": 2.2761
+   "ms_per_name": 2.1447
   },
   "tracegate (th=0.48, FPR-matched to lev1)": {
    "tp": 296,
@@ -55,7 +55,7 @@
    "f1": 0.0054,
    "fpr": 0.024,
    "recall_typo_labelled": 0.0113,
-   "ms_per_name": 2.2761
+   "ms_per_name": 2.1447
   }
  },
  "curve": [
@@ -480,6 +480,108 @@
    "recall_typo_labelled": 0.0
   }
  ],
+ "bootstrap": {
+  "n_boot": 1000,
+  "seed": 0,
+  "method": "stratified percentile bootstrap, 95%",
+  "ci": {
+   "mvp-difflib (14 names)": {
+    "precision": [
+     0.6667,
+     0.9583
+    ],
+    "recall": [
+     0.0001,
+     0.0003
+    ],
+    "f1": [
+     0.0003,
+     0.0006
+    ],
+    "fpr": [
+     0.0002,
+     0.0024
+    ]
+   },
+   "lev1 (top-5k)": {
+    "precision": [
+     0.6648,
+     0.7565
+    ],
+    "recall": [
+     0.0022,
+     0.0028
+    ],
+    "f1": [
+     0.0044,
+     0.0055
+    ],
+    "fpr": [
+     0.0225,
+     0.0323
+    ]
+   },
+   "tracegate (th=0.52)": {
+    "precision": [
+     0.6934,
+     0.7972
+    ],
+    "recall": [
+     0.0017,
+     0.0022
+    ],
+    "f1": [
+     0.0033,
+     0.0043
+    ],
+    "fpr": [
+     0.0135,
+     0.0216
+    ]
+   },
+   "tracegate (th=0.48, FPR-matched to lev1)": {
+    "precision": [
+     0.7098,
+     0.7929
+    ],
+    "recall": [
+     0.0024,
+     0.003
+    ],
+    "f1": [
+     0.0048,
+     0.006
+    ],
+    "fpr": [
+     0.0193,
+     0.0289
+    ]
+   }
+  },
+  "f1_diff_vs_lev1 (top-5k)": {
+   "mvp-difflib (14 names)": {
+    "ci": [
+     -0.0051,
+     -0.004
+    ],
+    "p_le_0": 1.0
+   },
+   "tracegate (th=0.52)": {
+    "ci": [
+     -0.0016,
+     -0.0007
+    ],
+    "p_le_0": 1.0
+   },
+   "tracegate (th=0.48, FPR-matched to lev1)": {
+    "ci": [
+     0.0,
+     0.0009
+    ],
+    "p_le_0": 0.045
+   }
+  }
+ },
  "ablation": {
   "separator": {
    "tp": 2,

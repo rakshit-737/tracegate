@@ -1,0 +1,7 @@
+.git
+data
+results
+tests
+benchmarks
+*.json
+.venv

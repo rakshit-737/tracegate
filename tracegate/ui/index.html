@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TRACEGATE lineage explorer</title>
+<style>
+  :root {
+    --bg: #f7f7f5; --panel: #ffffff; --ink: #1d1d1f; --muted: #6b6b70; --line: #d9d9de;
+    --accent: #2451b3; --block: #b42318; --warn: #b54708; --pass: #067647; --hl: #f5b400;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #111214; --panel: #1a1b1e; --ink: #ececef; --muted: #9a9aa2; --line: #2e2f33;
+            --accent: #7aa2f7; --block: #f97066; --warn: #fdb022; --pass: #47cd89; --hl: #fde272; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; background: var(--bg); color: var(--ink); }
+  header { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--line); background: var(--panel); }
+  header h1 { font-size: 16px; margin: 0 12px 0 0; letter-spacing: .02em; }
+  select, input, button { font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; }
+  button { cursor: pointer; background: var(--accent); color: #fff; border-color: var(--accent); }
+  main { display: grid; grid-template-columns: minmax(0, 1fr) 340px; min-height: calc(100vh - 58px); }
+  #canvas { overflow: auto; padding: 8px; }
+  aside { border-left: 1px solid var(--line); background: var(--panel); padding: 14px 16px; overflow: auto; max-height: calc(100vh - 58px); }
+  @media (max-width: 800px) { main { grid-template-columns: 1fr; } aside { border-left: 0; border-top: 1px solid var(--line); max-height: none; } }
+  .verdict { font-weight: 700; padding: 2px 8px; border-radius: 4px; color: #fff; }
+  .v-block { background: var(--block); } .v-warn { background: var(--warn); } .v-pass { background: var(--pass); }
+  svg text { fill: var(--ink); font-size: 11px; }
+  .node rect { fill: var(--panel); stroke: var(--line); stroke-width: 1.2; rx: 6; }
+  .node.finding rect { stroke: var(--block); stroke-width: 2; }
+  .node.hl rect { stroke: var(--hl); stroke-width: 3; }
+  .edge { stroke: var(--line); fill: none; stroke-width: 1.2; }
+  .edge.hl { stroke: var(--hl); stroke-width: 2.5; }
+  .kind { fill: var(--muted) !important; font-size: 10px !important; text-transform: uppercase; letter-spacing: .06em; }
+  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 18px 0 6px; }
+  pre { white-space: pre-wrap; word-break: break-word; font-size: 12px; background: var(--bg); padding: 8px; border-radius: 6px; }
+  .muted { color: var(--muted); }
+  ul { padding-left: 18px; margin: 4px 0; }
+</style>
+</head>
+<body>
+<header>
+  <h1>TRACEGATE</h1>
+  <label>Scenario
+    <select id="scenario">
+      <option>clean</option><option>malicious-dep</option><option selected>cve-origin</option>
+      <option>unreachable</option><option>tampered</option><option>unsigned-missing</option>
+    </select>
+  </label>
+  <button id="run">Run gate</button>
+  <input id="q" placeholder="Backtrack: CVE id or package" size="28" aria-label="Backtrack query">
+  <button id="bt">Backtrack</button>
+  <span id="verdict"></span>
+</header>
+<main>
+  <div id="canvas"><p class="muted">Run a scenario to build its provenance graph.</p></div>
+  <aside id="side"><h2>Decision</h2><p class="muted">No run yet.</p></aside>
+</main>
+<script>
+const ORDER = ["commit", "file", "dependency", "build", "layer", "image", "deployment", "container"];
+let current = null;
+
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+
+async function api(path, opts) {
+  const r = await fetch(path, opts);
+  if (!r.ok) throw new Error(await r.text());
+  return r.json();
+}
+
+function layout(g) {
+  const cols = {};
+  for (const n of g.nodes) (cols[n.kind] ??= []).push(n);
+  const pos = {}, colW = 170, rowH = 46;
+  let x = 10, maxRows = 0;
+  for (const k of ORDER) {
+    const list = (cols[k] || []).sort((a, b) => a.label.localeCompare(b.label));
+    list.forEach((n, i) => pos[n.id] = {x, y: 30 + i * rowH});
+    if (list.length) { x += colW; maxRows = Math.max(maxRows, list.length); }
+  }
+  return {pos, width: x + 10, height: 40 + maxRows * rowH};
+}
+
+function draw(g, highlight = new Set()) {
+  const {pos, width, height} = layout(g);
+  const edges = g.edges.map(e => {
+    const a = pos[e.src], b = pos[e.dst];
+    if (!a || !b) return "";
+    const hl = highlight.has(e.src) && highlight.has(e.dst) ? " hl" : "";
+    const x1 = a.x + 150, y1 = a.y + 16, x2 = b.x, y2 = b.y + 16, mx = (x1 + x2) / 2;
+    return `<path class="edge${hl}" d="M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}"><title>${esc(e.rel)}</title></path>`;
+  }).join("");
+  const nodes = g.nodes.map(n => {
+    const p = pos[n.id];
+    const cls = ["node", n.findings ? "finding" : "", highlight.has(n.id) ? "hl" : ""].join(" ");
+    return `<g class="${cls}" data-id="${esc(n.id)}" transform="translate(${p.x},${p.y})" tabindex="0">
+      <rect width="150" height="34"></rect>
+      <text x="8" y="13" class="kind">${esc(n.kind)}${n.findings ? " · " + n.findings + " finding(s)" : ""}</text>
+      <text x="8" y="27">${esc(n.label.slice(0, 22))}</text><title>${esc(n.label)}</title></g>`;
+  }).join("");
+  document.getElementById("canvas").innerHTML =
+    `<svg width="${width}" height="${height}" role="img" aria-label="provenance graph">${edges}${nodes}</svg>`;
+  document.querySelectorAll(".node").forEach(el => el.addEventListener("click", () => showNode(el.dataset.id)));
+}
+
+function showNode(id) {
+  const n = current.graph.nodes.find(x => x.id === id);
+  const fs = current.graph.findings.filter(f => f.node_id === id);
+  const attrs = Object.entries(n.attrs).filter(([, v]) => v !== null && v !== "").map(([k, v]) => `${esc(k)}: ${esc(JSON.stringify(v))}`).join("\n");
+  document.getElementById("side").innerHTML = decisionHtml() +
+    `<h2>${esc(n.kind)}</h2><p><strong>${esc(n.label)}</strong></p><pre>${attrs || "(no attributes)"}\nid: ${esc(n.id)}</pre>` +
+    (fs.length ? `<h2>Findings</h2><ul>${fs.map(f => `<li>[${esc(f.severity)}] ${esc(f.cve || f.id)} ${f.reachable === false ? "(unreachable)" : ""}<br><span class="muted">${esc(f.title)}</span></li>`).join("")}</ul>` : "");
+}
+
+function decisionHtml() {
+  const d = current.decision;
+  return `<h2>Decision</h2><p><span class="verdict v-${d.verdict}">${d.verdict.toUpperCase()}</span></p>
+    <ul>${d.reasons.map(r => `<li><strong>${esc(r.verdict)}</strong> ${esc(r.rule)}: ${esc(r.msg || r.finding)}${r.path ? `<br><span class="muted">${esc(r.path.join(" → "))}</span>` : ""}</li>`).join("") || "<li>No policy violations.</li>"}</ul>`;
+}
+
+document.getElementById("run").addEventListener("click", async () => {
+  const sc = document.getElementById("scenario").value;
+  const s = await api(`/v1/demo/${encodeURIComponent(sc)}`, {method: "POST"});
+  const graph = await api(`/v1/runs/${s.run}/graph`);
+  current = {run: s.run, graph, decision: graph.decision};
+  document.getElementById("verdict").innerHTML = `<span class="verdict v-${s.verdict}">${s.verdict.toUpperCase()}</span> <span class="muted">${s.graph.nodes} nodes · ${s.graph.edges} edges · ${s.graph.findings} findings</span>`;
+  draw(graph);
+  document.getElementById("side").innerHTML = decisionHtml();
+});
+
+document.getElementById("bt").addEventListener("click", async () => {
+  if (!current) return;
+  const q = document.getElementById("q").value.trim();
+  if (!q) return;
+  const stories = await api(`/v1/runs/${current.run}/backtrack?q=${encodeURIComponent(q)}`);
+  const byLabel = new Map(current.graph.nodes.map(n => [`${n.kind}:${n.label}`, n.id]));
+  const hl = new Set();
+  for (const s of stories) for (const p of s.path) if (byLabel.has(p)) hl.add(byLabel.get(p));
+  draw(current.graph, hl);
+  document.getElementById("side").innerHTML = decisionHtml() + `<h2>Origin story (${stories.length})</h2>` +
+    (stories.map(s => `<p><strong>${esc(s.finding.cve || s.finding.id)}</strong> in ${esc(s.artifact)}<br>
+      introduced by ${s.introduced_by ? `PR #${esc(s.introduced_by.pr)} · ${esc(s.introduced_by.author)} · <code>${esc(s.introduced_by.sha.slice(0, 12))}</code>` : "unknown"}<br>
+      services: ${esc(s.blast_radius.services.join(", ") || "none")}</p>`).join("") || `<p class="muted">No finding matches “${esc(q)}”.</p>`);
+});
+</script>
+</body>
+</html>

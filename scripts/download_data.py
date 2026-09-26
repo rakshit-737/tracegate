@@ -180,11 +180,16 @@ def prefetch_manifest_blobs(repo: Path, manifest: str) -> None:
     A blobless clone would otherwise lazily fetch each blob in its own round trip.
     """
     g = ["git", "-C", str(repo)]
-    shas = subprocess.run([*g, "log", "--first-parent", "--format=%H", "--", manifest],
-                          capture_output=True, text=True, check=True).stdout.split()
+    # --follow: also fetch the manifest's versions from before any rename
+    log = subprocess.run([*g, "log", "--first-parent", "--follow", "--name-only", "--format=%x1e%H",
+                          "--", manifest], capture_output=True, text=True, check=True).stdout
+    shas = []
     oids = set()
-    for c in shas:
-        out = subprocess.run([*g, "ls-tree", c, manifest], capture_output=True, text=True).stdout.split()
+    for block in log.split("\x1e")[1:]:
+        lines = [ln.strip() for ln in block.splitlines() if ln.strip()]
+        c, path = lines[0], (lines[1] if len(lines) > 1 else manifest)
+        shas.append(c)
+        out = subprocess.run([*g, "ls-tree", c, path], capture_output=True, text=True).stdout.split()
         if len(out) >= 3:
             oids.add(out[2])
     env = {**os.environ, "GIT_NO_LAZY_FETCH": "1"}

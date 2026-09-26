@@ -44,6 +44,7 @@ EXE = ".exe" if os.name == "nt" else ""
 SYFT, TRIVY = ROOT / "bin" / f"syft{EXE}", ROOT / "bin" / f"trivy{EXE}"
 OUT = ROOT / "scans"
 CACHE = ROOT / "trivy-cache"
+LONG_PREFIX = "\\\\?\\"  # Windows extended-length path prefix: \\?\
 
 
 def slug(s: str) -> str:
@@ -72,6 +73,10 @@ def _safe_extract(tar_gz: Path, dest: Path) -> None:
     bad = re.compile(r'[<>:"|?*\x00-\x1f]')
     import posixpath
     import shutil
+    if os.name == "nt" and not str(dest).startswith(LONG_PREFIX):
+        # extended-length prefix: node_modules trees exceed MAX_PATH (260) and would be
+        # silently dropped otherwise, hiding npm packages from Syft
+        dest = Path(LONG_PREFIX + str(dest.resolve()))
     dest.mkdir(parents=True, exist_ok=True)
     links: list[tuple[str, str]] = []
     with tarfile.open(tar_gz, "r:*") as t:
@@ -126,7 +131,9 @@ def syft_per_layer(oci_dir: Path, ref: str, out: Path) -> None:
         ldir = work / f"layer{i}"
         _safe_extract(oci_dir / "blobs/sha256" / layer["digest"].split(":")[1], ldir)
         lj = work / f"layer{i}.json"
-        subprocess.run([str(SYFT), f"dir:{ldir}", "-q", "-o", f"syft-json={lj}"], check=True)
+        # image catalogers: we are scanning an image filesystem (installed npm/python packages)
+        subprocess.run([str(SYFT), f"dir:{ldir}", "--override-default-catalogers", "image", "-q",
+                        "-o", f"syft-json={lj}"], check=True)
         doc = json.loads(lj.read_text(encoding="utf-8"))
         version = (doc.get("descriptor") or {}).get("version")
         osr = ldir / "etc" / "os-release"
@@ -158,7 +165,7 @@ def syft_per_layer(oci_dir: Path, ref: str, out: Path) -> None:
                                       "layers": layers}},
               "artifacts": arts}
     out.write_text(json.dumps(merged), encoding="utf-8")
-    shutil.rmtree(work, ignore_errors=True)
+    shutil.rmtree(LONG_PREFIX + str(work.resolve()) if os.name == "nt" else work, ignore_errors=True)
 
 
 def scan_images() -> None:

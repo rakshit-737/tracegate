@@ -29,6 +29,7 @@ import shutil
 import subprocess
 import sys
 import time
+import urllib.error
 import urllib.request
 import zipfile
 from pathlib import Path
@@ -50,6 +51,7 @@ MANIFEST = ROOT / "MANIFEST.json"
 OSV = {
     "osv/PyPI-all.zip": "https://osv-vulnerabilities.storage.googleapis.com/PyPI/all.zip",
     "osv/npm-all.zip": "https://osv-vulnerabilities.storage.googleapis.com/npm/all.zip",
+    "osv/Alpine-all.zip": "https://osv-vulnerabilities.storage.googleapis.com/Alpine/all.zip",
 }
 POPULAR = {
     # Hugo van Kemenade, top-pypi-packages (CC0 / public domain data from BigQuery PyPI downloads)
@@ -96,9 +98,25 @@ def fetch(url: str, rel: str, force: bool = False) -> Path:
         return dst
     print(f"  fetch   {url}")
     tmp = dst.with_suffix(dst.suffix + ".part")
-    req = urllib.request.Request(url, headers={"User-Agent": "tracegate-data/1.0"})
-    with urllib.request.urlopen(req, timeout=120) as r, tmp.open("wb") as f:
-        shutil.copyfileobj(r, f)
+    for attempt in range(1, 31):  # resumable: flaky links reset long transfers
+        have = tmp.stat().st_size if tmp.exists() else 0
+        headers = {"User-Agent": "tracegate-data/1.0"}
+        if have:
+            headers["Range"] = f"bytes={have}-"
+        try:
+            req = urllib.request.Request(url, headers=headers)
+            with urllib.request.urlopen(req, timeout=120) as r:
+                mode = "ab" if have and r.status == 206 else "wb"
+                with tmp.open(mode) as f:
+                    shutil.copyfileobj(r, f, 1 << 16)
+            break
+        except (OSError, urllib.error.URLError) as e:
+            if getattr(e, "code", None) == 416:  # range not satisfiable: already complete
+                break
+            print(f"    retry {attempt} after {type(e).__name__} at {tmp.stat().st_size if tmp.exists() else 0} bytes")
+            time.sleep(min(30, 2 * attempt))
+    else:
+        sys.exit(f"giving up on {url}")
     tmp.replace(dst)
     m = _load_manifest()
     m[rel] = {"url": url, "sha256": _sha256(dst), "bytes": dst.stat().st_size,
@@ -158,18 +176,67 @@ def cmd_tools(force: bool) -> None:
             exe.chmod(0o755)
 
 
+def prefetch_manifest_blobs(repo: Path, manifest: str) -> None:
+    """Fetch every historical version of the manifest in a few batched requests.
+
+    A blobless clone would otherwise lazily fetch each blob in its own round trip.
+    """
+    g = ["git", "-C", str(repo)]
+    shas = subprocess.run([*g, "log", "--first-parent", "--format=%H", "--", manifest],
+                          capture_output=True, text=True, check=True).stdout.split()
+    oids = set()
+    for c in shas:
+        out = subprocess.run([*g, "ls-tree", c, manifest], capture_output=True, text=True).stdout.split()
+        if len(out) >= 3:
+            oids.add(out[2])
+    env = {**os.environ, "GIT_NO_LAZY_FETCH": "1"}
+    chk = subprocess.run([*g, "cat-file", "--batch-check"], input="\n".join(sorted(oids)),
+                         capture_output=True, text=True, env=env).stdout
+    missing = [ln.split()[0] for ln in chk.splitlines() if ln.endswith("missing")]
+    print(f"    {manifest}: {len(shas)} commits, {len(oids)} blobs, {len(missing)} to fetch")
+    for i in range(0, len(missing), 150):
+        for attempt in range(1, 6):
+            r = subprocess.run([*g, "-c", "fetch.negotiationAlgorithm=noop", "fetch", "--quiet", "--no-tags",
+                                "--no-write-fetch-head", "--filter=blob:none", "origin", *missing[i:i + 150]])
+            if r.returncode == 0:
+                break
+            time.sleep(5 * attempt)
+
+
 def cmd_repos(force: bool) -> None:
     rdir = ROOT / "repos"
     rdir.mkdir(parents=True, exist_ok=True)
-    for name, url, *_ in REPOS:
+    for name, url, manifest, srcs in REPOS:
         dst = rdir / name
         if dst.exists():
             print(f"  cached  repos/{name}")
+            prefetch_manifest_blobs(dst, manifest)
             continue
         print(f"  clone   {url}")
-        subprocess.run(["git", "clone", "--quiet", "--single-branch", url, str(dst)], check=True)
+        # Blobless partial clone + sparse checkout: full commit history, but only the
+        # manifest and application sources are materialised (keeps the download small).
+        for attempt in range(1, 6):
+            if dst.exists():
+                shutil.rmtree(dst, ignore_errors=True)
+            r = subprocess.run(["git", "clone", "--quiet", "--filter=blob:none", "--no-checkout",
+                                "--single-branch", url, str(dst)])
+            if r.returncode == 0:
+                break
+            print(f"    clone retry {attempt}")
+            time.sleep(5 * attempt)
+        else:
+            sys.exit(f"could not clone {url}")
+        g = ["git", "-C", str(dst)]
+        subprocess.run([*g, "sparse-checkout", "set", "--no-cone", f"/{manifest}",
+                        *[f"/{d}/**/*.py" for d in srcs], "/Dockerfile*", "/Procfile",
+                        "/docker/**", "/bin/**"], check=True)
+        for attempt in range(1, 6):
+            if subprocess.run([*g, "checkout", "--quiet"]).returncode == 0:
+                break
+            time.sleep(5 * attempt)
         head = subprocess.run(["git", "-C", str(dst), "rev-parse", "HEAD"], check=True,
                               capture_output=True, text=True).stdout.strip()
+        prefetch_manifest_blobs(dst, manifest)
         m = _load_manifest()
         m[f"repos/{name}"] = {"url": url, "head": head,
                               "fetched": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}

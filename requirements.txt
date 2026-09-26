@@ -1,2 +1,3 @@
-# runtime: stdlib only
+# runtime: stdlib only. Optional extras (see pyproject.toml):
+#   pip install -e .[crypto,osv,api,bench]   # or .[dev] for tests + lint
 pytest>=7

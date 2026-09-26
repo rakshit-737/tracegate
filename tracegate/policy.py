@@ -13,6 +13,7 @@ from .models import Decision, Finding, NodeKind, Severity, Verdict
 
 Rule = Callable[[CollectResult], Iterator[tuple[Verdict, dict]]]
 RULES: list[Rule] = []
+SCANNERS = frozenset({"trivy", "grype", "osv"})
 
 
 def rule(fn: Rule) -> Rule:
@@ -46,7 +47,7 @@ def malicious_dependency(res: CollectResult):
 @rule
 def vulnerable_dependency(res: CollectResult):
     for f in res.graph.findings:
-        if f.source != "trivy":
+        if f.source not in SCANNERS:
             continue
         if f.severity.rank >= Severity.HIGH.rank:
             v = Verdict.WARN if f.reachable is False else Verdict.BLOCK

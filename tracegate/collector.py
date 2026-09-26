@@ -1,12 +1,14 @@
 """Provenance collector: verifies signed stage events and stitches them into the DAG.
 
-Accepted payload shapes (subsets of the real tool outputs):
-  commit  : {sha, author, pr, message, files:[path], deps_added:[{name, version}]}
+Accepted payload shapes (subsets of the real tool outputs; see tracegate.ingest
+for the adapters that produce them from real Syft / CycloneDX / Trivy JSON):
+  commit  : {sha, author, pr, message, seq?, timestamp?, files:[path],
+             deps_added:[{name, version, ecosystem?}], deps_removed:[...]}
   sast    : {commit, findings:[{file, rule, severity, title}]}
-  build   : {build_id, commit, image:{name, digest, layers:[{digest, created_by}]},
-             sbom:{artifacts:[{name, version, locations:[{layerID}]}]}}     # Syft-like
-  scan    : {image_digest, Results:[{Vulnerabilities:[{VulnerabilityID, PkgName,
-             InstalledVersion, Severity, Title}]}]}                         # Trivy-like
+  build   : {build_id, commit?, image?:{name, digest, layers:[{digest, created_by}]},
+             sbom:{artifacts:[{name, version, purl?, locations:[{layerID}]}]}}  # Syft
+  scan    : {image_digest?, Results:[{Vulnerabilities:[{VulnerabilityID, PkgName,
+             InstalledVersion, Severity, Title, PURL?, LayerDiffID?}]}]}        # Trivy
   deploy  : {service, image_digest, containers:[id]}
   runtime : {container, loaded_modules:[name]}
 """
@@ -16,7 +18,7 @@ from dataclasses import dataclass, field
 from typing import Iterable
 
 from .graph import ProvenanceGraph
-from .ids import digest, dep_id, purl
+from .ids import canonical_purl, dep_id, dep_id_from_purl, digest, purl
 from .models import Envelope, Finding, Node, NodeKind, Severity, StageEvent
 from .signing import SignatureError, Verifier
 
@@ -36,6 +38,7 @@ class CollectResult:
     rejected: list[str] = field(default_factory=list)
     stages_seen: set[str] = field(default_factory=set)
     runtime: dict[str, set[str]] = field(default_factory=dict)  # container id -> modules
+    unmatched: list[str] = field(default_factory=list)  # scanner findings with no SBOM node
 
     @property
     def missing_stages(self) -> set[str]:
@@ -79,16 +82,20 @@ class Collector:
         cid = self._commit_id(p["sha"])
         g.add_node(Node(cid, NodeKind.COMMIT, p["sha"][:12], {
             "sha": p["sha"], "author": p.get("author"), "pr": p.get("pr"),
-            "message": p.get("message", ""), "run_id": ev.run_id}))
+            "message": p.get("message", ""), "run_id": ev.run_id,
+            "seq": p.get("seq"), "timestamp": p.get("timestamp"),
+            "deps_removed": [f"{d['name']}=={d['version']}" for d in p.get("deps_removed", [])]}))
         for path in p.get("files", []):
             fid = digest(NodeKind.FILE, [p["sha"], path])
             g.add_node(Node(fid, NodeKind.FILE, path, {"path": path}))
             g.add_edge(cid, fid, "modifies")
         for d in p.get("deps_added", []):
-            did = dep_id(d["name"], d["version"])
+            eco = d.get("ecosystem", "pypi")
+            pu = canonical_purl(d["purl"]) if d.get("purl") else purl(d["name"], d["version"], eco)
+            did = dep_id_from_purl(pu)
             g.add_node(Node(did, NodeKind.DEPENDENCY, f"{d['name']}=={d['version']}",
-                            {"name": d["name"], "version": d["version"],
-                             "purl": purl(d["name"], d["version"])}))
+                            {"name": d["name"], "version": d["version"], "purl": pu,
+                             "ecosystem": eco}))
             g.add_edge(cid, did, "introduced")
 
     def _on_sast(self, res: CollectResult, ev: StageEvent) -> None:
@@ -106,30 +113,38 @@ class Collector:
     def _on_build(self, res: CollectResult, ev: StageEvent) -> None:
         g, p = res.graph, ev.payload
         bid = digest(NodeKind.BUILD, p["build_id"])
-        g.add_node(Node(bid, NodeKind.BUILD, p["build_id"], {"run_id": ev.run_id}))
-        cid = self._commit_id(p["commit"])
-        if cid in g.nodes:
-            g.add_edge(cid, bid, "built_by")
-        img = p["image"]
-        iid = digest(NodeKind.IMAGE, img["digest"])
-        g.add_node(Node(iid, NodeKind.IMAGE, img.get("name", img["digest"][:19]),
-                        {"digest": img["digest"]}))
-        g.add_edge(bid, iid, "produced")
+        g.add_node(Node(bid, NodeKind.BUILD, p["build_id"], {"run_id": ev.run_id,
+                                                              "tool": p.get("tool")}))
+        if p.get("commit"):
+            cid = self._commit_id(p["commit"])
+            if cid in g.nodes:
+                g.add_edge(cid, bid, "built_by")
+        img = p.get("image")
+        default_target = bid
         layer_ids: dict[str, str] = {}
-        for layer in img.get("layers", []):
-            lid = digest(NodeKind.LAYER, layer["digest"])  # shared across images
-            layer_ids[layer["digest"]] = lid
-            g.add_node(Node(lid, NodeKind.LAYER, layer["digest"][:19],
-                            {"digest": layer["digest"], "created_by": layer.get("created_by", "")}))
-            g.add_edge(lid, iid, "layer_of")
+        if img and img.get("digest"):
+            iid = digest(NodeKind.IMAGE, img["digest"])
+            g.add_node(Node(iid, NodeKind.IMAGE, img.get("name") or img["digest"][:19],
+                            {"digest": img["digest"], "repo_digests": img.get("repo_digests", [])}))
+            g.add_edge(bid, iid, "produced")
+            default_target = iid
+            for layer in img.get("layers", []):
+                lid = digest(NodeKind.LAYER, layer["digest"])  # shared across images
+                layer_ids[layer["digest"]] = lid
+                g.add_node(Node(lid, NodeKind.LAYER, layer["digest"][:19],
+                                {"digest": layer["digest"], "created_by": layer.get("created_by", "")}))
+                g.add_edge(lid, iid, "layer_of")
         for art in p.get("sbom", {}).get("artifacts", []):
-            did = dep_id(art["name"], art["version"])
-            g.add_node(Node(did, NodeKind.DEPENDENCY, f"{art['name']}=={art['version']}",
-                            {"name": art["name"], "version": art["version"],
-                             "purl": purl(art["name"], art["version"]),
-                             "import_name": art.get("import_name") or art["name"].lower().replace("-", "_")}))
+            pu = art.get("purl") or purl(art["name"], art["version"])
+            did = dep_id_from_purl(pu)
+            eco = pu[4:].split("/", 1)[0]
+            attrs = {"name": art["name"], "version": art["version"], "purl": canonical_purl(pu),
+                     "ecosystem": eco}
+            if eco == "pypi":
+                attrs["import_name"] = art.get("import_name") or art["name"].lower().replace("-", "_")
+            g.add_node(Node(did, NodeKind.DEPENDENCY, f"{art['name']}=={art['version']}", attrs))
             locs = [loc.get("layerID") for loc in art.get("locations", [])]
-            targets = [layer_ids[l] for l in locs if l in layer_ids] or [iid]
+            targets = sorted({layer_ids[x] for x in locs if x in layer_ids}) or [default_target]
             for t in targets:
                 g.add_edge(did, t, "installed_in")
 
@@ -137,14 +152,21 @@ class Collector:
         g, p = res.graph, ev.payload
         for r in p.get("Results", []):
             for v in r.get("Vulnerabilities") or []:
-                did = dep_id(v["PkgName"], v["InstalledVersion"])
+                did = (dep_id_from_purl(v["PURL"]) if v.get("PURL")
+                       else dep_id(v["PkgName"], v["InstalledVersion"]))
                 if did not in g.nodes:
-                    continue  # finding for a package the SBOM never saw: ignore (logged via coverage)
-                fid = f"{v['VulnerabilityID']}@{did}"
-                if any(f.id == fid for f in g.findings):
+                    # finding for a package the SBOM never saw: recorded, not silently dropped
+                    res.unmatched.append(f"{v['VulnerabilityID']} {v['PkgName']}@{v['InstalledVersion']}")
                     continue
-                g.add_finding(Finding(fid, did, "trivy", _sev(v.get("Severity", "medium")),
-                                      v.get("Title", v["VulnerabilityID"]), cve=v["VulnerabilityID"]))
+                fid = f"{v['VulnerabilityID']}@{did}"
+                if g.has_finding(fid):
+                    continue
+                ev_ = [f"fixed in {v['FixedVersion']}"] if v.get("FixedVersion") else []
+                if v.get("LayerDiffID"):
+                    ev_.append(f"layer {v['LayerDiffID'][:19]}")
+                g.add_finding(Finding(fid, did, p.get("tool", "trivy"), _sev(v.get("Severity", "medium")),
+                                      v.get("Title", v["VulnerabilityID"]), cve=v["VulnerabilityID"],
+                                      evidence=ev_))
 
     def _on_deploy(self, res: CollectResult, ev: StageEvent) -> None:
         g, p = res.graph, ev.payload

@@ -1,4 +1,4 @@
-"""In-memory provenance DAG. A Neo4j adapter is a TODO seam (same API)."""
+"""In-memory provenance DAG (see tracegate.neo4j for the Neo4j export/adapter)."""
 from __future__ import annotations
 
 from collections import defaultdict, deque
@@ -17,6 +17,7 @@ class ProvenanceGraph:
         self.out: dict[str, set[Edge]] = defaultdict(set)
         self.inc: dict[str, set[Edge]] = defaultdict(set)
         self.findings: list[Finding] = []
+        self._finding_ids: set[str] = set()
 
     def add_node(self, node: Node) -> Node:
         existing = self.nodes.get(node.id)
@@ -39,7 +40,13 @@ class ProvenanceGraph:
     def add_finding(self, f: Finding) -> None:
         if f.node_id not in self.nodes:
             raise KeyError(f"finding on unknown node {f.node_id}")
+        if f.id in self._finding_ids:
+            return
+        self._finding_ids.add(f.id)
         self.findings.append(f)
+
+    def has_finding(self, fid: str) -> bool:
+        return fid in self._finding_ids
 
     def _walk(self, start: str, forward: bool) -> set[str]:
         adj = self.out if forward else self.inc
@@ -71,11 +78,18 @@ class ProvenanceGraph:
                 while prev[path[-1]] is not None:
                     path.append(prev[path[-1]])  # type: ignore[arg-type]
                 return path
-            for e in sorted(self.inc.get(cur, ()), key=lambda e: e.src):
+            for e in sorted(self.inc.get(cur, ()), key=self._recency_key):
                 if e.src not in prev:
                     prev[e.src] = cur
                     q.append(e.src)
         return None
+
+    def _recency_key(self, e: Edge) -> tuple:
+        # Newest upstream node first (commit `seq` is its position in history), so a
+        # package version that was introduced, removed and re-introduced backtracks
+        # to the commit that introduced the copy that is actually shipped.
+        seq = self.nodes[e.src].attrs.get("seq")
+        return (1 if seq is None else 0, -(seq or 0), e.src)
 
     def of_kind(self, kind: NodeKind) -> Iterable[Node]:
         return [n for n in self.nodes.values() if n.kind == kind]

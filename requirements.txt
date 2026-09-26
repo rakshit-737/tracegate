@@ -1,0 +1,2 @@
+# runtime: stdlib only
+pytest>=7

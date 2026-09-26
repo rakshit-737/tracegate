@@ -9,6 +9,8 @@ fall back to a conservative *static* estimate from the repository itself:
               ENGINE, plugin paths...)
   entrypoint  distribution / console-script named in Dockerfile, Procfile,
               shell scripts or CI config (gunicorn, uwsgi, celery, ...)
+  referenced  its module name appears as a bare string constant (plugin / scheme
+              names such as passlib's "argon2"): weaker evidence, still reachable
   transitive  required (per pip-compile `# via` annotations) by a package that
               is itself reachable
   unreached   none of the above -> findings on it are downgraded block -> warn
@@ -58,8 +60,16 @@ KNOWN_IMPORTS: dict[str, list[str]] = {
     "argon2-cffi-bindings": ["_argon2_cffi_bindings"], "cffi": ["cffi", "_cffi_backend"],
     "markupsafe": ["markupsafe"], "jinja2": ["jinja2"], "werkzeug": ["werkzeug"], "flask-babel": ["flask_babel"],
     "flask-sqlalchemy": ["flask_sqlalchemy"], "flask-wtf": ["flask_wtf"], "flask-assets": ["flask_assets"],
-    "wtforms": ["wtforms"], "pretty-bad-protocol": ["pretty_bad_protocol"], "python-gnupg": ["gnupg"],
+    "wtforms": ["wtforms"], "celery-redbeat": ["redbeat"], "hiredis": ["hiredis"], "pretty-bad-protocol": ["pretty_bad_protocol"], "python-gnupg": ["gnupg"],
     "redis": ["redis"], "rq": ["rq"], "mod-wsgi": ["mod_wsgi"],
+}
+# Packages loaded implicitly by a framework/library the app does import: module prefix -> dists.
+IMPLIED_BY_MODULE: dict[str, tuple[str, ...]] = {
+    "django.db.backends.postgresql": ("psycopg", "psycopg2", "psycopg2-binary", "psycopg-binary", "psycopg-c"),
+    "django": ("tzdata", "sqlparse", "asgiref"),       # zoneinfo data / Django's own runtime deps
+    "zoneinfo": ("tzdata",),
+    "redis": ("hiredis",),                             # redis-py auto-selects the hiredis parser
+    "requests": ("urllib3", "idna", "certifi", "charset-normalizer"),
 }
 ENTRYPOINT_FILES = ("Dockerfile", "Procfile", "*.sh", "*.ini", "*.cfg", "*.toml", "*.yml", "*.yaml",
                     "*.conf", "gunicorn*.py", "uwsgi*")
@@ -76,11 +86,24 @@ def import_names(dist: str) -> list[str]:
             guesses.append(n[len(pre):].replace("-", "_"))
     if n.endswith("-binary"):
         guesses.append(n[:-7].replace("-", "_"))
+    parts = n.split("-")
+    if len(parts) > 1:  # namespace packages: google-cloud-storage -> google.cloud.storage
+        guesses.append(".".join(parts))
+        guesses.append(parts[0] + "." + "_".join(parts[1:]))
+        if len(parts) > 2:
+            guesses.append(".".join(parts[:2]) + "." + "_".join(parts[2:]))
     return guesses
 
 
-def app_imports(src_dirs: list[Path]) -> set[str]:
-    """Module paths (full dotted + every prefix) imported by, or named as dotted strings in, the sources."""
+_IDENT = re.compile(r"^[A-Za-z_][A-Za-z0-9_]{2,}$")
+
+
+def app_imports(src_dirs: list[Path], strings: set[str] | None = None) -> set[str]:
+    """Module paths (full dotted + every prefix) imported by, or named as dotted strings in, the sources.
+
+    If `strings` is given it is filled with bare identifier-like string constants
+    (e.g. passlib schemes "argon2", "bcrypt") - weaker evidence, reported separately.
+    """
     mods: set[str] = set()
 
     def add(dotted: str) -> None:
@@ -100,8 +123,14 @@ def app_imports(src_dirs: list[Path]) -> set[str]:
                         add(a.name)
                 elif isinstance(node, ast.ImportFrom) and node.module and node.level == 0:
                     add(node.module)
+                    for a in node.names:  # `from google.cloud import bigquery`
+                        if a.name != "*":
+                            add(f"{node.module}.{a.name}")
                 elif isinstance(node, ast.Constant) and isinstance(node.value, str) and _DOTTED.match(node.value):
                     add(node.value)
+                elif (strings is not None and isinstance(node, ast.Constant) and isinstance(node.value, str)
+                      and _IDENT.match(node.value)):
+                    strings.add(node.value.lower())
                 elif (isinstance(node, ast.Call) and getattr(node.func, "attr", getattr(node.func, "id", ""))
                       in ("import_module", "__import__", "include") and node.args
                       and isinstance(node.args[0], ast.Constant) and isinstance(node.args[0].value, str)):
@@ -154,9 +183,12 @@ class ReachReport:
 
 def static_reachability(pins: dict[str, str], src_dirs: list[Path], repo: Path,
                         req_text: str = "", mods: set[str] | None = None,
-                        ep: str | None = None) -> ReachReport:
-    """`mods` / `ep` may be passed pre-computed when analysing many snapshots of one repo."""
-    mods = app_imports(src_dirs) if mods is None else mods
+                        ep: str | None = None, strings: set[str] | None = None) -> ReachReport:
+    """`mods` / `ep` / `strings` may be passed pre-computed when analysing many snapshots of one repo."""
+    if mods is None:
+        strings = set()
+        mods = app_imports(src_dirs, strings)
+    strings = strings or set()
     ep = entrypoint_text(repo) if ep is None else ep
     rep = ReachReport()
     for dist in pins:
@@ -167,16 +199,30 @@ def static_reachability(pins: dict[str, str], src_dirs: list[Path], repo: Path,
                 re.search(rf"(?<![a-z0-9_]){re.escape(m.lower())}(?![a-z0-9_])", ep) for m in import_names(dist)):
             rep.status[dist], rep.evidence[dist] = "entrypoint", "named in Dockerfile/Procfile/scripts/config"
     via = via_graph(req_text) if req_text else {}
-    changed = True
-    while changed:  # fixed point over the dependency graph
-        changed = False
-        for dist in pins:
-            if dist in rep.status:
-                continue
-            parents = [p for p in via.get(dist, ()) if p in rep.status and rep.status[p] != "unreached"]
-            if parents:
-                rep.status[dist], rep.evidence[dist] = "transitive", f"required by reachable {sorted(parents)[0]}"
-                changed = True
+
+    def propagate() -> None:
+        changed = True
+        while changed:  # fixed point over the dependency graph
+            changed = False
+            for dist in pins:
+                if dist in rep.status:
+                    continue
+                parents = [p for p in via.get(dist, ()) if p in rep.status and rep.status[p] != "unreached"]
+                if parents:
+                    rep.status[dist], rep.evidence[dist] = "transitive", f"required by reachable {sorted(parents)[0]}"
+                    changed = True
+
+    for prefix, dists in IMPLIED_BY_MODULE.items():
+        if prefix in mods:
+            for d in dists:
+                if d in pins and d not in rep.status:
+                    rep.status[d], rep.evidence[d] = "transitive", f"loaded implicitly by '{prefix}'"
+    propagate()
+    # weakest evidence last: a bare string naming the module (passlib schemes, plugin names)
+    for dist in pins:
+        if dist not in rep.status and any("." not in m and m.lower() in strings for m in import_names(dist)):
+            rep.status[dist], rep.evidence[dist] = "referenced", "module name used as a string (plugin/scheme config)"
+    propagate()
     for dist in pins:
         if dist not in rep.status:
             rep.status[dist] = "unreached"

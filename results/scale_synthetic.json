@@ -1,0 +1,38 @@
+[
+ {
+  "services": 10,
+  "deps": 50,
+  "events": 41,
+  "nodes": 104,
+  "edges": 562,
+  "findings": 6,
+  "gate_s_median": 0.014
+ },
+ {
+  "services": 50,
+  "deps": 100,
+  "events": 201,
+  "nodes": 354,
+  "edges": 5302,
+  "findings": 11,
+  "gate_s_median": 0.17
+ },
+ {
+  "services": 100,
+  "deps": 200,
+  "events": 401,
+  "nodes": 704,
+  "edges": 20602,
+  "findings": 25,
+  "gate_s_median": 0.547
+ },
+ {
+  "services": 200,
+  "deps": 400,
+  "events": 801,
+  "nodes": 1404,
+  "edges": 81202,
+  "findings": 42,
+  "gate_s_median": 1.627
+ }
+]

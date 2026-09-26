@@ -1,0 +1,200 @@
+{
+ "images": [
+  {
+   "image": "alpine:3.14.2",
+   "syft_packages": 15,
+   "layers": 1,
+   "trivy_findings": 43,
+   "match_naive": 43,
+   "match_raw_purl": 0,
+   "match_tracegate": 43,
+   "sbom_jaccard_syft_vs_trivy": 0.9333
+  },
+  {
+   "image": "httpd:2.4.49-alpine3.14",
+   "syft_packages": 36,
+   "layers": 5,
+   "trivy_findings": 99,
+   "match_naive": 99,
+   "match_raw_purl": 0,
+   "match_tracegate": 99,
+   "sbom_jaccard_syft_vs_trivy": 0.9444
+  },
+  {
+   "image": "memcached:1.6.10-alpine3.14",
+   "syft_packages": 20,
+   "layers": 6,
+   "trivy_findings": 44,
+   "match_naive": 44,
+   "match_raw_purl": 0,
+   "match_tracegate": 44,
+   "sbom_jaccard_syft_vs_trivy": 0.9
+  },
+  {
+   "image": "nginx:1.21.3-alpine",
+   "syft_packages": 45,
+   "layers": 6,
+   "trivy_findings": 105,
+   "match_naive": 105,
+   "match_raw_purl": 0,
+   "match_tracegate": 105,
+   "sbom_jaccard_syft_vs_trivy": 0.9333
+  },
+  {
+   "image": "node:14.17.6-alpine3.14",
+   "syft_packages": 417,
+   "layers": 4,
+   "trivy_findings": 90,
+   "match_naive": 90,
+   "match_raw_purl": 47,
+   "match_tracegate": 90,
+   "sbom_jaccard_syft_vs_trivy": 0.9952
+  },
+  {
+   "image": "python:3.9.7-alpine3.14",
+   "syft_packages": 51,
+   "layers": 5,
+   "trivy_findings": 83,
+   "match_naive": 83,
+   "match_raw_purl": 12,
+   "match_tracegate": 83,
+   "sbom_jaccard_syft_vs_trivy": 0.9512
+  },
+  {
+   "image": "redis:6.2.5-alpine3.14",
+   "syft_packages": 19,
+   "layers": 6,
+   "trivy_findings": 43,
+   "match_naive": 43,
+   "match_raw_purl": 0,
+   "match_tracegate": 43,
+   "sbom_jaccard_syft_vs_trivy": 0.8947
+  }
+ ],
+ "identity_convergence": {
+  "naive": 1.0,
+  "raw": 0.1164,
+  "canon": 1.0,
+  "trivy_rows": 507
+ },
+ "graph": {
+  "nodes": 538,
+  "edges": 556,
+  "findings": 218
+ },
+ "gate_ms_median": 71.9,
+ "verdict": "block",
+ "unmatched_trivy_findings": 0,
+ "unique_finding_nodes": 215,
+ "unique_cves": 142,
+ "dedup_ratio": 2.36,
+ "shared_layers": [
+  {
+   "layer": "sha256:e2eb06d8af82",
+   "images": [
+    "alpine:3.14.2",
+    "httpd:2.4.49-alpine3.14",
+    "memcached:1.6.10-alpine3.14",
+    "nginx:1.21.3-alpine",
+    "node:14.17.6-alpine3.14",
+    "python:3.9.7-alpine3.14",
+    "redis:6.2.5-alpine3.14"
+   ],
+   "services": [
+    "svc-alpine",
+    "svc-httpd",
+    "svc-memcached",
+    "svc-nginx",
+    "svc-node",
+    "svc-python",
+    "svc-redis"
+   ],
+   "packages_in_layer": 15,
+   "findings_in_layer": 43
+  }
+ ],
+ "widest_blast_radius": [
+  [
+   7,
+   "CVE-2023-0465",
+   "libssl1.1==1.1.1l-r0"
+  ],
+  [
+   7,
+   "CVE-2023-0465",
+   "libcrypto1.1==1.1.1l-r0"
+  ],
+  [
+   7,
+   "CVE-2023-0464",
+   "libssl1.1==1.1.1l-r0"
+  ],
+  [
+   7,
+   "CVE-2023-0464",
+   "libcrypto1.1==1.1.1l-r0"
+  ],
+  [
+   7,
+   "CVE-2023-0286",
+   "libssl1.1==1.1.1l-r0"
+  ]
+ ],
+ "example_origin_story": {
+  "finding": {
+   "id": "CVE-2023-0465@dependency:sha256:50c68ec7b60858befb012ac5c26cf46d",
+   "node_id": "dependency:sha256:50c68ec7b60858befb012ac5c26cf46d",
+   "source": "trivy",
+   "severity": "medium",
+   "title": "openssl: Invalid certificate policies in leaf certificates are silently ignored",
+   "cve": "CVE-2023-0465",
+   "reachable": null,
+   "evidence": [
+    "fixed in 1.1.1t-r2",
+    "layer sha256:e2eb06d8af82"
+   ]
+  },
+  "artifact": "libcrypto1.1==1.1.1l-r0",
+  "introduced_by": null,
+  "builds": [],
+  "path": [],
+  "blast_radius": {
+   "images": [
+    "alpine:3.14.2",
+    "httpd:2.4.49-alpine3.14",
+    "memcached:1.6.10-alpine3.14",
+    "nginx:1.21.3-alpine",
+    "node:14.17.6-alpine3.14",
+    "python:3.9.7-alpine3.14",
+    "redis:6.2.5-alpine3.14"
+   ],
+   "services": [
+    "svc-alpine",
+    "svc-httpd",
+    "svc-memcached",
+    "svc-nginx",
+    "svc-node",
+    "svc-python",
+    "svc-redis"
+   ],
+   "containers": [
+    "alpine-0",
+    "httpd-0",
+    "memcached-0",
+    "nginx-0",
+    "node-0",
+    "python-0",
+    "redis-0"
+   ]
+  }
+ },
+ "warden": {
+  "language_packages_scored": 401,
+  "flagged": [
+   "npm:ansistyles==0.1.3 (Warden risk 0.89: possible separator of 'ansi-styles' (separator-only difference; target rank #4))",
+   "npm:npm-cli-docs==0.1.0 (Warden risk 1.00: known malicious package (OSV MAL-2022-4933))",
+   "npm:uid-number==0.0.6 (Warden risk 0.52: possible typo2 of 'is-number' (2 edits; target rank #92))"
+  ]
+ },
+ "note": "deployments are synthetic (one service per image); SBOM via Syft per-layer dir scans"
+}

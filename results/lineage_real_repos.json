@@ -1,0 +1,970 @@
+{
+ "summary": {
+  "tracegate": {
+   "correct": 356,
+   "total": 365,
+   "accuracy": 0.9753
+  },
+  "last-manifest-commit": {
+   "correct": 63,
+   "total": 365,
+   "accuracy": 0.1726
+  },
+  "pickaxe-first": {
+   "correct": 34,
+   "total": 365,
+   "accuracy": 0.0932
+  },
+  "scanner-only": {
+   "correct": 0,
+   "total": 365,
+   "accuracy": 0.0
+  }
+ },
+ "repos": [
+  {
+   "repo": "healthchecks",
+   "manifest": "requirements.txt",
+   "manifest_commits": 236,
+   "snapshots": 12,
+   "history_walk_s": 16.81,
+   "gate_ms_median": 37.1,
+   "gate_ms_max": 287.4,
+   "attribution": {
+    "tracegate": {
+     "correct": 21,
+     "total": 21,
+     "accuracy": 1.0
+    },
+    "last-manifest-commit": {
+     "correct": 9,
+     "total": 21,
+     "accuracy": 0.4286
+    },
+    "pickaxe-first": {
+     "correct": 5,
+     "total": 21,
+     "accuracy": 0.2381
+    },
+    "scanner-only": {
+     "correct": 0,
+     "total": 21,
+     "accuracy": 0.0
+    }
+   },
+   "disagreements": [],
+   "per_snapshot": [
+    {
+     "sha": "00cdc313ec",
+     "date": "2015-06-11",
+     "pins": 2,
+     "vulnerable_pkgs": 1,
+     "findings": 31,
+     "backtrack_correct": 1,
+     "verdict": "block",
+     "graph": {
+      "nodes": 5,
+      "edges": 6,
+      "findings": 31
+     },
+     "high_plus": 12,
+     "high_plus_actionable": 12,
+     "verdict_after_reachability": "block",
+     "warden_flags": []
+    },
+    {
+     "sha": "ccf8aa55f0",
+     "date": "2018-08-03",
+     "pins": 5,
+     "vulnerable_pkgs": 2,
+     "findings": 32,
+     "backtrack_correct": 2,
+     "verdict": "block",
+     "graph": {
+      "nodes": 73,
+      "edges": 56,
+      "findings": 32
+     },
+     "high_plus": 14,
+     "high_plus_actionable": 13,
+     "verdict_after_reachability": "block",
+     "warden_flags": []
+    },
+    {
+     "sha": "87b232074c",
+     "date": "2019-12-02",
+     "pins": 6,
+     "vulnerable_pkgs": 2,
+     "findings": 38,
+     "backtrack_correct": 2,
+     "verdict": "block",
+     "graph": {
+      "nodes": 145,
+      "edges": 107,
+      "findings": 38
+     },
+     "high_plus": 16,
+     "high_plus_actionable": 16,
+     "verdict_after_reachability": "block",
+     "warden_flags": []
+    },
+    {
+     "sha": "a5ea8a03c6",
+     "date": "2021-02-01",
+     "pins": 8,
+     "vulnerable_pkgs": 2,
+     "findings": 24,
+     "backtrack_correct": 2,
+     "verdict": "block",
+     "graph": {
+      "nodes": 210,
+      "edges": 153,
+      "findings": 24
+     },
+     "high_plus": 7,
+     "high_plus_actionable": 7,
+     "verdict_after_reachability": "block",
+     "warden_flags": []
+    },
+    {
+     "sha": "10a8c48fc0",
+     "date": "2021-12-07",
+     "pins": 12,
+     "vulnerable_pkgs": 2,
+     "findings": 35,
+     "backtrack_correct": 2,
+     "verdict": "block",
+     "graph": {
+      "nodes": 275,
+      "edges": 201,
+      "findings": 35
+     },
+     "high_plus": 18,
+     "high_plus_actionable": 18,
+     "verdict_after_reachability": "block",
+     "warden_flags": []
+    },
+    {
+     "sha": "948912bfe3",
+     "date": "2022-10-04",
+     "pins": 11,
+     "vulnerable_pkgs": 1,
+     "findings": 19,
+     "backtrack_correct": 1,
+     "verdict": "block",
+     "graph": {
+      "nodes": 348,
+      "edges": 252,
+      "findings": 19
+     },
+     "high_plus": 9,
+     "high_plus_actionable": 9,
+     "verdict_after_reachability": "block",
+     "warden_flags": []
+    },
+    {
+     "sha": "688191e6d5",
+     "date": "2023-09-05",
+     "pins": 12,
+     "vulnerable_pkgs": 3,
+     "findings": 50,
+     "backtrack_correct": 3,
+     "verdict": "block",
+     "graph": {
+      "nodes": 423,
+      "edges": 307,
+      "findings": 50
+     },
+     "high_plus": 17,
+     "high_plus_actionable": 17,
+     "verdict_after_reachability": "block",
+     "warden_flags": []
+    },
+    {
+     "sha": "e1344e10b3",
+     "date": "2024-04-03",
+     "pins": 14,
+     "vulnerable_pkgs": 2,
+     "findings": 27,
+     "backtrack_correct": 2,
+     "verdict": "block",
+     "graph": {
+      "nodes": 498,
+      "edges": 363,
+      "findings": 27
+     },
+     "high_plus": 8,
+     "high_plus_actionable": 8,
+     "verdict_after_reachability": "block",
+     "warden_flags": []
+    },
+    {
+     "sha": "6382bd737a",
+     "date": "2025-02-19",
+     "pins": 15,
+     "vulnerable_pkgs": 2,
+     "findings": 25,
+     "backtrack_correct": 2,
+     "verdict": "block",
+     "graph": {
+      "nodes": 574,
+      "edges": 419,
+      "findings": 25
+     },
+     "high_plus": 7,
+     "high_plus_actionable": 7,
+     "verdict_after_reachability": "block",
+     "warden_flags": []
+    },
+    {
+     "sha": "2eb824a94d",
+     "date": "2025-10-08",
+     "pins": 15,
+     "vulnerable_pkgs": 2,
+     "findings": 36,
+     "backtrack_correct": 2,
+     "verdict": "block",
+     "graph": {
+      "nodes": 645,
+      "edges": 469,
+      "findings": 36
+     },
+     "high_plus": 10,
+     "high_plus_actionable": 10,
+     "verdict_after_reachability": "block",
+     "warden_flags": []
+    },
+    {
+     "sha": "b44fbeb3d9",
+     "date": "2026-03-18",
+     "pins": 15,
+     "vulnerable_pkgs": 2,
+     "findings": 22,
+     "backtrack_correct": 2,
+     "verdict": "block",
+     "graph": {
+      "nodes": 714,
+      "edges": 516,
+      "findings": 22
+     },
+     "high_plus": 3,
+     "high_plus_actionable": 3,
+     "verdict_after_reachability": "block",
+     "warden_flags": []
+    },
+    {
+     "sha": "5bd5d9d38d",
+     "date": "2026-09-21",
+     "pins": 15,
+     "vulnerable_pkgs": 0,
+     "findings": 0,
+     "backtrack_correct": 0,
+     "verdict": "pass",
+     "graph": {
+      "nodes": 784,
+      "edges": 565,
+      "findings": 0
+     },
+     "high_plus": 0,
+     "high_plus_actionable": 0,
+     "verdict_after_reachability": "pass",
+     "warden_flags": []
+    }
+   ],
+   "head": {
+    "sha": "5bd5d9d38d22",
+    "pins": 15,
+    "reach_status_counts": {
+     "imported": 14,
+     "entrypoint": 1,
+     "referenced": 0,
+     "transitive": 0,
+     "unreached": 0
+    },
+    "unreached": [],
+    "direct_deps": null,
+    "direct_deps_marked_unreached": [],
+    "trivy_findings": 0,
+    "trivy_unmatched": 0
+   },
+   "reachability": {
+    "high_plus_total": 121,
+    "actionable_total": 120,
+    "downgraded_examples": [
+     "CVE-2018-18074 requests==2.9.1"
+    ],
+    "note": "historical snapshots analysed against HEAD sources"
+   }
+  },
+  {
+   "repo": "netbox",
+   "manifest": "requirements.txt",
+   "manifest_commits": 215,
+   "snapshots": 12,
+   "history_walk_s": 16.16,
+   "gate_ms_median": 70.0,
+   "gate_ms_max": 175.6,
+   "attribution": {
+    "tracegate": {
+     "correct": 108,
+     "total": 109,
+     "accuracy": 0.9908
+    },
+    "last-manifest-commit": {
+     "correct": 39,
+     "total": 109,
+     "accuracy": 0.3578
+    },
+    "pickaxe-first": {
+     "correct": 16,
+     "total": 109,
+     "accuracy": 0.1468
+    },
+    "scanner-only": {
+     "correct": 0,
+     "total": 109,
+     "accuracy": 0.0
+    }
+   },
+   "disagreements": [
+    {
+     "snapshot": "6b6ea36b4c",
+     "package": "social-auth-core",
+     "tracegate": "7c09259b7d",
+     "blame": "f1a7bceef2",
+     "blame_subject": "Merge pull request #10758 from netbox-community/develop"
+    }
+   ],
+   "per_snapshot": [
+    {
+     "sha": "27b289ee3b",
+     "date": "2016-03-01",
+     "pins": 25,
+     "vulnerable_pkgs": 11,
+     "findings": 58,
+     "backtrack_correct": 11,
+     "verdict": "block",
+     "graph": {
+      "nodes": 28,
+      "edges": 52,
+      "findings": 58
+     },
+     "high_plus": 27,
+     "high_plus_actionable": 18,
+     "verdict_after_reachability": "block",
+     "warden_flags": []
+    },
+    {
+     "sha": "cb83eb204b",
+     "date": "2018-11-06",
+     "pins": 21,
+     "vulnerable_pkgs": 7,
+     "findings": 66,
+     "backtrack_correct": 7,
+     "verdict": "block",
+     "graph": {
+      "nodes": 114,
+      "edges": 117,
+      "findings": 66
+     },
+     "high_plus": 48,
+     "high_plus_actionable": 46,
+     "verdict_after_reachability": "block",
+     "warden_flags": []
+    },
+    {
+     "sha": "b493d739bd",
+     "date": "2021-04-12",
+     "pins": 23,
+     "vulnerable_pkgs": 8,
+     "findings": 59,
+     "backtrack_correct": 8,
+     "verdict": "block",
+     "graph": {
+      "nodes": 265,
+      "edges": 250,
+      "findings": 60
+     },
+     "high_plus": 31,
+     "high_plus_actionable": 30,
+     "verdict_after_reachability": "block",
+     "warden_flags": [
+      "Warden risk 0.55: possible typo1 of 'django-pglock' (insertion; target rank #3478)"
+     ]
+    },
+    {
+     "sha": "f5356b84f6",
+     "date": "2021-11-03",
+     "pins": 28,
+     "vulnerable_pkgs": 8,
+     "findings": 71,
+     "backtrack_correct": 8,
+     "verdict": "block",
+     "graph": {
+      "nodes": 351,
+      "edges": 322,
+      "findings": 72
+     },
+     "high_plus": 38,
+     "high_plus_actionable": 38,
+     "verdict_after_reachability": "block",
+     "warden_flags": [
+      "Warden risk 0.55: possible typo1 of 'django-pglock' (insertion; target rank #3478)"
+     ]
+    },
+    {
+     "sha": "7c09259b7d",
+     "date": "2022-06-20",
+     "pins": 34,
+     "vulnerable_pkgs": 12,
+     "findings": 65,
+     "backtrack_correct": 12,
+     "verdict": "block",
+     "graph": {
+      "nodes": 452,
+      "edges": 409,
+      "findings": 66
+     },
+     "high_plus": 29,
+     "high_plus_actionable": 29,
+     "verdict_after_reachability": "block",
+     "warden_flags": [
+      "Warden risk 0.55: possible typo1 of 'django-pglock' (insertion; target rank #3478)"
+     ]
+    },
+    {
+     "sha": "6b6ea36b4c",
+     "date": "2023-03-13",
+     "pins": 34,
+     "vulnerable_pkgs": 12,
+     "findings": 59,
+     "backtrack_correct": 11,
+     "verdict": "block",
+     "graph": {
+      "nodes": 563,
+      "edges": 502,
+      "findings": 60
+     },
+     "high_plus": 24,
+     "high_plus_actionable": 24,
+     "verdict_after_reachability": "block",
+     "warden_flags": [
+      "Warden risk 0.55: possible typo1 of 'django-pglock' (insertion; target rank #3478)"
+     ]
+    },
+    {
+     "sha": "28080e9b14",
+     "date": "2023-11-30",
+     "pins": 36,
+     "vulnerable_pkgs": 13,
+     "findings": 87,
+     "backtrack_correct": 13,
+     "verdict": "block",
+     "graph": {
+      "nodes": 727,
+      "edges": 649,
+      "findings": 88
+     },
+     "high_plus": 30,
+     "high_plus_actionable": 30,
+     "verdict_after_reachability": "block",
+     "warden_flags": [
+      "Warden risk 0.55: possible typo1 of 'django-pglock' (insertion; target rank #3478)"
+     ]
+    },
+    {
+     "sha": "cbf84a6b95",
+     "date": "2024-07-26",
+     "pins": 37,
+     "vulnerable_pkgs": 11,
+     "findings": 61,
+     "backtrack_correct": 11,
+     "verdict": "block",
+     "graph": {
+      "nodes": 868,
+      "edges": 773,
+      "findings": 62
+     },
+     "high_plus": 21,
+     "high_plus_actionable": 21,
+     "verdict_after_reachability": "block",
+     "warden_flags": [
+      "Warden risk 0.55: possible typo1 of 'django-pglock' (insertion; target rank #3478)"
+     ]
+    },
+    {
+     "sha": "c4304d059c",
+     "date": "2025-02-21",
+     "pins": 38,
+     "vulnerable_pkgs": 11,
+     "findings": 53,
+     "backtrack_correct": 11,
+     "verdict": "block",
+     "graph": {
+      "nodes": 993,
+      "edges": 880,
+      "findings": 54
+     },
+     "high_plus": 20,
+     "high_plus_actionable": 20,
+     "verdict_after_reachability": "block",
+     "warden_flags": [
+      "Warden risk 0.55: possible typo1 of 'django-pglock' (insertion; target rank #3478)"
+     ]
+    },
+    {
+     "sha": "c9386bc9c3",
+     "date": "2025-10-13",
+     "pins": 43,
+     "vulnerable_pkgs": 9,
+     "findings": 62,
+     "backtrack_correct": 9,
+     "verdict": "block",
+     "graph": {
+      "nodes": 1133,
+      "edges": 1006,
+      "findings": 63
+     },
+     "high_plus": 23,
+     "high_plus_actionable": 23,
+     "verdict_after_reachability": "block",
+     "warden_flags": [
+      "Warden risk 0.55: possible typo1 of 'django-pglock' (insertion; target rank #3478)"
+     ]
+    },
+    {
+     "sha": "8fbb6f74d3",
+     "date": "2026-04-28",
+     "pins": 44,
+     "vulnerable_pkgs": 7,
+     "findings": 37,
+     "backtrack_correct": 7,
+     "verdict": "block",
+     "graph": {
+      "nodes": 1279,
+      "edges": 1133,
+      "findings": 38
+     },
+     "high_plus": 11,
+     "high_plus_actionable": 11,
+     "verdict_after_reachability": "block",
+     "warden_flags": [
+      "Warden risk 0.55: possible typo1 of 'django-pglock' (insertion; target rank #3478)"
+     ]
+    },
+    {
+     "sha": "abccf4e036",
+     "date": "2026-09-15",
+     "pins": 45,
+     "vulnerable_pkgs": 0,
+     "findings": 0,
+     "backtrack_correct": 0,
+     "verdict": "warn",
+     "graph": {
+      "nodes": 1408,
+      "edges": 1244,
+      "findings": 1
+     },
+     "high_plus": 0,
+     "high_plus_actionable": 0,
+     "verdict_after_reachability": "warn",
+     "warden_flags": [
+      "Warden risk 0.55: possible typo1 of 'django-pglock' (insertion; target rank #3478)"
+     ]
+    }
+   ],
+   "head": {
+    "sha": "abccf4e03650",
+    "pins": 45,
+    "reach_status_counts": {
+     "imported": 35,
+     "entrypoint": 0,
+     "referenced": 2,
+     "transitive": 2,
+     "unreached": 6
+    },
+    "unreached": [
+     "django-pgware",
+     "django-rich",
+     "mkdocs-material",
+     "mkdocstrings",
+     "mkdocstrings-python",
+     "tablib"
+    ],
+    "direct_deps": null,
+    "direct_deps_marked_unreached": [],
+    "trivy_findings": 0,
+    "trivy_unmatched": 0
+   },
+   "reachability": {
+    "high_plus_total": 302,
+    "actionable_total": 290,
+    "downgraded_examples": [
+     "CVE-2013-7459 pycrypto==2.6.1",
+     "CVE-2018-1000805 paramiko==1.15.2",
+     "CVE-2018-6594 pycrypto==2.6.1",
+     "CVE-2018-7750 paramiko==1.15.2",
+     "CVE-2019-14853 ecdsa==0.13",
+     "CVE-2019-14859 ecdsa==0.13",
+     "CVE-2022-24302 paramiko==1.15.2",
+     "CVE-2022-24302 paramiko==2.4.2",
+     "CVE-2023-52323 pycryptodome==3.10.1",
+     "CVE-2023-52323 pycryptodome==3.6.6",
+     "CVE-2024-23342 ecdsa==0.13",
+     "CVE-2026-41066 lxml==3.5.0"
+    ],
+    "note": "historical snapshots analysed against HEAD sources"
+   }
+  },
+  {
+   "repo": "warehouse",
+   "manifest": "requirements/main.txt",
+   "manifest_commits": 2514,
+   "snapshots": 12,
+   "history_walk_s": 185.31,
+   "gate_ms_median": 447.5,
+   "gate_ms_max": 2989.3,
+   "attribution": {
+    "tracegate": {
+     "correct": 227,
+     "total": 235,
+     "accuracy": 0.966
+    },
+    "last-manifest-commit": {
+     "correct": 15,
+     "total": 235,
+     "accuracy": 0.0638
+    },
+    "pickaxe-first": {
+     "correct": 13,
+     "total": 235,
+     "accuracy": 0.0553
+    },
+    "scanner-only": {
+     "correct": 0,
+     "total": 235,
+     "accuracy": 0.0
+    }
+   },
+   "disagreements": [
+    {
+     "snapshot": "ca80b3c923",
+     "package": "html5lib",
+     "tracegate": "d20db4e0e5",
+     "blame": "3932163e87",
+     "blame_subject": "Merge pull request #1044 from dstufft/hashes"
+    },
+    {
+     "snapshot": "ca80b3c923",
+     "package": "pygments",
+     "tracegate": "d92a5bae5c",
+     "blame": "3932163e87",
+     "blame_subject": "Merge pull request #1044 from dstufft/hashes"
+    },
+    {
+     "snapshot": "2d2f589c8c",
+     "package": "babel",
+     "tracegate": "3ba9bb9c6f",
+     "blame": "d8bb63bf22",
+     "blame_subject": "Bump boto3 from 1.9.31 to 1.9.32 (#4934)"
+    },
+    {
+     "snapshot": "2d2f589c8c",
+     "package": "celery",
+     "tracegate": "373abd4886",
+     "blame": "d8bb63bf22",
+     "blame_subject": "Bump boto3 from 1.9.31 to 1.9.32 (#4934)"
+    },
+    {
+     "snapshot": "2d2f589c8c",
+     "package": "jinja2",
+     "tracegate": "75ed5f8809",
+     "blame": "d8bb63bf22",
+     "blame_subject": "Bump boto3 from 1.9.31 to 1.9.32 (#4934)"
+    },
+    {
+     "snapshot": "2d2f589c8c",
+     "package": "mako",
+     "tracegate": "49df5fda37",
+     "blame": "d8bb63bf22",
+     "blame_subject": "Bump boto3 from 1.9.31 to 1.9.32 (#4934)"
+    },
+    {
+     "snapshot": "2d2f589c8c",
+     "package": "pygments",
+     "tracegate": "6e1554f23c",
+     "blame": "d8bb63bf22",
+     "blame_subject": "Bump boto3 from 1.9.31 to 1.9.32 (#4934)"
+    },
+    {
+     "snapshot": "db49f34adc",
+     "package": "celery",
+     "tracegate": "93deda17e6",
+     "blame": "502a42b536",
+     "blame_subject": "Remove [sqs] extra from celery dependency (#9032)"
+    }
+   ],
+   "per_snapshot": [
+    {
+     "sha": "8caa04ecf6",
+     "date": "2015-07-02",
+     "pins": 51,
+     "vulnerable_pkgs": 9,
+     "findings": 25,
+     "backtrack_correct": 9,
+     "verdict": "block",
+     "graph": {
+      "nodes": 54,
+      "edges": 104,
+      "findings": 25
+     },
+     "high_plus": 16,
+     "high_plus_actionable": 10,
+     "verdict_after_reachability": "block",
+     "warden_flags": []
+    },
+    {
+     "sha": "ca80b3c923",
+     "date": "2017-01-07",
+     "pins": 76,
+     "vulnerable_pkgs": 16,
+     "findings": 72,
+     "backtrack_correct": 14,
+     "verdict": "block",
+     "graph": {
+      "nodes": 995,
+      "edges": 844,
+      "findings": 72
+     },
+     "high_plus": 26,
+     "high_plus_actionable": 18,
+     "verdict_after_reachability": "block",
+     "warden_flags": []
+    },
+    {
+     "sha": "c23f9e163a",
+     "date": "2017-07-31",
+     "pins": 94,
+     "vulnerable_pkgs": 20,
+     "findings": 87,
+     "backtrack_correct": 20,
+     "verdict": "block",
+     "graph": {
+      "nodes": 1705,
+      "edges": 1348,
+      "findings": 87
+     },
+     "high_plus": 39,
+     "high_plus_actionable": 23,
+     "verdict_after_reachability": "block",
+     "warden_flags": []
+    },
+    {
+     "sha": "8e71d85a1d",
+     "date": "2018-02-08",
+     "pins": 94,
+     "vulnerable_pkgs": 20,
+     "findings": 84,
+     "backtrack_correct": 20,
+     "verdict": "block",
+     "graph": {
+      "nodes": 2403,
+      "edges": 1818,
+      "findings": 84
+     },
+     "high_plus": 38,
+     "high_plus_actionable": 23,
+     "verdict_after_reachability": "block",
+     "warden_flags": []
+    },
+    {
+     "sha": "8239a732f5",
+     "date": "2018-06-27",
+     "pins": 104,
+     "vulnerable_pkgs": 22,
+     "findings": 97,
+     "backtrack_correct": 22,
+     "verdict": "block",
+     "graph": {
+      "nodes": 3103,
+      "edges": 2302,
+      "findings": 97
+     },
+     "high_plus": 45,
+     "high_plus_actionable": 31,
+     "verdict_after_reachability": "block",
+     "warden_flags": []
+    },
+    {
+     "sha": "2d2f589c8c",
+     "date": "2018-11-20",
+     "pins": 107,
+     "vulnerable_pkgs": 21,
+     "findings": 96,
+     "backtrack_correct": 16,
+     "verdict": "block",
+     "graph": {
+      "nodes": 3804,
+      "edges": 2780,
+      "findings": 96
+     },
+     "high_plus": 45,
+     "high_plus_actionable": 31,
+     "verdict_after_reachability": "block",
+     "warden_flags": []
+    },
+    {
+     "sha": "76e3cc31d4",
+     "date": "2019-06-04",
+     "pins": 108,
+     "vulnerable_pkgs": 20,
+     "findings": 92,
+     "backtrack_correct": 20,
+     "verdict": "block",
+     "graph": {
+      "nodes": 4548,
+      "edges": 3302,
+      "findings": 92
+     },
+     "high_plus": 42,
+     "high_plus_actionable": 28,
+     "verdict_after_reachability": "block",
+     "warden_flags": []
+    },
+    {
+     "sha": "c339820283",
+     "date": "2020-03-13",
+     "pins": 118,
+     "vulnerable_pkgs": 25,
+     "findings": 99,
+     "backtrack_correct": 25,
+     "verdict": "block",
+     "graph": {
+      "nodes": 5256,
+      "edges": 3795,
+      "findings": 99
+     },
+     "high_plus": 46,
+     "high_plus_actionable": 29,
+     "verdict_after_reachability": "block",
+     "warden_flags": []
+    },
+    {
+     "sha": "db49f34adc",
+     "date": "2021-03-12",
+     "pins": 122,
+     "vulnerable_pkgs": 26,
+     "findings": 90,
+     "backtrack_correct": 25,
+     "verdict": "block",
+     "graph": {
+      "nodes": 6093,
+      "edges": 4414,
+      "findings": 90
+     },
+     "high_plus": 40,
+     "high_plus_actionable": 36,
+     "verdict_after_reachability": "block",
+     "warden_flags": []
+    },
+    {
+     "sha": "1023676124",
+     "date": "2022-11-02",
+     "pins": 144,
+     "vulnerable_pkgs": 30,
+     "findings": 105,
+     "backtrack_correct": 30,
+     "verdict": "block",
+     "graph": {
+      "nodes": 7215,
+      "edges": 5339,
+      "findings": 105
+     },
+     "high_plus": 43,
+     "high_plus_actionable": 39,
+     "verdict_after_reachability": "block",
+     "warden_flags": []
+    },
+    {
+     "sha": "f6cfcb2b23",
+     "date": "2024-09-06",
+     "pins": 187,
+     "vulnerable_pkgs": 25,
+     "findings": 62,
+     "backtrack_correct": 25,
+     "verdict": "block",
+     "graph": {
+      "nodes": 8697,
+      "edges": 6675,
+      "findings": 62
+     },
+     "high_plus": 26,
+     "high_plus_actionable": 26,
+     "verdict_after_reachability": "block",
+     "warden_flags": []
+    },
+    {
+     "sha": "0df9b03693",
+     "date": "2026-09-25",
+     "pins": 184,
+     "vulnerable_pkgs": 1,
+     "findings": 1,
+     "backtrack_correct": 1,
+     "verdict": "warn",
+     "graph": {
+      "nodes": 10210,
+      "edges": 7777,
+      "findings": 1
+     },
+     "high_plus": 0,
+     "high_plus_actionable": 0,
+     "verdict_after_reachability": "warn",
+     "warden_flags": []
+    }
+   ],
+   "head": {
+    "sha": "0df9b036934b",
+    "pins": 184,
+    "reach_status_counts": {
+     "imported": 81,
+     "entrypoint": 2,
+     "referenced": 2,
+     "transitive": 99,
+     "unreached": 0
+    },
+    "unreached": [],
+    "direct_deps": 79,
+    "direct_deps_marked_unreached": [],
+    "trivy_findings": 0,
+    "trivy_unmatched": 0
+   },
+   "reachability": {
+    "high_plus_total": 406,
+    "actionable_total": 294,
+    "downgraded_examples": [
+     "CVE-2017-18342 pyyaml==3.11",
+     "CVE-2018-7753 bleach==2.1.2",
+     "CVE-2020-13757 rsa==3.4.2",
+     "CVE-2020-13757 rsa==4.0",
+     "CVE-2020-14343 pyyaml==3.11",
+     "CVE-2020-25658 rsa==3.4.2",
+     "CVE-2020-25658 rsa==4.0",
+     "CVE-2020-6817 bleach==1.4.1",
+     "CVE-2020-6817 bleach==1.5.0",
+     "CVE-2020-6817 bleach==2.0.0",
+     "CVE-2020-6817 bleach==2.1.2",
+     "CVE-2020-6817 bleach==2.1.3",
+     "CVE-2020-6817 bleach==3.0.2",
+     "CVE-2020-6817 bleach==3.1.0",
+     "CVE-2020-6817 bleach==3.1.1",
+     "CVE-2021-21240 httplib2==0.10.3",
+     "CVE-2022-40023 mako==1.0.1",
+     "CVE-2022-40023 mako==1.0.11",
+     "CVE-2022-40023 mako==1.0.6",
+     "CVE-2022-40023 mako==1.0.7"
+    ],
+    "note": "historical snapshots analysed against HEAD sources"
+   }
+  }
+ ]
+}

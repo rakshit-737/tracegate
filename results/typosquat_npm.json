@@ -1,0 +1,911 @@
+{
+ "ecosystem": "npm",
+ "reference_size": 5000,
+ "split": "50/50 by sha256(name); numbers are TEST half",
+ "chosen_threshold": 0.52,
+ "dev_positives": 109550,
+ "dev_negatives": 4028,
+ "positives": 109219,
+ "negatives": 4083,
+ "typo_labelled_positives": 710,
+ "results": {
+  "mvp-difflib (14 names)": {
+   "tp": 23,
+   "fp": 5,
+   "fn": 109196,
+   "tn": 4078,
+   "precision": 0.8214,
+   "recall": 0.0002,
+   "f1": 0.0004,
+   "fpr": 0.0012,
+   "recall_typo_labelled": 0.0014,
+   "ms_per_name": 5.9724
+  },
+  "lev1 (top-5k)": {
+   "tp": 272,
+   "fp": 111,
+   "fn": 108947,
+   "tn": 3972,
+   "precision": 0.7102,
+   "recall": 0.0025,
+   "f1": 0.005,
+   "fpr": 0.0272,
+   "recall_typo_labelled": 0.0099,
+   "ms_per_name": 0.2106
+  },
+  "tracegate (th=0.52)": {
+   "tp": 209,
+   "fp": 72,
+   "fn": 109010,
+   "tn": 4011,
+   "precision": 0.7438,
+   "recall": 0.0019,
+   "f1": 0.0038,
+   "fpr": 0.0176,
+   "recall_typo_labelled": 0.0099,
+   "ms_per_name": 2.2761
+  },
+  "tracegate (th=0.48, FPR-matched to lev1)": {
+   "tp": 296,
+   "fp": 98,
+   "fn": 108923,
+   "tn": 3985,
+   "precision": 0.7513,
+   "recall": 0.0027,
+   "f1": 0.0054,
+   "fpr": 0.024,
+   "recall_typo_labelled": 0.0113,
+   "ms_per_name": 2.2761
+  }
+ },
+ "curve": [
+  {
+   "threshold": 0.3,
+   "tp": 3275,
+   "fp": 563,
+   "fn": 105944,
+   "tn": 3520,
+   "precision": 0.8533,
+   "recall": 0.03,
+   "f1": 0.0579,
+   "fpr": 0.1379,
+   "recall_typo_labelled": 0.0845
+  },
+  {
+   "threshold": 0.32,
+   "tp": 3275,
+   "fp": 563,
+   "fn": 105944,
+   "tn": 3520,
+   "precision": 0.8533,
+   "recall": 0.03,
+   "f1": 0.0579,
+   "fpr": 0.1379,
+   "recall_typo_labelled": 0.0845
+  },
+  {
+   "threshold": 0.34,
+   "tp": 3251,
+   "fp": 559,
+   "fn": 105968,
+   "tn": 3524,
+   "precision": 0.8533,
+   "recall": 0.0298,
+   "f1": 0.0575,
+   "fpr": 0.1369,
+   "recall_typo_labelled": 0.0831
+  },
+  {
+   "threshold": 0.36,
+   "tp": 1287,
+   "fp": 394,
+   "fn": 107932,
+   "tn": 3689,
+   "precision": 0.7656,
+   "recall": 0.0118,
+   "f1": 0.0232,
+   "fpr": 0.0965,
+   "recall_typo_labelled": 0.0521
+  },
+  {
+   "threshold": 0.38,
+   "tp": 923,
+   "fp": 270,
+   "fn": 108296,
+   "tn": 3813,
+   "precision": 0.7737,
+   "recall": 0.0085,
+   "f1": 0.0167,
+   "fpr": 0.0661,
+   "recall_typo_labelled": 0.0423
+  },
+  {
+   "threshold": 0.4,
+   "tp": 855,
+   "fp": 227,
+   "fn": 108364,
+   "tn": 3856,
+   "precision": 0.7902,
+   "recall": 0.0078,
+   "f1": 0.0155,
+   "fpr": 0.0556,
+   "recall_typo_labelled": 0.0324
+  },
+  {
+   "threshold": 0.42,
+   "tp": 680,
+   "fp": 202,
+   "fn": 108539,
+   "tn": 3881,
+   "precision": 0.771,
+   "recall": 0.0062,
+   "f1": 0.0124,
+   "fpr": 0.0495,
+   "recall_typo_labelled": 0.0254
+  },
+  {
+   "threshold": 0.44,
+   "tp": 542,
+   "fp": 157,
+   "fn": 108677,
+   "tn": 3926,
+   "precision": 0.7754,
+   "recall": 0.005,
+   "f1": 0.0099,
+   "fpr": 0.0385,
+   "recall_typo_labelled": 0.0197
+  },
+  {
+   "threshold": 0.46,
+   "tp": 402,
+   "fp": 123,
+   "fn": 108817,
+   "tn": 3960,
+   "precision": 0.7657,
+   "recall": 0.0037,
+   "f1": 0.0073,
+   "fpr": 0.0301,
+   "recall_typo_labelled": 0.0141
+  },
+  {
+   "threshold": 0.48,
+   "tp": 296,
+   "fp": 98,
+   "fn": 108923,
+   "tn": 3985,
+   "precision": 0.7513,
+   "recall": 0.0027,
+   "f1": 0.0054,
+   "fpr": 0.024,
+   "recall_typo_labelled": 0.0113
+  },
+  {
+   "threshold": 0.5,
+   "tp": 257,
+   "fp": 80,
+   "fn": 108962,
+   "tn": 4003,
+   "precision": 0.7626,
+   "recall": 0.0024,
+   "f1": 0.0047,
+   "fpr": 0.0196,
+   "recall_typo_labelled": 0.0099
+  },
+  {
+   "threshold": 0.52,
+   "tp": 209,
+   "fp": 72,
+   "fn": 109010,
+   "tn": 4011,
+   "precision": 0.7438,
+   "recall": 0.0019,
+   "f1": 0.0038,
+   "fpr": 0.0176,
+   "recall_typo_labelled": 0.0099
+  },
+  {
+   "threshold": 0.54,
+   "tp": 184,
+   "fp": 63,
+   "fn": 109035,
+   "tn": 4020,
+   "precision": 0.7449,
+   "recall": 0.0017,
+   "f1": 0.0034,
+   "fpr": 0.0154,
+   "recall_typo_labelled": 0.0099
+  },
+  {
+   "threshold": 0.56,
+   "tp": 109,
+   "fp": 47,
+   "fn": 109110,
+   "tn": 4036,
+   "precision": 0.6987,
+   "recall": 0.001,
+   "f1": 0.002,
+   "fpr": 0.0115,
+   "recall_typo_labelled": 0.0042
+  },
+  {
+   "threshold": 0.58,
+   "tp": 83,
+   "fp": 36,
+   "fn": 109136,
+   "tn": 4047,
+   "precision": 0.6975,
+   "recall": 0.0008,
+   "f1": 0.0015,
+   "fpr": 0.0088,
+   "recall_typo_labelled": 0.0014
+  },
+  {
+   "threshold": 0.6,
+   "tp": 60,
+   "fp": 28,
+   "fn": 109159,
+   "tn": 4055,
+   "precision": 0.6818,
+   "recall": 0.0005,
+   "f1": 0.0011,
+   "fpr": 0.0069,
+   "recall_typo_labelled": 0.0014
+  },
+  {
+   "threshold": 0.62,
+   "tp": 36,
+   "fp": 12,
+   "fn": 109183,
+   "tn": 4071,
+   "precision": 0.75,
+   "recall": 0.0003,
+   "f1": 0.0007,
+   "fpr": 0.0029,
+   "recall_typo_labelled": 0.0014
+  },
+  {
+   "threshold": 0.64,
+   "tp": 27,
+   "fp": 8,
+   "fn": 109192,
+   "tn": 4075,
+   "precision": 0.7714,
+   "recall": 0.0002,
+   "f1": 0.0005,
+   "fpr": 0.002,
+   "recall_typo_labelled": 0.0014
+  },
+  {
+   "threshold": 0.66,
+   "tp": 18,
+   "fp": 6,
+   "fn": 109201,
+   "tn": 4077,
+   "precision": 0.75,
+   "recall": 0.0002,
+   "f1": 0.0003,
+   "fpr": 0.0015,
+   "recall_typo_labelled": 0.0014
+  },
+  {
+   "threshold": 0.68,
+   "tp": 14,
+   "fp": 3,
+   "fn": 109205,
+   "tn": 4080,
+   "precision": 0.8235,
+   "recall": 0.0001,
+   "f1": 0.0003,
+   "fpr": 0.0007,
+   "recall_typo_labelled": 0.0014
+  },
+  {
+   "threshold": 0.7,
+   "tp": 10,
+   "fp": 3,
+   "fn": 109209,
+   "tn": 4080,
+   "precision": 0.7692,
+   "recall": 0.0001,
+   "f1": 0.0002,
+   "fpr": 0.0007,
+   "recall_typo_labelled": 0.0014
+  },
+  {
+   "threshold": 0.72,
+   "tp": 9,
+   "fp": 2,
+   "fn": 109210,
+   "tn": 4081,
+   "precision": 0.8182,
+   "recall": 0.0001,
+   "f1": 0.0002,
+   "fpr": 0.0005,
+   "recall_typo_labelled": 0.0014
+  },
+  {
+   "threshold": 0.74,
+   "tp": 6,
+   "fp": 2,
+   "fn": 109213,
+   "tn": 4081,
+   "precision": 0.75,
+   "recall": 0.0001,
+   "f1": 0.0001,
+   "fpr": 0.0005,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.76,
+   "tp": 6,
+   "fp": 2,
+   "fn": 109213,
+   "tn": 4081,
+   "precision": 0.75,
+   "recall": 0.0001,
+   "f1": 0.0001,
+   "fpr": 0.0005,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.78,
+   "tp": 0,
+   "fp": 2,
+   "fn": 109219,
+   "tn": 4081,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0.0,
+   "fpr": 0.0005,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.8,
+   "tp": 0,
+   "fp": 2,
+   "fn": 109219,
+   "tn": 4081,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0.0,
+   "fpr": 0.0005,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.82,
+   "tp": 0,
+   "fp": 1,
+   "fn": 109219,
+   "tn": 4082,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0.0,
+   "fpr": 0.0002,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.84,
+   "tp": 0,
+   "fp": 1,
+   "fn": 109219,
+   "tn": 4082,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0.0,
+   "fpr": 0.0002,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.86,
+   "tp": 0,
+   "fp": 1,
+   "fn": 109219,
+   "tn": 4082,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0.0,
+   "fpr": 0.0002,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.88,
+   "tp": 0,
+   "fp": 1,
+   "fn": 109219,
+   "tn": 4082,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0.0,
+   "fpr": 0.0002,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.9,
+   "tp": 0,
+   "fp": 0,
+   "fn": 109219,
+   "tn": 4083,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0.0,
+   "fpr": 0.0,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.92,
+   "tp": 0,
+   "fp": 0,
+   "fn": 109219,
+   "tn": 4083,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0.0,
+   "fpr": 0.0,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.94,
+   "tp": 0,
+   "fp": 0,
+   "fn": 109219,
+   "tn": 4083,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0.0,
+   "fpr": 0.0,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.96,
+   "tp": 0,
+   "fp": 0,
+   "fn": 109219,
+   "tn": 4083,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0.0,
+   "fpr": 0.0,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.98,
+   "tp": 0,
+   "fp": 0,
+   "fn": 109219,
+   "tn": 4083,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0.0,
+   "fpr": 0.0,
+   "recall_typo_labelled": 0.0
+  }
+ ],
+ "ablation": {
+  "separator": {
+   "tp": 2,
+   "fp": 11,
+   "fn": 109217,
+   "tn": 4072,
+   "precision": 0.1538,
+   "recall": 0.0,
+   "f1": 0.0,
+   "fpr": 0.0027,
+   "recall_typo_labelled": 0.0
+  },
+  "homoglyph": {
+   "tp": 4,
+   "fp": 7,
+   "fn": 109215,
+   "tn": 4076,
+   "precision": 0.3636,
+   "recall": 0.0,
+   "f1": 0.0001,
+   "fpr": 0.0017,
+   "recall_typo_labelled": 0.0
+  },
+  "typo1": {
+   "tp": 172,
+   "fp": 57,
+   "fn": 109047,
+   "tn": 4026,
+   "precision": 0.7511,
+   "recall": 0.0016,
+   "f1": 0.0031,
+   "fpr": 0.014,
+   "recall_typo_labelled": 0.007
+  },
+  "typo2": {
+   "tp": 12,
+   "fp": 2,
+   "fn": 109207,
+   "tn": 4081,
+   "precision": 0.8571,
+   "recall": 0.0001,
+   "f1": 0.0002,
+   "fpr": 0.0005,
+   "recall_typo_labelled": 0.0
+  },
+  "reorder": {
+   "tp": 3,
+   "fp": 5,
+   "fn": 109216,
+   "tn": 4078,
+   "precision": 0.375,
+   "recall": 0.0,
+   "f1": 0.0001,
+   "fpr": 0.0012,
+   "recall_typo_labelled": 0.0
+  },
+  "combosquat": {
+   "tp": 2,
+   "fp": 1,
+   "fn": 109217,
+   "tn": 4082,
+   "precision": 0.6667,
+   "recall": 0.0,
+   "f1": 0.0,
+   "fpr": 0.0002,
+   "recall_typo_labelled": 0.0028
+  },
+  "suffix": {
+   "tp": 20,
+   "fp": 7,
+   "fn": 109199,
+   "tn": 4076,
+   "precision": 0.7407,
+   "recall": 0.0002,
+   "f1": 0.0004,
+   "fpr": 0.0017,
+   "recall_typo_labelled": 0.0
+  },
+  "brandjack": {
+   "tp": 0,
+   "fp": 0,
+   "fn": 109219,
+   "tn": 4083,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0.0,
+   "fpr": 0.0,
+   "recall_typo_labelled": 0.0
+  }
+ },
+ "by_technique": {
+  "typo1": {
+   "tp": 167,
+   "fp": 46
+  },
+  "reorder": {
+   "tp": 3,
+   "fp": 5
+  },
+  "separator": {
+   "tp": 2,
+   "fp": 11
+  },
+  "typo2": {
+   "tp": 12,
+   "fp": 2
+  },
+  "combosquat": {
+   "tp": 2,
+   "fp": 1
+  },
+  "suffix": {
+   "tp": 19,
+   "fp": 6
+  },
+  "homoglyph": {
+   "tp": 4,
+   "fp": 1
+  }
+ },
+ "examples_tp": [
+  [
+   "semvre",
+   "semver",
+   "typo1",
+   0.765
+  ],
+  [
+   "comamnder",
+   "commander",
+   "typo1",
+   0.7615
+  ],
+  [
+   "comander",
+   "commander",
+   "typo1",
+   0.7615
+  ],
+  [
+   "commandef",
+   "commander",
+   "typo1",
+   0.7615
+  ],
+  [
+   "commanedr",
+   "commander",
+   "typo1",
+   0.7615
+  ],
+  [
+   "commqnder",
+   "commander",
+   "typo1",
+   0.7615
+  ],
+  [
+   "colour-name",
+   "color-name",
+   "typo1",
+   0.7394
+  ],
+  [
+   "suorce-map",
+   "source-map",
+   "typo1",
+   0.7312
+  ],
+  [
+   "alanced-match",
+   "balanced-match",
+   "typo1",
+   0.7297
+  ],
+  [
+   "iodash",
+   "lodash",
+   "homoglyph",
+   0.7196
+  ],
+  [
+   "fs-exrta",
+   "fs-extra",
+   "typo1",
+   0.6948
+  ],
+  [
+   "fs-extar",
+   "fs-extra",
+   "typo1",
+   0.6948
+  ],
+  [
+   "fs-xetra",
+   "fs-extra",
+   "typo1",
+   0.6948
+  ],
+  [
+   "apth-exists",
+   "path-exists",
+   "typo1",
+   0.6896
+  ],
+  [
+   "node-fethc",
+   "node-fetch",
+   "typo1",
+   0.6748
+  ],
+  [
+   "debug11",
+   "debug",
+   "suffix",
+   0.6666
+  ],
+  [
+   "debugr1",
+   "debug",
+   "suffix",
+   0.6666
+  ],
+  [
+   "helper",
+   "helpers",
+   "typo1",
+   0.6636
+  ],
+  [
+   "typecript",
+   "typescript",
+   "typo1",
+   0.6537
+  ],
+  [
+   "typescript3",
+   "typescript",
+   "typo1",
+   0.6537
+  ],
+  [
+   "dbeug",
+   "debug",
+   "typo1",
+   0.6476
+  ],
+  [
+   "debu",
+   "debug",
+   "typo1",
+   0.6476
+  ],
+  [
+   "deug",
+   "debug",
+   "typo1",
+   0.6476
+  ],
+  [
+   "jest-utils",
+   "jest-util",
+   "typo1",
+   0.6469
+  ],
+  [
+   "epxress",
+   "express",
+   "typo1",
+   0.6447
+  ]
+ ],
+ "examples_fp": [
+  [
+   "ansistyles",
+   "ansi-styles",
+   "separator",
+   0.8928
+  ],
+  [
+   "findup",
+   "find-up",
+   "separator",
+   0.807
+  ],
+  [
+   "dom-utils",
+   "domutils",
+   "separator",
+   0.7129
+  ],
+  [
+   "templates",
+   "template",
+   "typo1",
+   0.6671
+  ],
+  [
+   "murmurhash",
+   "imurmurhash",
+   "typo1",
+   0.6668
+  ],
+  [
+   "parseuri",
+   "parseurl",
+   "homoglyph",
+   0.6615
+  ],
+  [
+   "flatten",
+   "flatted",
+   "typo1",
+   0.6591
+  ],
+  [
+   "express5",
+   "express",
+   "typo1",
+   0.6447
+  ],
+  [
+   "schemes",
+   "schemas",
+   "typo1",
+   0.6399
+  ],
+  [
+   "dom-serialize",
+   "dom-serializer",
+   "typo1",
+   0.6353
+  ],
+  [
+   "qr-code",
+   "qrcode",
+   "separator",
+   0.6329
+  ],
+  [
+   "isurl",
+   "is-url",
+   "separator",
+   0.6322
+  ],
+  [
+   "seed-random",
+   "seedrandom",
+   "separator",
+   0.6193
+  ],
+  [
+   "react-uid",
+   "react-id",
+   "typo1",
+   0.6189
+  ],
+  [
+   "color-space",
+   "colorspace",
+   "separator",
+   0.6175
+  ],
+  [
+   "googlemaps",
+   "google-maps",
+   "separator",
+   0.6174
+  ],
+  [
+   "cssinjs-utils",
+   "css-in-js-utils",
+   "separator",
+   0.6173
+  ],
+  [
+   "tslog",
+   "ts-log",
+   "separator",
+   0.6152
+  ],
+  [
+   "brace",
+   "braces",
+   "typo1",
+   0.6127
+  ],
+  [
+   "tslint-config-prettier",
+   "eslint-config-prettier",
+   "typo1",
+   0.6119
+  ],
+  [
+   "react-date-picker",
+   "react-datepicker",
+   "separator",
+   0.61
+  ],
+  [
+   "didyoumean2",
+   "didyoumean",
+   "typo1",
+   0.6063
+  ],
+  [
+   "echarts",
+   "recharts",
+   "typo1",
+   0.606
+  ],
+  [
+   "ansi-color",
+   "ansi-colors",
+   "typo1",
+   0.6055
+  ],
+  [
+   "utils-stream",
+   "util-stream",
+   "typo1",
+   0.6038
+  ]
+ ],
+ "sources": {
+  "malicious": "OSV MAL-* (ossf/malicious-packages) via osv-vulnerabilities bulk dump",
+  "popular": "wooorm/npm-high-impact"
+ }
+}

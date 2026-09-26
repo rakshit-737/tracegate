@@ -6,14 +6,23 @@ from .models import Finding, NodeKind, Severity
 from .warden import WardenClient
 
 
+def _warden_for(warden, eco: str):
+    if hasattr(warden, "for_ecosystem"):
+        return warden.for_ecosystem(eco)
+    return warden if eco == "pypi" else None  # plain Warden clients score PyPI only
+
+
 def enrich_warden(res: CollectResult, warden: WardenClient, threshold: float = 0.5) -> None:
     g = res.graph
     for dep in g.of_kind(NodeKind.DEPENDENCY):
-        s = warden.score(dep.attrs["name"], dep.attrs["version"])
+        w = _warden_for(warden, dep.attrs.get("ecosystem", "pypi"))
+        if w is None:
+            continue  # e.g. OS packages: no name-based risk model applies
+        s = w.score(dep.attrs["name"], dep.attrs["version"])
         dep.attrs["warden_risk"] = s.risk
         if s.risk >= threshold:
             fid = f"warden@{dep.id}"
-            if not any(f.id == fid for f in g.findings):
+            if not g.has_finding(fid):
                 sev = Severity.CRITICAL if s.risk >= 0.8 else Severity.HIGH
                 g.add_finding(Finding(fid, dep.id, "warden", sev,
                                       f"Warden risk {s.risk:.2f}: " + "; ".join(s.reasons),

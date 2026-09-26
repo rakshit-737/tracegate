@@ -64,6 +64,20 @@ class HeuristicWarden:
         return WardenScore(name, version, m.score, m.reasons if m.score > 0 else [])
 
 
+class MultiWarden:
+    """Routes each dependency to the scorer for its ecosystem (pypi, npm, ...)."""
+
+    def __init__(self, by_ecosystem: dict[str, WardenClient]):
+        self.by_ecosystem = by_ecosystem
+
+    def for_ecosystem(self, eco: str) -> WardenClient | None:
+        return self.by_ecosystem.get(eco)
+
+    def score(self, name: str, version: str) -> WardenScore:  # default: PyPI
+        w = self.by_ecosystem.get("pypi")
+        return w.score(name, version) if w else WardenScore(name, version, 0.0, [])
+
+
 class DifflibWarden:
     """Original MVP heuristic (difflib ratio vs 14 names). Benchmark baseline only."""
 

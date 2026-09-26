@@ -11,6 +11,7 @@ derived from the repository itself rather than from CI metadata.
 """
 from __future__ import annotations
 
+import os
 import re
 import subprocess
 from dataclasses import dataclass, field
@@ -20,6 +21,7 @@ from .ids import normalize_name
 from .models import StageEvent
 
 _PIN = re.compile(r"^\s*([A-Za-z0-9][A-Za-z0-9._-]*)\s*(?:\[[^\]]*\])?\s*===?\s*([^\s;#\\,]+)")
+_NL, _TAB = chr(10), chr(9)
 _PR = re.compile(r"(?:\(#(\d+)\)\s*$|Merge pull request #(\d+))")
 
 
@@ -74,31 +76,42 @@ class ManifestCommit:
         return int(m.group(1) or m.group(2)) if m else None
 
 
+def follow_log(repo: str | Path, manifest: str, rev: str = "HEAD") -> list[tuple[str, str, int, str, str]]:
+    """Oldest-first (sha, author, ts, subject, path-at-that-commit) for first-parent commits
+    touching `manifest`, following renames (a manifest moved from requirements.txt to
+    requirements/main.txt keeps its history, like `git blame` does)."""
+    out = _git(Path(repo), "log", "--first-parent", "--follow", "--name-only",
+               "--format=%x1e%H%x1f%ae%x1f%at%x1f%s", rev, "--", manifest)
+    rows = []
+    for block in out.split("\x1e")[1:]:
+        head, _, rest = block.partition("\n")
+        sha, author, ts, subject = head.split("\x1f", 3)
+        paths = [ln.strip() for ln in rest.splitlines() if ln.strip()]
+        rows.append((sha, author, int(ts), subject, paths[0] if paths else manifest))
+    return rows[::-1]
+
+
 def manifest_history(repo: str | Path, manifest: str, rev: str = "HEAD",
                      limit: int | None = None) -> list[ManifestCommit]:
-    """Oldest-first list of first-parent commits that touched `manifest`, with pin diffs."""
+    """Oldest-first list of first-parent commits that changed a pin in `manifest` (renames followed)."""
     repo = Path(repo)
-    fmt = "%H%x1f%ae%x1f%at%x1f%s"
-    args = ["log", "--first-parent", "--reverse", f"--format={fmt}", rev, "--", manifest]
-    lines = [ln for ln in _git(repo, *args).splitlines() if ln.strip()]
+    rows = follow_log(repo, manifest, rev)
     if limit:
-        lines = lines[-limit:]
+        rows = rows[-limit:]
     out: list[ManifestCommit] = []
     prev: dict[str, str] = {}
-    if limit and lines:  # seed the state from the parent of the first kept commit
-        first = lines[0].split("\x1f")[0]
+    if limit and rows:  # seed the state from the parent of the first kept commit
         try:
-            prev = parse_requirements(_git(repo, "show", f"{first}^:{manifest}"))
+            prev = parse_requirements(_git(repo, "show", f"{rows[0][0]}^:{rows[0][4]}"))
         except subprocess.CalledProcessError:
             prev = {}
-    for ln in lines:
-        sha, author, ts, subject = ln.split("\x1f", 3)
+    for sha, author, ts, subject, path in rows:
         try:
-            text = _git(repo, "show", f"{sha}:{manifest}")
+            text = _git(repo, "show", f"{sha}:{path}")
         except subprocess.CalledProcessError:
             text = ""  # file deleted in this commit
         pins = parse_requirements(text)
-        mc = ManifestCommit(sha, author, int(ts), subject, pins)
+        mc = ManifestCommit(sha, author, ts, subject, pins)
         mc.added = {n: v for n, v in pins.items() if prev.get(n) != v}
         mc.removed = {n: v for n, v in prev.items() if pins.get(n) != v}
         if mc.added or mc.removed:
@@ -138,3 +151,43 @@ def pickaxe_first_mention(repo: str | Path, manifest: str, name: str, rev: str =
     out = _git(Path(repo), "log", "--first-parent", "--reverse", "--format=%H", "-i",
                f"-G^{re.escape(name)}[=<> \\[]", rev, "--", manifest).split()
     return out[0] if out else None
+
+
+def materialize(repo: str | Path, sha: str, prefixes: list[str], dest: str | Path,
+                suffixes: tuple[str, ...] = (".py",),
+                names: tuple[str, ...] = ("Dockerfile", "Procfile")) -> int:
+    """Write the files under `prefixes` (plus top-level `names`) as of `sha` into `dest`.
+
+    Works on blobless clones: missing blobs are fetched in batches first. Used to run static
+    reachability against the sources that actually shipped with a historical snapshot.
+    """
+    repo, dest = Path(repo), Path(dest)
+    listing = _git(repo, "ls-tree", "-r", sha).splitlines()
+    want: list[tuple[str, str]] = []
+    for ln in listing:
+        meta, _, path = ln.partition(_TAB)
+        parts = meta.split()
+        if len(parts) < 3 or parts[1] != "blob":
+            continue
+        under = any(path.startswith(p.rstrip("/") + "/") for p in prefixes)
+        if (under and path.endswith(suffixes)) or path in names:
+            want.append((parts[2], path))
+    env_nolazy = {**os.environ, "GIT_NO_LAZY_FETCH": "1"}
+    chk = subprocess.run(["git", "-C", str(repo), "cat-file", "--batch-check"],
+                         input=_NL.join(o for o, _ in want), capture_output=True, text=True,
+                         env=env_nolazy).stdout
+    missing = [ln.split()[0] for ln in chk.splitlines() if ln.endswith("missing")]
+    for i in range(0, len(missing), 200):
+        subprocess.run(["git", "-C", str(repo), "-c", "fetch.negotiationAlgorithm=noop", "fetch", "--quiet",
+                        "--no-tags", "--no-write-fetch-head", "--filter=blob:none", "origin", *missing[i:i + 200]],
+                       check=False)
+    n = 0
+    for oid, path in want:
+        out = subprocess.run(["git", "-C", str(repo), "cat-file", "blob", oid], capture_output=True)
+        if out.returncode != 0:
+            continue
+        target = dest / path
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(out.stdout)
+        n += 1
+    return n

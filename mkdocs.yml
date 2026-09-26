@@ -1,0 +1,56 @@
+site_name: TRACEGATE
+site_description: Provenance-aware CI/CD security gate
+site_url: https://rakshit-737.github.io/tracegate/
+repo_url: https://github.com/rakshit-737/tracegate
+repo_name: rakshit-737/tracegate
+edit_uri: edit/main/docs/
+theme:
+  name: material
+  features: [navigation.sections, navigation.top, content.code.copy, search.suggest]
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      toggle: {icon: material/weather-night, name: Dark mode}
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      toggle: {icon: material/weather-sunny, name: Light mode}
+markdown_extensions:
+  - admonition
+  - attr_list
+  - tables
+  - toc: {permalink: true}
+  - pymdownx.highlight
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [.]
+          options: {show_source: false, members_order: source, show_root_heading: true, heading_level: 3}
+nav:
+  - Home: index.md
+  - Getting started: getting-started.md
+  - Architecture: architecture.md
+  - Datasets: datasets.md
+  - Benchmarks: benchmarks.md
+  - CLI & API reference: reference.md
+  - Threat model: threat-model.md
+  - Security: security.md
+  - ADRs:
+      - adr/index.md
+      - adr/0001-content-addressed-identity.md
+      - adr/0002-signed-stage-events-fail-closed.md
+      - adr/0003-deterministic-policy-python-dsl-and-rego.md
+      - adr/0004-reachability-runtime-first-static-fallback.md
+      - adr/0005-real-data-evaluation-design.md
+      - adr/0006-version-aware-malicious-package-matching.md
+  - Changelog: changelog.md
+  - Limitations & roadmap: limitations.md
+  - Live demo: demo/index.html

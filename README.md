@@ -71,25 +71,26 @@ Warden (dependency-risk) scoring of the 401 language packages flags 3. One is `n
 
 ```mermaid
 flowchart LR
-  subgraph SRC[Real pipeline inputs]
-    GIT[git history of pinned manifest] --> LIN[gitlineage: commit events]
-    SY[Syft JSON / CycloneDX] --> ING[ingest adapters]
-    TV[Trivy JSON] --> ING
-    OSV[(OSV bulk dumps: PyPI, npm, Alpine)] --> IDX[OsvIndex]
-    DEP[deploy / runtime facts] --> ENV
+  subgraph SRC["Real pipeline inputs"]
+    GIT["git history: requirements, package-lock, poetry.lock, uv.lock"] --> LIN["gitlineage: commit events"]
+    SY["Syft JSON / CycloneDX"] --> ING["ingest adapters"]
+    TV["Trivy JSON"] --> ING
+    SA["SARIF: Semgrep / Bandit / CodeQL"] --> ING
+    OSV[("OSV bulk dumps: PyPI, npm, Alpine")] --> IDX["OsvIndex"]
+    DEP["deploy / runtime facts"] --> ENV
   end
-  LIN --> ENV[DSSE envelopes, Ed25519 or HMAC]
+  LIN --> ENV["DSSE envelopes, Ed25519 or HMAC"]
   ING --> ENV
-  ENV --> COL[collector: verify, fail closed]
-  COL --> G[(provenance DAG, purl + digest ids)]
-  IDX --> W[HeuristicWarden: MAL records + typosquat]
-  W --> EN[enrich]
-  RE[static / runtime reachability] --> EN
-  G --> EN --> POL[policy: Python DSL = Rego port]
-  POL --> OUT[PR comment + exit code]
-  G --> BT[backtrack + blast radius]
-  G --> EXP[exports: Cypher/Neo4j, in-toto SLSA, OPA input]
-  G --> API[FastAPI + lineage explorer UI]
+  ENV --> COL["collector: verify, fail closed"]
+  COL --> G[("provenance DAG, purl + digest ids")]
+  IDX --> W["HeuristicWarden: MAL records + typosquat"]
+  W --> EN["enrich"]
+  RE["static / runtime reachability"] --> EN
+  G --> EN --> POL["policy: Python DSL = Rego port"]
+  POL --> OUT["PR comment + exit code"]
+  G --> BT["backtrack + blast radius"]
+  G --> EXP["exports: Cypher/Neo4j, in-toto SLSA, OPA input"]
+  G --> API["FastAPI + lineage explorer UI"]
 ```
 
 Graph shape: `commit -introduced-> dependency -installed_in-> layer -layer_of-> image -> deployment -> container`, plus `commit -> build -> image`. Node ids are content-addressed. Dependencies are keyed by a canonical purl, so a package seen in the manifest, by Syft and by Trivy becomes **one** node, and a shared base layer is one node across every image ([ADR 0001](docs/adr/0001-content-addressed-identity.md)).

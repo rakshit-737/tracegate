@@ -69,6 +69,7 @@ class ManifestCommit:
     pins: dict[str, str]
     added: dict[str, str] = field(default_factory=dict)    # name -> new version
     removed: dict[str, str] = field(default_factory=dict)  # name -> old version
+    path: str = ""  # manifest path at this commit (differs from the current one before a rename)
 
     @property
     def pr(self) -> int | None:
@@ -111,7 +112,7 @@ def manifest_history(repo: str | Path, manifest: str, rev: str = "HEAD",
         except subprocess.CalledProcessError:
             text = ""  # file deleted in this commit
         pins = parse_requirements(text)
-        mc = ManifestCommit(sha, author, ts, subject, pins)
+        mc = ManifestCommit(sha, author, ts, subject, pins, path=path)
         mc.added = {n: v for n, v in pins.items() if prev.get(n) != v}
         mc.removed = {n: v for n, v in prev.items() if pins.get(n) != v}
         if mc.added or mc.removed:

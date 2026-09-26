@@ -115,7 +115,7 @@ def eval_repo(name: str, osv: OsvIndex, n_snap: int, warden: HeuristicWarden) ->
         enrich_warden(res, warden)
         dec = evaluate(res)
         gate_ms.append(1000 * (time.perf_counter() - t0))
-        truth = blame_introducers(repo, manifest, mc.sha)
+        truth = blame_introducers(repo, mc.path or manifest, mc.sha)
         vuln_pkgs = sorted({res.graph.nodes[f.node_id].attrs["name"].lower().replace("_", "-")
                             for f in res.graph.findings if f.source in ("osv", "trivy")})
         n_ok = 0
@@ -148,7 +148,7 @@ def eval_repo(name: str, osv: OsvIndex, n_snap: int, warden: HeuristicWarden) ->
                              "graph": res.graph.stats()})
         # Static reachability. Only HEAD sources are checked out (blobless clone), so older
         # snapshots are analysed against HEAD's import set: an approximation, flagged in output.
-        req_text = _git(repo, "show", f"{mc.sha}:{manifest}")
+        req_text = _git(repo, "show", f"{mc.sha}:{mc.path or manifest}")
         rep = static_reachability(pins, [repo / s for s in srcs], repo, req_text, mods=mods, ep=ep,
                                   strings=strings)
         scan_f = [f for f in res.graph.findings if f.source in ("osv", "trivy")]

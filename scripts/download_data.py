@@ -69,8 +69,6 @@ REPOS = [
     ("healthchecks", "https://github.com/healthchecks/healthchecks.git", "requirements.txt", ["hc"]),
     ("netbox", "https://github.com/netbox-community/netbox.git", "requirements.txt", ["netbox"]),
     ("warehouse", "https://github.com/pypi/warehouse.git", "requirements/main.txt", ["warehouse"]),
-    ("securedrop", "https://github.com/freedomofpress/securedrop.git",
-     "securedrop/requirements/python3/requirements.txt", ["securedrop"]),
 ]
 
 

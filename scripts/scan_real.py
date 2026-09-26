@@ -37,8 +37,7 @@ IMAGES = [
     "node:14.17.6-alpine3.14",
 ]
 REPOS = {"healthchecks": "requirements.txt", "netbox": "requirements.txt",
-         "warehouse": "requirements/main.txt",
-         "securedrop": "securedrop/requirements/python3/requirements.txt"}
+         "warehouse": "requirements/main.txt"}
 
 ROOT = data_root()
 EXE = ".exe" if os.name == "nt" else ""

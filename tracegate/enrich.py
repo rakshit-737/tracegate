@@ -50,3 +50,22 @@ def enrich(res: CollectResult, warden: WardenClient) -> None:
 
 def actionable(findings: list[Finding], min_sev: Severity = Severity.HIGH) -> list[Finding]:
     return [f for f in findings if f.severity.rank >= min_sev.rank and f.reachable is not False]
+
+
+def enrich_static_reachability(res: CollectResult, report) -> int:
+    """Fill reachability from a static `tracegate.reach.ReachReport` where runtime facts are absent.
+
+    Runtime evidence always wins; returns the number of findings updated.
+    """
+    g, n = res.graph, 0
+    for f in g.findings:
+        node = g.nodes[f.node_id]
+        if node.kind != NodeKind.DEPENDENCY or f.source == "warden" or f.reachable is not None:
+            continue
+        r = report.reachable(node.attrs["name"])
+        if r is None:
+            continue
+        f.reachable = r
+        f.evidence.append(f"static: {report.evidence.get(node.attrs['name'].lower(), report.status.get(node.attrs['name'].lower()))}")
+        n += 1
+    return n

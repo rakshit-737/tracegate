@@ -92,6 +92,22 @@ def test_osv_scan_payload_shape(osv):
     assert vs and vs[0]["PURL"] == "pkg:pypi/pyyaml@5.3" and vs[0]["Severity"] == "CRITICAL"
 
 
+def test_malicious_lookup_is_version_aware():
+    # shapes copied from real ossf/malicious-packages records (MAL-2025-46969, MAL-2022-4933)
+    recs = [
+        {"id": "MAL-2025-46969", "affected": [{"package": {"name": "chalk", "ecosystem": "npm"},
+                                               "versions": ["5.6.1"]}]},
+        {"id": "MAL-2022-4933", "affected": [{"package": {"name": "npm-cli-docs", "ecosystem": "npm"},
+                                              "ranges": [{"type": "SEMVER", "events": [{"introduced": "0"}]}]}]},
+    ]
+    idx = OsvIndex.from_records(recs, "npm")
+    assert idx.malicious("chalk", "5.6.1") and not idx.malicious("chalk", "2.4.1")
+    assert idx.malicious("npm-cli-docs", "0.1.0") and idx.malicious("chalk")  # name-only query keeps all
+    w = HeuristicWarden(popular=["chalk"], osv=idx)
+    assert w.score("chalk", "5.6.1").risk == 1.0
+    assert w.score("chalk", "2.4.1").risk == 0.0  # clean older release of a popular package
+
+
 def test_cvss_and_typosquat_label():
     assert cvss3_base("CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H") == 9.8
     assert cvss3_base("garbage") is None

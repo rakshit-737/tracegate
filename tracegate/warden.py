@@ -56,8 +56,8 @@ class HeuristicWarden:
         if n in self.denylist:
             return WardenScore(name, version, 1.0, ["on denylist"])
         if self.osv is not None:
-            mal = self.osv.malicious(name)
-            if mal:  # MAL records usually cover every version ("introduced: 0")
+            mal = self.osv.malicious(name, version or None)
+            if mal:  # version-aware: most MAL records cover every version, hijacks do not
                 ids = ", ".join(m["id"] for m in mal[:3])
                 return WardenScore(name, version, 1.0, [f"known malicious package (OSV {ids})"])
         m = self.detector.score(name)

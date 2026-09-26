@@ -134,12 +134,6 @@ class OsvIndex:
                 if pkg.get("ecosystem") != want:
                     continue
                 name = normalize_name(pkg.get("name", ""), self.ecosystem)
-                if r["id"].startswith("MAL-"):
-                    self.mal.setdefault(name, []).append({
-                        "id": r["id"], "versions": aff.get("versions", []),
-                        "summary": r.get("summary", ""), "details": (r.get("details") or "")[:500],
-                        "published": r.get("published")})
-                    continue
                 rng, fixed = [], []
                 for rg in aff.get("ranges", []) or []:
                     if rg.get("type") not in ("ECOSYSTEM", "SEMVER"):
@@ -157,6 +151,12 @@ class OsvIndex:
                             intro = None
                     if intro is not None:
                         rng.append((intro, None, None))
+                if r["id"].startswith("MAL-"):
+                    self.mal.setdefault(name, []).append({
+                        "id": r["id"], "versions": aff.get("versions", []) or [], "ranges": rng,
+                        "summary": r.get("summary", ""), "details": (r.get("details") or "")[:500],
+                        "published": r.get("published")})
+                    continue
                 v = OsvVuln(r["id"], list(r.get("aliases", []) or []), r.get("summary") or r["id"], sev, fixed)
                 self.by_name.setdefault(name, []).append(
                     _Affected(v, frozenset(aff.get("versions", []) or []), rng))
@@ -203,8 +203,29 @@ class OsvIndex:
             return False
         return False
 
-    def malicious(self, name: str) -> list[dict]:
-        return self.mal.get(normalize_name(name, self.ecosystem), [])
+    def malicious(self, name: str, version: str | None = None) -> list[dict]:
+        """OSV MAL-* records for `name`; with `version`, only those whose affected set contains it.
+
+        OSV semantics: a version is affected if it is listed in `versions` OR falls in a range.
+        Most MAL records cover every version (`introduced: 0`, no end), but account-takeover
+        incidents (e.g. the Sept-2025 npm chalk/debug hijack) list only the trojanised releases,
+        so matching on the name alone would flag every older, clean install.
+        """
+        recs = self.mal.get(normalize_name(name, self.ecosystem), [])
+        if version is None:
+            return recs
+        return [m for m in recs if self._mal_affects(m, version)]
+
+    @classmethod
+    def _mal_affects(cls, rec: dict, version: str) -> bool:
+        versions, ranges = rec.get("versions") or [], rec.get("ranges") or []
+        if not versions and not ranges:
+            return True  # no affected-version data: treat the whole package as malicious
+        if version in versions:
+            return True
+        if any(intro in (None, "0") and fixed is None and last is None for intro, fixed, last in ranges):
+            return True  # "every version" range; no version parsing needed
+        return cls._in_ranges(version, ranges)
 
     def scan_payload(self, deps: Iterable[tuple[str, str]], tool: str = "osv") -> dict:
         """Trivy-shaped scan payload for (name, version) pairs."""

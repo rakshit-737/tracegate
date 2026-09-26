@@ -2,7 +2,7 @@
 
 ## Limitations
 
-- **Reachability is static and at module level.** Runtime facts are supported as events, but no eBPF or `/proc/*/maps` collector ships. Historical snapshots in the lineage benchmark use HEAD sources. `gitlineage.materialize()` exists to check out per-snapshot sources, but it is not yet wired into the benchmark.
+- **Reachability is static and at module level.** Runtime facts are supported as events, but no eBPF or `/proc/*/maps` collector ships. Per-snapshot source materialisation is available in the lineage benchmark (`--materialize`); dynamic imports, plugins loaded by name from settings, and C-extension loading are still invisible.
 - **The 15% reduction has no false-negative audit.** There is no public ground truth for "exploitable in this app".
 - **Lineage covers `requirements*.txt`, `package-lock.json`, `poetry.lock` and `uv.lock`.** Go modules, Cargo and yarn/pnpm locks are not parsed yet. The real-repo lineage benchmark numbers are for pip manifests only.
 - **Signing uses Ed25519 or HMAC keys, not Sigstore keyless.** There is no Rekor transparency log.
@@ -13,7 +13,7 @@
 
 ## Roadmap
 
-- Per-snapshot source materialisation in the reachability benchmark; eBPF / `sys.modules` runtime collector.
+- eBPF / `sys.modules` runtime collector (needs a Linux runtime; not feasible on the Windows dev machine).
 - Lock-file lineage for Go modules, Cargo and yarn/pnpm.
 - Sigstore keyless signing + Rekor inclusion proofs.
 - Neo4j live adapter (currently Cypher export) and a React lineage explorer.

@@ -3,7 +3,7 @@
 ```bash
 git clone https://github.com/rakshit-737/tracegate && cd tracegate
 pip install -e ".[dev]"            # the core gate is stdlib-only; extras add crypto/osv/api
-python -m pytest -q                # 50 tests; 4 real-data tests skip without datasets
+python -m pytest -q                # 56 tests; 4 real-data tests skip without datasets
 python -m tracegate.cli demo       # the six spec scenarios
 ```
 

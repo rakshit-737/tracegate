@@ -4,6 +4,24 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [1.0.0] - 2026-09-26
+
+### Added
+- **SARIF 2.1.0 adapter** (`tracegate ingest --sarif`) for Semgrep, Bandit, CodeQL and other SAST tools;
+  severity from `security-severity` or the SARIF level.
+- **Lock-file lineage**: `tracegate lineage` now walks `package-lock.json` (v1-v3), `poetry.lock` and
+  `uv.lock` history, with the npm ecosystem set on commit events.
+- **Per-snapshot reachability** in the lineage benchmark (`--materialize`): each historical snapshot is
+  analysed against its own sources and config/CI entrypoints.
+- **Bootstrap confidence intervals** (seeded, stratified, 1,000 resamples) and paired F1 differences
+  in the typosquat benchmark.
+- **Docs site** (MkDocs Material) on GitHub Pages with a static, server-free lineage-explorer demo.
+- **Release workflow**: tagged builds push `ghcr.io/rakshit-737/tracegate` and attach wheel/sdist.
+
+### Changed
+- Reachability headline now reports both runs: -15.1% actionable with HEAD sources, -25.8% with
+  per-snapshot sources. Typosquat point estimates re-ran unchanged; CIs added.
+
 ## [0.2.0] - 2026-09-26
 
 Real-data release: TRACEGATE now ingests unmodified output from real Syft/Trivy runs,

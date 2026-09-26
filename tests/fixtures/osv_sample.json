@@ -1,0 +1,301 @@
+[
+ {
+  "schema_version": "1.9.0",
+  "id": "GHSA-8q59-q68h-6hv4",
+  "published": "2021-03-25T21:26:26Z",
+  "modified": "2026-02-04T03:33:10.792778Z",
+  "aliases": [
+   "CVE-2020-14343",
+   "PYSEC-2021-142"
+  ],
+  "related": [
+   "CVE-2026-24009"
+  ],
+  "summary": "Improper Input Validation in PyYAML",
+  "details": "A vulnerability was discovered in the PyYAML library in versions before 5.4, where it is susceptible to arbitrary code execution when it processes untrusted YAML files through the full_load method or with the FullLoader loader. Applications that use the library to process untrusted input may be vuln",
+  "affected": [
+   {
+    "package": {
+     "name": "pyyaml",
+     "ecosystem": "PyPI",
+     "purl": "pkg:pypi/pyyaml"
+    },
+    "ranges": [
+     {
+      "type": "ECOSYSTEM",
+      "events": [
+       {
+        "introduced": "0"
+       },
+       {
+        "fixed": "5.4"
+       }
+      ]
+     }
+    ],
+    "versions": [
+     "3.01",
+     "3.02",
+     "3.03",
+     "3.04",
+     "3.05",
+     "3.06",
+     "3.07",
+     "3.08",
+     "3.09",
+     "3.10",
+     "3.11",
+     "3.12",
+     "3.13",
+     "3.13b1",
+     "3.13rc1",
+     "4.2b1",
+     "4.2b2",
+     "4.2b4",
+     "5.1",
+     "5.1.1",
+     "5.1.2",
+     "5.1b1",
+     "5.1b3",
+     "5.1b5",
+     "5.1b7",
+     "5.2",
+     "5.2b1",
+     "5.3",
+     "5.3.1",
+     "5.3b1",
+     "5.4b1",
+     "5.4b2"
+    ],
+    "database_specific": {
+     "source": "https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2021/03/GHSA-8q59-q68h-6hv4/GHSA-8q59-q68h-6hv4.json"
+    }
+   }
+  ],
+  "references": [
+   {
+    "type": "ADVISORY",
+    "url": "https://nvd.nist.gov/vuln/detail/CVE-2020-14343"
+   },
+   {
+    "type": "WEB",
+    "url": "https://github.com/SeldonIO/seldon-core/issues/2252"
+   },
+   {
+    "type": "WEB",
+    "url": "https://github.com/yaml/pyyaml/issues/420"
+   },
+   {
+    "type": "WEB",
+    "url": "https://github.com/yaml/pyyaml/issues/420#issuecomment-663673966"
+   },
+   {
+    "type": "WEB",
+    "url": "https://github.com/yaml/pyyaml/commit/a001f2782501ad2d24986959f0239a354675f9dc"
+   },
+   {
+    "type": "WEB",
+    "url": "https://bugzilla.redhat.com/show_bug.cgi?id=1860466"
+   },
+   {
+    "type": "ADVISORY",
+    "url": "https://github.com/advisories/GHSA-8q59-q68h-6hv4"
+   },
+   {
+    "type": "WEB",
+    "url": "https://github.com/pypa/advisory-database/tree/main/vulns/pyyaml/PYSEC-2021-142.yaml"
+   },
+   {
+    "type": "PACKAGE",
+    "url": "https://github.com/yaml/pyyaml"
+   },
+   {
+    "type": "WEB",
+    "url": "https://pypi.org/project/PyYAML"
+   },
+   {
+    "type": "WEB",
+    "url": "https://www.oracle.com/security-alerts/cpuapr2022.html"
+   },
+   {
+    "type": "WEB",
+    "url": "https://www.oracle.com/security-alerts/cpujul2022.html"
+   }
+  ],
+  "database_specific": {
+   "cwe_ids": [
+    "CWE-20"
+   ],
+   "github_reviewed": true,
+   "github_reviewed_at": "2021-03-25T21:15:23Z",
+   "nvd_published_at": "2021-02-09T21:15:00Z",
+   "severity": "CRITICAL"
+  },
+  "severity": [
+   {
+    "type": "CVSS_V3",
+    "score": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+   },
+   {
+    "type": "CVSS_V4",
+    "score": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N"
+   }
+  ]
+ },
+ {
+  "schema_version": "1.7.3",
+  "id": "MAL-2022-7426",
+  "published": "2022-08-30T19:37:30Z",
+  "modified": "2023-11-08T04:17:30.820360Z",
+  "aliases": [
+   "GHSA-8rgr-xgx4-q7jq"
+  ],
+  "summary": "Malicious code in pymocks (PyPI)",
+  "details": "\n---\n_-= Per source details. Do not edit below this line.=-_\n\n## Source: ghsa-malware (c7a97355d8b3b2dabe0e20f66045fa970717443f6f81e532c13d2e8bc1568dc8)\nSecurity researchers at Check Point Research discovered a malicious package called `pymocks`. PyPI has since removed `pymocks`.\n",
+  "affected": [
+   {
+    "package": {
+     "name": "pymocks",
+     "ecosystem": "PyPI",
+     "purl": "pkg:pypi/pymocks"
+    },
+    "ranges": [
+     {
+      "type": "ECOSYSTEM",
+      "events": [
+       {
+        "introduced": "0"
+       }
+      ]
+     }
+    ],
+    "database_specific": {
+     "cwes": [
+      {
+       "cweId": "CWE-506",
+       "description": "The product contains code that appears to be malicious in nature.",
+       "name": "Embedded Malicious Code"
+      }
+     ],
+     "source": "https://github.com/ossf/malicious-packages/blob/main/osv/malicious/pypi/pymocks/MAL-2022-7426.json"
+    },
+    "versions": []
+   }
+  ],
+  "references": [
+   {
+    "type": "WEB",
+    "url": "https://pypi.org/project/pymocks/"
+   },
+   {
+    "type": "WEB",
+    "url": "https://research.checkpoint.com/2022/cloudguard-spectral-detects-several-malicious-packages-on-pypi-the-official-software-repository-for-python-developers/"
+   },
+   {
+    "type": "ADVISORY",
+    "url": "https://github.com/advisories/GHSA-8rgr-xgx4-q7jq"
+   }
+  ],
+  "database_specific": {
+   "malicious-packages-origins": [
+    {
+     "id": "GHSA-8rgr-xgx4-q7jq",
+     "import_time": "2023-07-30T21:58:02.17209864Z",
+     "modified_time": "2022-08-30T19:37:31Z",
+     "ranges": [
+      {
+       "events": [
+        {
+         "introduced": "0"
+        }
+       ],
+       "type": "ECOSYSTEM"
+      }
+     ],
+     "sha256": "c7a97355d8b3b2dabe0e20f66045fa970717443f6f81e532c13d2e8bc1568dc8",
+     "source": "ghsa-malware"
+    }
+   ]
+  }
+ },
+ {
+  "schema_version": "1.7.3",
+  "id": "PYSEC-2021-142",
+  "published": "2021-02-09T21:15:00Z",
+  "modified": "2023-11-08T04:02:26.414885Z",
+  "aliases": [
+   "CVE-2020-14343",
+   "GHSA-8q59-q68h-6hv4"
+  ],
+  "details": "A vulnerability was discovered in the PyYAML library in versions before 5.4, where it is susceptible to arbitrary code execution when it processes untrusted YAML files through the full_load method or with the FullLoader loader. Applications that use the library to process untrusted input may be vuln",
+  "affected": [
+   {
+    "package": {
+     "name": "pyyaml",
+     "ecosystem": "PyPI",
+     "purl": "pkg:pypi/pyyaml"
+    },
+    "ranges": [
+     {
+      "type": "ECOSYSTEM",
+      "events": [
+       {
+        "introduced": "0"
+       },
+       {
+        "fixed": "5.4"
+       }
+      ]
+     }
+    ],
+    "versions": [
+     "3.01",
+     "3.02",
+     "3.03",
+     "3.04",
+     "3.05",
+     "3.06",
+     "3.07",
+     "3.08",
+     "3.09",
+     "3.10",
+     "3.11",
+     "3.12",
+     "3.13",
+     "3.13b1",
+     "3.13rc1",
+     "4.2b1",
+     "4.2b2",
+     "4.2b4",
+     "5.1",
+     "5.1.1",
+     "5.1.2",
+     "5.1b1",
+     "5.1b3",
+     "5.1b5",
+     "5.1b7",
+     "5.2",
+     "5.2b1",
+     "5.3",
+     "5.3.1",
+     "5.3b1",
+     "5.4b1",
+     "5.4b2"
+    ],
+    "database_specific": {
+     "source": "https://github.com/pypa/advisory-database/blob/main/vulns/pyyaml/PYSEC-2021-142.yaml"
+    }
+   }
+  ],
+  "references": [
+   {
+    "type": "REPORT",
+    "url": "https://bugzilla.redhat.com/show_bug.cgi?id=1860466"
+   },
+   {
+    "type": "ADVISORY",
+    "url": "https://github.com/advisories/GHSA-8q59-q68h-6hv4"
+   }
+  ]
+ }
+]

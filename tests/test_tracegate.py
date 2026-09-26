@@ -31,7 +31,8 @@ def test_graph_rejects_cycles():
     g = ProvenanceGraph()
     for n in "abc":
         g.add_node(Node(n, NodeKind.BUILD, n))
-    g.add_edge("a", "b", "x"); g.add_edge("b", "c", "x")
+    g.add_edge("a", "b", "x")
+    g.add_edge("b", "c", "x")
     with pytest.raises(CycleError):
         g.add_edge("c", "a", "x")
 

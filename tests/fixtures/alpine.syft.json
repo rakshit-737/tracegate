@@ -1,0 +1,205 @@
+{
+ "descriptor": {
+  "name": "syft",
+  "version": "1.52.0",
+  "mode": "per-layer dir scan"
+ },
+ "source": {
+  "type": "image",
+  "name": "alpine:3.14.2",
+  "metadata": {
+   "userInput": "alpine:3.14.2",
+   "imageID": "sha256:14119a10abf4669e8cdbdff324a9f9605d99697215a0d21c360fe8dfa8471bab",
+   "manifestDigest": "sha256:69704ef328d05a9f806b6b8502915e6a0a4faa4d72018dc42343f511490daf8a",
+   "layers": [
+    {
+     "digest": "sha256:e2eb06d8af8218cfec8210147357a68b7e13f7c485b991c288c2d01dc228bb68",
+     "size": 2814446,
+     "created_by": "/bin/sh -c #(nop) ADD file:aad4290d27580cc1a094ffaf98c3ca2fc5d699fe695dfb8e6e9fac20f1129450 in / "
+    }
+   ]
+  }
+ },
+ "artifacts": [
+  {
+   "name": "alpine-baselayout",
+   "version": "3.2.0-r16",
+   "type": "apk",
+   "purl": "pkg:apk/alpine/alpine-baselayout@3.2.0-r16?arch=x86_64&upstream=alpine-baselayout&distro=alpine-3.14.2",
+   "locations": [
+    {
+     "path": "\\lib\\apk\\db\\installed",
+     "layerID": "sha256:e2eb06d8af8218cfec8210147357a68b7e13f7c485b991c288c2d01dc228bb68"
+    }
+   ]
+  },
+  {
+   "name": "alpine-keys",
+   "version": "2.3-r1",
+   "type": "apk",
+   "purl": "pkg:apk/alpine/alpine-keys@2.3-r1?arch=x86_64&upstream=alpine-keys&distro=alpine-3.14.2",
+   "locations": [
+    {
+     "path": "\\lib\\apk\\db\\installed",
+     "layerID": "sha256:e2eb06d8af8218cfec8210147357a68b7e13f7c485b991c288c2d01dc228bb68"
+    }
+   ]
+  },
+  {
+   "name": "apk-tools",
+   "version": "2.12.7-r0",
+   "type": "apk",
+   "purl": "pkg:apk/alpine/apk-tools@2.12.7-r0?arch=x86_64&upstream=apk-tools&distro=alpine-3.14.2",
+   "locations": [
+    {
+     "path": "\\lib\\apk\\db\\installed",
+     "layerID": "sha256:e2eb06d8af8218cfec8210147357a68b7e13f7c485b991c288c2d01dc228bb68"
+    }
+   ]
+  },
+  {
+   "name": "busybox",
+   "version": "1.33.1",
+   "type": "binary",
+   "purl": "pkg:generic/busybox@1.33.1",
+   "locations": [
+    {
+     "path": "\\bin\\busybox",
+     "layerID": "sha256:e2eb06d8af8218cfec8210147357a68b7e13f7c485b991c288c2d01dc228bb68"
+    }
+   ]
+  },
+  {
+   "name": "busybox",
+   "version": "1.33.1-r3",
+   "type": "apk",
+   "purl": "pkg:apk/alpine/busybox@1.33.1-r3?arch=x86_64&upstream=busybox&distro=alpine-3.14.2",
+   "locations": [
+    {
+     "path": "\\lib\\apk\\db\\installed",
+     "layerID": "sha256:e2eb06d8af8218cfec8210147357a68b7e13f7c485b991c288c2d01dc228bb68"
+    }
+   ]
+  },
+  {
+   "name": "ca-certificates-bundle",
+   "version": "20191127-r5",
+   "type": "apk",
+   "purl": "pkg:apk/alpine/ca-certificates-bundle@20191127-r5?arch=x86_64&upstream=ca-certificates&distro=alpine-3.14.2",
+   "locations": [
+    {
+     "path": "\\lib\\apk\\db\\installed",
+     "layerID": "sha256:e2eb06d8af8218cfec8210147357a68b7e13f7c485b991c288c2d01dc228bb68"
+    }
+   ]
+  },
+  {
+   "name": "libc-utils",
+   "version": "0.7.2-r3",
+   "type": "apk",
+   "purl": "pkg:apk/alpine/libc-utils@0.7.2-r3?arch=x86_64&upstream=libc-dev&distro=alpine-3.14.2",
+   "locations": [
+    {
+     "path": "\\lib\\apk\\db\\installed",
+     "layerID": "sha256:e2eb06d8af8218cfec8210147357a68b7e13f7c485b991c288c2d01dc228bb68"
+    }
+   ]
+  },
+  {
+   "name": "libcrypto1.1",
+   "version": "1.1.1l-r0",
+   "type": "apk",
+   "purl": "pkg:apk/alpine/libcrypto1.1@1.1.1l-r0?arch=x86_64&upstream=openssl&distro=alpine-3.14.2",
+   "locations": [
+    {
+     "path": "\\lib\\apk\\db\\installed",
+     "layerID": "sha256:e2eb06d8af8218cfec8210147357a68b7e13f7c485b991c288c2d01dc228bb68"
+    }
+   ]
+  },
+  {
+   "name": "libretls",
+   "version": "3.3.3p1-r2",
+   "type": "apk",
+   "purl": "pkg:apk/alpine/libretls@3.3.3p1-r2?arch=x86_64&upstream=libretls&distro=alpine-3.14.2",
+   "locations": [
+    {
+     "path": "\\lib\\apk\\db\\installed",
+     "layerID": "sha256:e2eb06d8af8218cfec8210147357a68b7e13f7c485b991c288c2d01dc228bb68"
+    }
+   ]
+  },
+  {
+   "name": "libssl1.1",
+   "version": "1.1.1l-r0",
+   "type": "apk",
+   "purl": "pkg:apk/alpine/libssl1.1@1.1.1l-r0?arch=x86_64&upstream=openssl&distro=alpine-3.14.2",
+   "locations": [
+    {
+     "path": "\\lib\\apk\\db\\installed",
+     "layerID": "sha256:e2eb06d8af8218cfec8210147357a68b7e13f7c485b991c288c2d01dc228bb68"
+    }
+   ]
+  },
+  {
+   "name": "musl",
+   "version": "1.2.2-r3",
+   "type": "apk",
+   "purl": "pkg:apk/alpine/musl@1.2.2-r3?arch=x86_64&upstream=musl&distro=alpine-3.14.2",
+   "locations": [
+    {
+     "path": "\\lib\\apk\\db\\installed",
+     "layerID": "sha256:e2eb06d8af8218cfec8210147357a68b7e13f7c485b991c288c2d01dc228bb68"
+    }
+   ]
+  },
+  {
+   "name": "musl-utils",
+   "version": "1.2.2-r3",
+   "type": "apk",
+   "purl": "pkg:apk/alpine/musl-utils@1.2.2-r3?arch=x86_64&upstream=musl&distro=alpine-3.14.2",
+   "locations": [
+    {
+     "path": "\\lib\\apk\\db\\installed",
+     "layerID": "sha256:e2eb06d8af8218cfec8210147357a68b7e13f7c485b991c288c2d01dc228bb68"
+    }
+   ]
+  },
+  {
+   "name": "scanelf",
+   "version": "1.3.2-r0",
+   "type": "apk",
+   "purl": "pkg:apk/alpine/scanelf@1.3.2-r0?arch=x86_64&upstream=pax-utils&distro=alpine-3.14.2",
+   "locations": [
+    {
+     "path": "\\lib\\apk\\db\\installed",
+     "layerID": "sha256:e2eb06d8af8218cfec8210147357a68b7e13f7c485b991c288c2d01dc228bb68"
+    }
+   ]
+  },
+  {
+   "name": "ssl_client",
+   "version": "1.33.1-r3",
+   "type": "apk",
+   "purl": "pkg:apk/alpine/ssl_client@1.33.1-r3?arch=x86_64&upstream=busybox&distro=alpine-3.14.2",
+   "locations": [
+    {
+     "path": "\\lib\\apk\\db\\installed",
+     "layerID": "sha256:e2eb06d8af8218cfec8210147357a68b7e13f7c485b991c288c2d01dc228bb68"
+    }
+   ]
+  },
+  {
+   "name": "zlib",
+   "version": "1.2.11-r3",
+   "type": "apk",
+   "purl": "pkg:apk/alpine/zlib@1.2.11-r3?arch=x86_64&upstream=zlib&distro=alpine-3.14.2",
+   "locations": [
+    {
+     "path": "\\lib\\apk\\db\\installed",
+     "layerID": "sha256:e2eb06d8af8218cfec8210147357a68b7e13f7c485b991c288c2d01dc228bb68"
+    }
+   ]
+  }
+ ]
+}

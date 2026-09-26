@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tracegate"
+version = "0.1.0"
+description = "Provenance-aware CI/CD security gate with SBOM lineage and finding->commit backtracking"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=7"]
+
+[project.scripts]
+tracegate = "tracegate.cli:main"
+
+[tool.setuptools]
+packages = ["tracegate"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -9,9 +9,9 @@ from tracegate.cli import main
 from tracegate.graph import CycleError, ProvenanceGraph
 from tracegate.ids import dep_id
 from tracegate.models import Node, NodeKind, Verdict
-from tracegate.pipeline import load_envelopes, run, save_envelopes
+from tracegate.pipeline import load_envelopes, run
 from tracegate.policy import pr_comment
-from tracegate.signing import HmacSigner, SignatureError, Verifier
+from tracegate.signing import SignatureError, Verifier
 from tracegate.warden import HeuristicWarden, WardenScore
 
 TRUST = {synth.DEMO_KEYID: synth.DEMO_KEY}

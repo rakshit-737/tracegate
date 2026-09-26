@@ -13,8 +13,9 @@ import difflib
 import json
 import urllib.parse
 import urllib.request
+from collections.abc import Iterable
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Iterable, Protocol
+from typing import TYPE_CHECKING, Protocol
 
 from .typosquat import TyposquatDetector, normalize
 
@@ -45,7 +46,7 @@ class HeuristicWarden:
     """
 
     def __init__(self, popular: Iterable[str] | None = None, denylist: set[str] | None = None,
-                 osv: "OsvIndex | None" = None):
+                 osv: OsvIndex | None = None):
         self.detector = TyposquatDetector(list(popular) if popular is not None else POPULAR)
         self.denylist = {normalize(d) for d in (denylist or set())}
         self.osv = osv

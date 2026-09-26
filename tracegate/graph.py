@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from collections import defaultdict, deque
-from typing import Iterable
+from collections.abc import Iterable
 
 from .models import Edge, Finding, Node, NodeKind
 

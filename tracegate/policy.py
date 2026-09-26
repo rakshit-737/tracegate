@@ -6,7 +6,7 @@ No ML / LLM participates in the decision.
 """
 from __future__ import annotations
 
-from typing import Callable, Iterator
+from collections.abc import Callable, Iterator
 
 from .collector import CollectResult
 from .models import Decision, Finding, NodeKind, Severity, Verdict

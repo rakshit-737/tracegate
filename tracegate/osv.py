@@ -20,9 +20,9 @@ import math
 import re
 import urllib.request
 import zipfile
+from collections.abc import Iterable, Iterator
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Iterable, Iterator
 
 from .ids import normalize_name, purl
 
@@ -94,14 +94,14 @@ class OsvIndex:
 
     # ---- loading --------------------------------------------------------------
     @classmethod
-    def from_zip(cls, path: str | Path, ecosystem: str = "pypi") -> "OsvIndex":
+    def from_zip(cls, path: str | Path, ecosystem: str = "pypi") -> OsvIndex:
         idx = cls(ecosystem)
         with zipfile.ZipFile(path) as z:
             idx.add_records(json.loads(z.read(n)) for n in z.namelist() if n.endswith(".json"))
         return idx
 
     @classmethod
-    def from_records(cls, records: Iterable[dict], ecosystem: str = "pypi") -> "OsvIndex":
+    def from_records(cls, records: Iterable[dict], ecosystem: str = "pypi") -> OsvIndex:
         idx = cls(ecosystem)
         idx.add_records(records)
         return idx

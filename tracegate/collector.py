@@ -14,8 +14,8 @@ for the adapters that produce them from real Syft / CycloneDX / Trivy JSON):
 """
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import dataclass, field
-from typing import Iterable
 
 from .graph import ProvenanceGraph
 from .ids import canonical_purl, dep_id, dep_id_from_purl, digest, purl

@@ -5,7 +5,7 @@ import json
 from dataclasses import asdict
 from pathlib import Path
 
-from .collector import CollectResult, Collector
+from .collector import Collector, CollectResult
 from .enrich import enrich
 from .models import Decision, Envelope
 from .policy import evaluate

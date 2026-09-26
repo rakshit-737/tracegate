@@ -19,8 +19,8 @@ from __future__ import annotations
 
 import math
 import re
+from collections.abc import Iterable
 from dataclasses import dataclass, field
-from typing import Iterable
 
 _SEP = re.compile(r"[-_.]+")
 

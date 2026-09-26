@@ -62,7 +62,23 @@ let current = null;
 
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
 
+// Static mode (GitHub Pages demo): answers come from precomputed JSON in ./data/.
+const STATIC = document.documentElement.dataset.static === "1";
+const cache = {};
+async function staticApi(path) {
+  const u = new URL(path, location.href);
+  const m = u.pathname.match(/\/v1\/(?:demo|runs)\/([^/]+)(?:\/(graph|backtrack))?$/);
+  if (!m) throw new Error("not available in the static demo: " + path);
+  const sc = decodeURIComponent(m[1]);
+  cache[sc] ??= await (await fetch(`data/${encodeURIComponent(sc)}.json`)).json();
+  const d = cache[sc];
+  if (!m[2]) return d.summary;
+  if (m[2] === "graph") return d.graph;
+  return d.backtrack[(u.searchParams.get("q") || "").toLowerCase()] || [];
+}
+
 async function api(path, opts) {
+  if (STATIC) return staticApi(path);
   const r = await fetch(path, opts);
   if (!r.ok) throw new Error(await r.text());
   return r.json();

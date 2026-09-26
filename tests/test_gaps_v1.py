@@ -93,3 +93,18 @@ def test_lineage_over_package_lock(tmp_path):
     assert hist[1].added == {"lodash": "4.17.21", "chalk": "5.3.0"}
     ev = commit_events(hist, "package-lock.json")[1]
     assert {d["ecosystem"] for d in ev.payload["deps_added"]} == {"npm"}
+
+
+def test_static_demo_build(tmp_path):
+    import runpy
+    import sys
+    argv = sys.argv
+    sys.argv = ["build_static_demo.py", "--out", str(tmp_path)]
+    try:
+        runpy.run_path(str(Path(__file__).parents[1] / "scripts" / "build_static_demo.py"), run_name="__main__")
+    finally:
+        sys.argv = argv
+    assert 'data-static="1"' in (tmp_path / "index.html").read_text(encoding="utf-8")
+    d = json.loads((tmp_path / "data" / "cve-origin.json").read_text(encoding="utf-8"))
+    assert d["summary"]["verdict"] == "block"
+    assert d["backtrack"]["cve-2020-14343"][0]["introduced_by"]["pr"] == 42

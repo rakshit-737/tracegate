@@ -8,3 +8,4 @@ data/
 *.part
 bench_out/
 .ruff_cache/
+site/

@@ -1,7 +1,7 @@
 """Commit-stage collector for real git repositories.
 
 Walks the first-parent history of a pinned dependency manifest
-(requirements.txt / pip-compile output) and emits one `commit` stage event
+(requirements.txt / pip-compile output, package-lock.json, poetry.lock, uv.lock) and emits one `commit` stage event
 per commit that changed a pin: which dependency versions it introduced and
 which it removed. This is the "commit -> dependency" half of the lineage,
 derived from the repository itself rather than from CI metadata.
@@ -18,6 +18,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from .ids import normalize_name
+from .lockfiles import ecosystem_for, parse_manifest
 from .models import StageEvent
 
 _PIN = re.compile(r"^\s*([A-Za-z0-9][A-Za-z0-9._-]*)\s*(?:\[[^\]]*\])?\s*===?\s*([^\s;#\\,]+)")
@@ -103,7 +104,7 @@ def manifest_history(repo: str | Path, manifest: str, rev: str = "HEAD",
     prev: dict[str, str] = {}
     if limit and rows:  # seed the state from the parent of the first kept commit
         try:
-            prev = parse_requirements(_git(repo, "show", f"{rows[0][0]}^:{rows[0][4]}"))
+            prev = parse_manifest(rows[0][4], _git(repo, "show", f"{rows[0][0]}^:{rows[0][4]}"))
         except subprocess.CalledProcessError:
             prev = {}
     for sha, author, ts, subject, path in rows:
@@ -111,7 +112,10 @@ def manifest_history(repo: str | Path, manifest: str, rev: str = "HEAD",
             text = _git(repo, "show", f"{sha}:{path}")
         except subprocess.CalledProcessError:
             text = ""  # file deleted in this commit
-        pins = parse_requirements(text)
+        try:
+            pins = parse_manifest(path, text)
+        except ValueError:  # malformed lock file at this commit
+            pins = {}
         mc = ManifestCommit(sha, author, ts, subject, pins, path=path)
         mc.added = {n: v for n, v in pins.items() if prev.get(n) != v}
         mc.removed = {n: v for n, v in prev.items() if pins.get(n) != v}
@@ -122,12 +126,13 @@ def manifest_history(repo: str | Path, manifest: str, rev: str = "HEAD",
 
 
 def commit_events(history: list[ManifestCommit], manifest: str, run_prefix: str = "git") -> list[StageEvent]:
+    eco = ecosystem_for(manifest)
     evs = []
     for i, mc in enumerate(history):
         evs.append(StageEvent("commit", f"{run_prefix}-{mc.sha[:8]}", {
             "sha": mc.sha, "author": mc.author, "pr": mc.pr, "message": mc.subject,
             "seq": i, "timestamp": mc.timestamp, "files": [manifest],
-            "deps_added": [{"name": n, "version": v, "ecosystem": "pypi"} for n, v in sorted(mc.added.items())],
+            "deps_added": [{"name": n, "version": v, "ecosystem": eco} for n, v in sorted(mc.added.items())],
             "deps_removed": [{"name": n, "version": v} for n, v in sorted(mc.removed.items())],
         }))
     return evs

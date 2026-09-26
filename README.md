@@ -206,17 +206,17 @@ SBOMs, scanning and attestation formats are not novel. The contribution is the i
 
 - **Reachability is static and at module level.** Runtime facts are supported as events, but no eBPF or `/proc/*/maps` collector ships. Historical snapshots in the lineage benchmark use HEAD sources. `gitlineage.materialize()` exists to check out per-snapshot sources, but it is not yet wired into the benchmark.
 - **The 15% reduction has no false-negative audit.** There is no public ground truth for "exploitable in this app".
-- **Lineage covers pinned `requirements*.txt` manifests.** Lock files for npm, Poetry and uv are not parsed yet.
+- **Lineage covers `requirements*.txt`, `package-lock.json`, `poetry.lock` and `uv.lock`.** Go modules, Cargo and yarn/pnpm locks are not parsed yet. The real-repo lineage benchmark numbers are for pip manifests only.
 - **Signing uses Ed25519 or HMAC keys, not Sigstore keyless.** There is no Rekor transparency log.
 - **Warden is a stand-in.** The HTTP contract to the real Warden service (`GET /score`) is assumed.
 - **Typosquat recall is low in absolute terms** (see above). Treat it as one signal, not a malware detector.
-- **SAST is an event schema only.** The collector accepts `sast` stage events, but there is no SARIF / Semgrep / Bandit adapter yet.
+- **SAST comes in as SARIF 2.1.0** (`tracegate ingest --sarif`, tested on Bandit-style fixtures). SAST findings are attached to files, not to dependencies, so reachability does not apply to them.
 - Image deployments in the image benchmark are synthetic (one service per image).
 
 ## Roadmap
 
 - Per-snapshot source materialisation in the reachability benchmark; eBPF / `sys.modules` runtime collector.
-- Lock-file lineage (package-lock, poetry.lock, uv.lock) and Go modules.
+- Lock-file lineage for Go modules, Cargo and yarn/pnpm.
 - Sigstore keyless signing + Rekor inclusion proofs.
 - Neo4j live adapter (currently Cypher export) and a React lineage explorer.
 - EPSS-based prioritisation and a GitHub App for PR comments.

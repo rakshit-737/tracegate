@@ -153,9 +153,11 @@ class ReachReport:
 
 
 def static_reachability(pins: dict[str, str], src_dirs: list[Path], repo: Path,
-                        req_text: str = "") -> ReachReport:
-    mods = app_imports(src_dirs)
-    ep = entrypoint_text(repo)
+                        req_text: str = "", mods: set[str] | None = None,
+                        ep: str | None = None) -> ReachReport:
+    """`mods` / `ep` may be passed pre-computed when analysing many snapshots of one repo."""
+    mods = app_imports(src_dirs) if mods is None else mods
+    ep = entrypoint_text(repo) if ep is None else ep
     rep = ReachReport()
     for dist in pins:
         hit = next((m for m in import_names(dist) if m in mods), None)

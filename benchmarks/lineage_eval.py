@@ -50,7 +50,7 @@ from tracegate.ingest import syft_json_to_build, trivy_json_to_scan  # noqa: E40
 from tracegate.models import Severity, StageEvent  # noqa: E402
 from tracegate.osv import OsvIndex  # noqa: E402
 from tracegate.policy import evaluate  # noqa: E402
-from tracegate.reach import static_reachability  # noqa: E402
+from tracegate.reach import app_imports, entrypoint_text, static_reachability  # noqa: E402
 from tracegate.signing import HmacSigner, Verifier  # noqa: E402
 from tracegate.warden import HeuristicWarden  # noqa: E402
 
@@ -96,6 +96,8 @@ def eval_repo(name: str, osv: OsvIndex, n_snap: int, warden: HeuristicWarden) ->
     rows = {"tracegate": [0, 0], "last-manifest-commit": [0, 0], "pickaxe-first": [0, 0]}
     disagreements, gate_ms, per_snapshot, reach_rows = [], [], [], []
     pick_cache: dict[str, str | None] = {}
+    mods = app_imports([repo / s for s in srcs])  # HEAD sources, parsed once per repo
+    ep = entrypoint_text(repo)
     head_stats = {}
     for k in idx:
         mc = hist[k]
@@ -146,7 +148,7 @@ def eval_repo(name: str, osv: OsvIndex, n_snap: int, warden: HeuristicWarden) ->
         # Static reachability. Only HEAD sources are checked out (blobless clone), so older
         # snapshots are analysed against HEAD's import set: an approximation, flagged in output.
         req_text = _git(repo, "show", f"{mc.sha}:{manifest}")
-        rep = static_reachability(pins, [repo / s for s in srcs], repo, req_text)
+        rep = static_reachability(pins, [repo / s for s in srcs], repo, req_text, mods=mods, ep=ep)
         scan_f = [f for f in res.graph.findings if f.source in ("osv", "trivy")]
         hi = [f for f in scan_f if f.severity.rank >= Severity.HIGH.rank]
         enrich_static_reachability(res, rep)

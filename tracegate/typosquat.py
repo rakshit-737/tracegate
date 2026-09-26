@@ -133,7 +133,9 @@ class TyposquatDetector:
         self.squashed: dict[str, str] = {}
         self.deglyphed: dict[str, str] = {}
         self.tokens: dict[tuple[str, ...], str] = {}
-        self.index: dict[str, set[str]] = {}
+        # deletion key -> reference name(s); a bare str for the common single-name case keeps
+        # the index small (it holds ~100 keys per long reference name)
+        self.index: dict[str, str | list[str]] = {}
         for n in self.ranked:
             self.squashed.setdefault(squash(n), n)
             self.deglyphed.setdefault(_deglyph(squash(n)), n)
@@ -143,7 +145,20 @@ class TyposquatDetector:
             if len(n) >= min_len:
                 k = 2 if len(n) >= long_name else 1
                 for d in _deletes(n, k):
-                    self.index.setdefault(d, set()).add(n)
+                    cur = self.index.get(d)
+                    if cur is None:
+                        self.index[d] = n
+                    elif isinstance(cur, str):
+                        if cur != n:
+                            self.index[d] = [cur, n]
+                    elif n not in cur:
+                        cur.append(n)
+
+    def _lookup(self, key: str) -> list[str] | tuple[str, ...]:
+        v = self.index.get(key)
+        if v is None:
+            return ()
+        return (v,) if isinstance(v, str) else v
 
     # popularity weight: rank 0 -> 1.0, rank 10k -> ~0.55
     def _pop(self, target: str) -> float:
@@ -181,7 +196,7 @@ class TyposquatDetector:
             k = 2 if len(n) >= self.long_name else 1
             pool: set[str] = set()
             for d in _deletes(n, k):
-                pool |= self.index.get(d, set())
+                pool.update(self._lookup(d))
             for tgt in pool:
                 if tgt == n:
                     continue
@@ -204,7 +219,7 @@ class TyposquatDetector:
                     cands.append(("suffix", stripped, f"'{stripped}' + version-like suffix"))
                 else:
                     for d in _deletes(stripped, 1):
-                        for tgt in self.index.get(d, ()):
+                        for tgt in self._lookup(d):
                             if not tgt[-1:].isdigit() and damerau(stripped, tgt) <= 1:
                                 cands.append(("suffix", tgt, "typo + version-like suffix"))
         if "brandjack" in self.enabled and len(toks) > 1:

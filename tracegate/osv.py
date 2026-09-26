@@ -20,7 +20,7 @@ import math
 import re
 import urllib.request
 import zipfile
-from collections.abc import Iterable, Iterator
+from collections.abc import Callable, Iterable, Iterator
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -96,8 +96,8 @@ class OsvIndex:
     @classmethod
     def from_zip(cls, path: str | Path, ecosystem: str = "pypi") -> OsvIndex:
         idx = cls(ecosystem)
-        with zipfile.ZipFile(path) as z:
-            idx.add_records(json.loads(z.read(n)) for n in z.namelist() if n.endswith(".json"))
+        # two streaming passes (severity-by-alias, then index) so the full dump is never in memory
+        idx.add_records(lambda: iter_zip_records(path))
         return idx
 
     @classmethod
@@ -106,17 +106,26 @@ class OsvIndex:
         idx.add_records(records)
         return idx
 
-    def add_records(self, records: Iterable[dict]) -> None:
-        recs = [r for r in records if not r.get("withdrawn")]
+    def add_records(self, records: Iterable[dict] | Callable[[], Iterable[dict]]) -> None:
+        """`records` may be a re-iterable factory (callable) to allow streaming."""
+        if callable(records):
+            source = records
+        else:
+            kept = list(records)
+            source = lambda: kept  # noqa: E731
         sev_by_id: dict[str, str] = {}
-        for r in recs:
+        for r in source():
+            if r.get("withdrawn"):
+                continue
             s = self._own_severity(r)
             if s:
                 sev_by_id[r["id"]] = s
                 for a in r.get("aliases", []) or []:
                     sev_by_id.setdefault(a, s)
         want = _ECO.get(self.ecosystem, self.ecosystem)
-        for r in recs:
+        for r in source():
+            if r.get("withdrawn"):
+                continue
             self.n_records += 1
             sev = sev_by_id.get(r["id"]) or next(
                 (sev_by_id[a] for a in r.get("aliases", []) or [] if a in sev_by_id), None)

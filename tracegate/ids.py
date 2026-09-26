@@ -12,6 +12,7 @@ import hashlib
 import json
 import re
 import urllib.parse
+from functools import lru_cache
 from typing import Any
 
 from .models import NodeKind
@@ -38,6 +39,7 @@ def normalize_name(name: str, ecosystem: str = "pypi") -> str:
     return n
 
 
+@lru_cache(maxsize=65536)
 def purl(name: str, version: str, ecosystem: str = "pypi", namespace: str | None = None) -> str:
     eco = ecosystem.lower()
     n = normalize_name(name, eco)
@@ -45,6 +47,7 @@ def purl(name: str, version: str, ecosystem: str = "pypi", namespace: str | None
     return f"pkg:{eco}/{ns}{urllib.parse.quote(n, safe='@/')}@{version}"
 
 
+@lru_cache(maxsize=65536)
 def canonical_purl(p: str) -> str:
     """Strip qualifiers/subpath and normalise the name, e.g.
 
@@ -71,5 +74,6 @@ def dep_id(name: str, version: str, ecosystem: str = "pypi") -> str:
     return dep_id_from_purl(purl(name, version, ecosystem))
 
 
+@lru_cache(maxsize=65536)
 def dep_id_from_purl(p: str) -> str:
     return digest(NodeKind.DEPENDENCY, canonical_purl(p))

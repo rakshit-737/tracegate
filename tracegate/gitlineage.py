@@ -15,6 +15,7 @@ import os
 import re
 import subprocess
 from dataclasses import dataclass, field
+from fnmatch import fnmatch
 from pathlib import Path
 
 from .ids import normalize_name
@@ -161,11 +162,13 @@ def pickaxe_first_mention(repo: str | Path, manifest: str, name: str, rev: str =
 
 def materialize(repo: str | Path, sha: str, prefixes: list[str], dest: str | Path,
                 suffixes: tuple[str, ...] = (".py",),
-                names: tuple[str, ...] = ("Dockerfile", "Procfile")) -> int:
+                names: tuple[str, ...] = ("Dockerfile", "Procfile"),
+                anywhere: tuple[str, ...] = ()) -> int:
     """Write the files under `prefixes` (plus top-level `names`) as of `sha` into `dest`.
 
     Works on blobless clones: missing blobs are fetched in batches first. Used to run static
     reachability against the sources that actually shipped with a historical snapshot.
+    `anywhere` are basename globs (e.g. reach.ENTRYPOINT_FILES) matched across the whole tree.
     """
     repo, dest = Path(repo), Path(dest)
     listing = _git(repo, "ls-tree", "-r", sha).splitlines()
@@ -176,7 +179,8 @@ def materialize(repo: str | Path, sha: str, prefixes: list[str], dest: str | Pat
         if len(parts) < 3 or parts[1] != "blob":
             continue
         under = any(path.startswith(p.rstrip("/") + "/") for p in prefixes)
-        if (under and path.endswith(suffixes)) or path in names:
+        base = path.rsplit("/", 1)[-1]
+        if (under and path.endswith(suffixes)) or path in names or any(fnmatch(base, g) for g in anywhere):
             want.append((parts[2], path))
     env_nolazy = {**os.environ, "GIT_NO_LAZY_FETCH": "1"}
     chk = subprocess.run(["git", "-C", str(repo), "cat-file", "--batch-check"],

@@ -29,6 +29,7 @@ import argparse
 import json
 import statistics
 import sys
+import tempfile
 import time
 from pathlib import Path
 
@@ -44,13 +45,14 @@ from tracegate.gitlineage import (  # noqa: E402
     commit_events,
     direct_deps_from_pip_compile,
     manifest_history,
+    materialize,
     pickaxe_first_mention,
 )
 from tracegate.ingest import syft_json_to_build, trivy_json_to_scan  # noqa: E402
 from tracegate.models import Severity, StageEvent  # noqa: E402
 from tracegate.osv import OsvIndex  # noqa: E402
 from tracegate.policy import evaluate  # noqa: E402
-from tracegate.reach import app_imports, entrypoint_text, static_reachability  # noqa: E402
+from tracegate.reach import ENTRYPOINT_FILES, app_imports, entrypoint_text, static_reachability  # noqa: E402
 from tracegate.signing import HmacSigner, Verifier  # noqa: E402
 from tracegate.warden import HeuristicWarden  # noqa: E402
 
@@ -79,7 +81,8 @@ def build_events(repo: Path, manifest: str, hist, upto: int, pins: dict[str, str
     return evs
 
 
-def eval_repo(name: str, osv: OsvIndex, n_snap: int, warden: HeuristicWarden) -> dict | None:
+def eval_repo(name: str, osv: OsvIndex, n_snap: int, warden: HeuristicWarden,
+              per_snapshot_sources: bool = False) -> dict | None:
     root = data_root()
     repo = root / "repos" / name
     manifest, srcs = REPOS[name]
@@ -149,8 +152,17 @@ def eval_repo(name: str, osv: OsvIndex, n_snap: int, warden: HeuristicWarden) ->
         # Static reachability. Only HEAD sources are checked out (blobless clone), so older
         # snapshots are analysed against HEAD's import set: an approximation, flagged in output.
         req_text = _git(repo, "show", f"{mc.sha}:{mc.path or manifest}")
-        rep = static_reachability(pins, [repo / s for s in srcs], repo, req_text, mods=mods, ep=ep,
-                                  strings=strings)
+        if per_snapshot_sources and not is_head:
+            # Check out the sources that actually shipped with this snapshot (ADR 0004 gap).
+            with tempfile.TemporaryDirectory() as td:
+                materialize(repo, mc.sha, srcs, td, anywhere=ENTRYPOINT_FILES)
+                s_strings: set[str] = set()
+                s_mods = app_imports([Path(td) / s for s in srcs], s_strings)
+                rep = static_reachability(pins, [Path(td) / s for s in srcs], Path(td), req_text,
+                                          mods=s_mods, ep=entrypoint_text(Path(td)), strings=s_strings)
+        else:
+            rep = static_reachability(pins, [repo / s for s in srcs], repo, req_text, mods=mods, ep=ep,
+                                      strings=strings)
         scan_f = [f for f in res.graph.findings if f.source in ("osv", "trivy")]
         hi = [f for f in scan_f if f.severity.rank >= Severity.HIGH.rank]
         enrich_static_reachability(res, rep)
@@ -196,6 +208,8 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--snapshots", type=int, default=12)
     ap.add_argument("--repos", nargs="*", default=list(REPOS))
+    ap.add_argument("--materialize", action="store_true",
+                    help="analyse each historical snapshot against its own sources (slower)")
     ap.add_argument("--out", default=str(Path(__file__).resolve().parents[1] / "results"))
     a = ap.parse_args()
     zp = data_root() / "osv/PyPI-all.zip"
@@ -207,7 +221,7 @@ def main() -> None:
           f"{len(osv.mal)} malicious names ({time.perf_counter() - t0:.1f}s)")
     from tracegate.data import top_pypi
     warden = HeuristicWarden(popular=top_pypi(5000), osv=osv)
-    results = [r for r in (eval_repo(n, osv, a.snapshots, warden) for n in a.repos) if r]
+    results = [r for r in (eval_repo(n, osv, a.snapshots, warden, a.materialize) for n in a.repos) if r]
     tot = {}
     for r in results:
         for k, v in r["attribution"].items():
@@ -216,7 +230,7 @@ def main() -> None:
     summary = {k: {"correct": c, "total": t, "accuracy": round(c / t, 4) if t else None} for k, (c, t) in tot.items()}
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
-    (out / "lineage_real_repos.json").write_text(json.dumps({"summary": summary, "repos": results}, indent=1))
+    (out / ("lineage_real_repos_materialized.json" if a.materialize else "lineage_real_repos.json")).write_text(json.dumps({"summary": summary, "repos": results}, indent=1))
     print("TOTAL", json.dumps(summary))
 
 

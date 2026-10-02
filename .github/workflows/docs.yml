@@ -30,8 +30,7 @@ jobs:
           import pathlib, re
           n = 0
           for f in [pathlib.Path("README.md"), *sorted(pathlib.Path("docs").rglob("*.md"))]:
-              for i, block in enumerate(re.findall(r"```mermaid
-(.*?)```", f.read_text(encoding="utf-8"), re.S)):
+              for i, block in enumerate(re.findall(r"```mermaid\s*?\n(.*?)```", f.read_text(encoding="utf-8"), re.S)):
                   pathlib.Path(f"/tmp/mmd/{f.stem}-{i}.mmd").write_text(block, encoding="utf-8")
                   n += 1
           print(n, "mermaid blocks")

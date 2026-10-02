@@ -2,7 +2,8 @@ name: kind-admission
 # Deploys a Sigstore-signed and an unsigned image to an ephemeral kind cluster through the
 # TRACEGATE admission step (cosign keyless verification against this workflow's identity, then
 # `tracegate gate` on the signed Syft/Trivy/commit events of that exact image digest).
-# Only the signed image may be admitted. Everything runs inside this runner: a localhost
+# Only the signed image may be admitted; a third, cosign-valid image whose signed provenance
+# lacks the build/scan stages is denied by TRACEGATE's gate itself. Everything runs inside this runner: a localhost
 # registry, a kind cluster, two trivial busybox images holding a dummy file.
 on:
   push:
@@ -43,7 +44,7 @@ jobs:
         run: |
           docker run -d -p 127.0.0.1:5000:5000 --name reg registry:2
           mkdir -p img && cd img
-          for v in signed unsigned; do
+          for v in signed unsigned signed-noscan; do
             echo "tracegate kind demo: $v" > dummy.txt
             printf 'FROM busybox:1.37\nCOPY dummy.txt /dummy.txt\nCMD ["sh","-c","cat /dummy.txt; sleep 3600"]\n' > Dockerfile
             docker build -q -t $REG/tg-app:$v .
@@ -51,7 +52,7 @@ jobs:
             docker inspect --format '{{index .RepoDigests 0}}' $REG/tg-app:$v > ../$v.ref
             kind load docker-image --name tg $REG/tg-app:$v
           done
-          cat ../signed.ref ../unsigned.ref
+          cat ../signed.ref ../unsigned.ref ../signed-noscan.ref
       - name: CI stage for the signed image only - keyless signature + signed provenance events
         run: |
           IMG=$(cat signed.ref)
@@ -68,6 +69,10 @@ jobs:
           python -m tracegate.cli lineage app requirements.txt -o commits.json
           python -m tracegate.cli ingest --syft sbom.json --trivy trivy.json --commit "$(git -C app rev-parse HEAD)" -o img.json
           python -m tracegate.cli merge commits.json img.json -o "events-$(cut -d@ -f2 signed.ref | cut -c8-19).json"
+          # Third image: validly Sigstore-signed by this workflow, but its signed provenance has no
+          # build/scan stage. cosign accepts it; only TRACEGATE's gate can deny it.
+          cosign sign --yes --allow-insecure-registry "$(cat signed-noscan.ref)"
+          cp commits.json "events-$(cut -d@ -f2 signed-noscan.ref | cut -c8-19).json"
       - name: Admission through TRACEGATE (only admitted images are applied)
         env:
           IDENTITY: ^https://github.com/${{ github.repository }}/\.github/workflows/kind-admission\.yml@
@@ -75,7 +80,7 @@ jobs:
           export TRACEGATE_KEYID=ci TRACEGATE_PUBKEY="$RUNNER_TEMP/ci.pub" \
                  TRACEGATE_PUBKEY_BUNDLE="$RUNNER_TEMP/ci.pub.sigstore.json" TRACEGATE_SIGSTORE_IDENTITY="$IDENTITY"
           echo '[]' > decisions.json
-          for v in signed unsigned; do
+          for v in signed unsigned signed-noscan; do
             IMG=$(cat $v.ref); short=$(cut -d@ -f2 $v.ref | cut -c8-19)
             reason=""; allowed=false
             if ! cosign verify --allow-insecure-registry --certificate-identity-regexp "$IDENTITY" \
@@ -107,8 +112,10 @@ jobs:
         run: |
           kubectl rollout status deployment/tg-signed --timeout=120s
           kubectl get pods -l app=tg-signed -o jsonpath='{.items[0].status.phase}' | grep -qx Running
-          if kubectl get deployment tg-unsigned 2>/dev/null; then echo "unsigned image was admitted"; exit 1; fi
-          python -c "import json;d={x['deployment']:x for x in json.load(open('decisions.json'))};assert d['signed']['allowed'] and not d['unsigned']['allowed'];print('admission OK')"
+          for v in unsigned signed-noscan; do
+            if kubectl get deployment tg-$v 2>/dev/null; then echo "$v image was admitted"; exit 1; fi
+          done
+          python -c "import json;d={x['deployment']:x for x in json.load(open('decisions.json'))};assert d['signed']['allowed'] and not d['unsigned']['allowed'] and not d['signed-noscan']['allowed'];assert d['signed-noscan']['reason'].startswith('tracegate gate blocked'), d['signed-noscan'];print('admission OK')"
           kubectl get pods -o wide | tee pods.txt
       - if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1

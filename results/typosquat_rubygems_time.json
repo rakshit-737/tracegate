@@ -1,0 +1,1140 @@
+{
+ "ecosystem": "RubyGems",
+ "reference_size": 5000,
+ "split": "time split: positives published < 2025-01-01 tune, >= 2025-01-01 test (OSV `published`, dominated by bulk backfill days); negatives 50/50 by sha256(name)",
+ "chosen_threshold": 0.58,
+ "dev_positives": 735,
+ "dev_negatives": 2486,
+ "positives": 3430,
+ "negatives": 2479,
+ "typo_labelled_positives": 0,
+ "results": {
+  "mvp-difflib (14 names)": {
+   "tp": 456,
+   "fp": 4,
+   "fn": 2974,
+   "tn": 2475,
+   "precision": 0.9913,
+   "recall": 0.1329,
+   "f1": 0.2344,
+   "fpr": 0.0016,
+   "precision_at_prev_0.01": 0.4562,
+   "precision_at_prev_0.001": 0.0768,
+   "recall_typo_labelled": 0.0,
+   "ms_per_name": 0.2587
+  },
+  "lev1 (top-5k)": {
+   "tp": 149,
+   "fp": 57,
+   "fn": 3281,
+   "tn": 2422,
+   "precision": 0.7233,
+   "recall": 0.0434,
+   "f1": 0.082,
+   "fpr": 0.023,
+   "precision_at_prev_0.01": 0.0187,
+   "precision_at_prev_0.001": 0.0019,
+   "recall_typo_labelled": 0.0,
+   "ms_per_name": 0.0138
+  },
+  "typomania/TypoGard (top-5k)": {
+   "tp": 55,
+   "fp": 56,
+   "fn": 3375,
+   "tn": 2423,
+   "precision": 0.4955,
+   "recall": 0.016,
+   "f1": 0.0311,
+   "fpr": 0.0226,
+   "precision_at_prev_0.01": 0.0071,
+   "precision_at_prev_0.001": 0.0007,
+   "recall_typo_labelled": 0.0,
+   "ms_per_name": 0.2907
+  },
+  "pypi-scan (top-50)": {
+   "tp": 126,
+   "fp": 1,
+   "fn": 3304,
+   "tn": 2478,
+   "precision": 0.9921,
+   "recall": 0.0367,
+   "f1": 0.0708,
+   "fpr": 0.0004,
+   "precision_at_prev_0.01": 0.481,
+   "precision_at_prev_0.001": 0.0841,
+   "recall_typo_labelled": 0.0,
+   "ms_per_name": 0.0071
+  },
+  "pypi-scan (top-5k)": {
+   "tp": 144,
+   "fp": 42,
+   "fn": 3286,
+   "tn": 2437,
+   "precision": 0.7742,
+   "recall": 0.042,
+   "f1": 0.0796,
+   "fpr": 0.0169,
+   "precision_at_prev_0.01": 0.0245,
+   "precision_at_prev_0.001": 0.0025,
+   "recall_typo_labelled": 0.0,
+   "ms_per_name": 0.0084
+  },
+  "tracegate (th=0.58)": {
+   "tp": 132,
+   "fp": 13,
+   "fn": 3298,
+   "tn": 2466,
+   "precision": 0.9103,
+   "recall": 0.0385,
+   "f1": 0.0738,
+   "fpr": 0.0052,
+   "precision_at_prev_0.01": 0.0696,
+   "precision_at_prev_0.001": 0.0074,
+   "recall_typo_labelled": 0.0,
+   "ms_per_name": 0.1015
+  },
+  "tracegate (th=0.46, FPR-matched to lev1)": {
+   "tp": 150,
+   "fp": 52,
+   "fn": 3280,
+   "tn": 2427,
+   "precision": 0.7426,
+   "recall": 0.0437,
+   "f1": 0.0826,
+   "fpr": 0.021,
+   "precision_at_prev_0.01": 0.0206,
+   "precision_at_prev_0.001": 0.0021,
+   "recall_typo_labelled": 0.0,
+   "ms_per_name": 0.1015
+  }
+ },
+ "curve": [
+  {
+   "threshold": 0.3,
+   "tp": 166,
+   "fp": 450,
+   "fn": 3264,
+   "tn": 2029,
+   "precision": 0.2695,
+   "recall": 0.0484,
+   "f1": 0.0821,
+   "fpr": 0.1815,
+   "precision_at_prev_0.01": 0.0027,
+   "precision_at_prev_0.001": 0.0003,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.32,
+   "tp": 166,
+   "fp": 450,
+   "fn": 3264,
+   "tn": 2029,
+   "precision": 0.2695,
+   "recall": 0.0484,
+   "f1": 0.0821,
+   "fpr": 0.1815,
+   "precision_at_prev_0.01": 0.0027,
+   "precision_at_prev_0.001": 0.0003,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.34,
+   "tp": 166,
+   "fp": 442,
+   "fn": 3264,
+   "tn": 2037,
+   "precision": 0.273,
+   "recall": 0.0484,
+   "f1": 0.0822,
+   "fpr": 0.1783,
+   "precision_at_prev_0.01": 0.0027,
+   "precision_at_prev_0.001": 0.0003,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.36,
+   "tp": 164,
+   "fp": 341,
+   "fn": 3266,
+   "tn": 2138,
+   "precision": 0.3248,
+   "recall": 0.0478,
+   "f1": 0.0834,
+   "fpr": 0.1376,
+   "precision_at_prev_0.01": 0.0035,
+   "precision_at_prev_0.001": 0.0003,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.38,
+   "tp": 157,
+   "fp": 163,
+   "fn": 3273,
+   "tn": 2316,
+   "precision": 0.4906,
+   "recall": 0.0458,
+   "f1": 0.0837,
+   "fpr": 0.0658,
+   "precision_at_prev_0.01": 0.007,
+   "precision_at_prev_0.001": 0.0007,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.4,
+   "tp": 155,
+   "fp": 95,
+   "fn": 3275,
+   "tn": 2384,
+   "precision": 0.62,
+   "recall": 0.0452,
+   "f1": 0.0842,
+   "fpr": 0.0383,
+   "precision_at_prev_0.01": 0.0118,
+   "precision_at_prev_0.001": 0.0012,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.42,
+   "tp": 152,
+   "fp": 80,
+   "fn": 3278,
+   "tn": 2399,
+   "precision": 0.6552,
+   "recall": 0.0443,
+   "f1": 0.083,
+   "fpr": 0.0323,
+   "precision_at_prev_0.01": 0.0137,
+   "precision_at_prev_0.001": 0.0014,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.44,
+   "tp": 152,
+   "fp": 67,
+   "fn": 3278,
+   "tn": 2412,
+   "precision": 0.6941,
+   "recall": 0.0443,
+   "f1": 0.0833,
+   "fpr": 0.027,
+   "precision_at_prev_0.01": 0.0163,
+   "precision_at_prev_0.001": 0.0016,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.46,
+   "tp": 150,
+   "fp": 52,
+   "fn": 3280,
+   "tn": 2427,
+   "precision": 0.7426,
+   "recall": 0.0437,
+   "f1": 0.0826,
+   "fpr": 0.021,
+   "precision_at_prev_0.01": 0.0206,
+   "precision_at_prev_0.001": 0.0021,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.48,
+   "tp": 150,
+   "fp": 41,
+   "fn": 3280,
+   "tn": 2438,
+   "precision": 0.7853,
+   "recall": 0.0437,
+   "f1": 0.0829,
+   "fpr": 0.0165,
+   "precision_at_prev_0.01": 0.0261,
+   "precision_at_prev_0.001": 0.0026,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.5,
+   "tp": 148,
+   "fp": 38,
+   "fn": 3282,
+   "tn": 2441,
+   "precision": 0.7957,
+   "recall": 0.0431,
+   "f1": 0.0819,
+   "fpr": 0.0153,
+   "precision_at_prev_0.01": 0.0277,
+   "precision_at_prev_0.001": 0.0028,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.52,
+   "tp": 143,
+   "fp": 34,
+   "fn": 3287,
+   "tn": 2445,
+   "precision": 0.8079,
+   "recall": 0.0417,
+   "f1": 0.0793,
+   "fpr": 0.0137,
+   "precision_at_prev_0.01": 0.0298,
+   "precision_at_prev_0.001": 0.003,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.54,
+   "tp": 143,
+   "fp": 29,
+   "fn": 3287,
+   "tn": 2450,
+   "precision": 0.8314,
+   "recall": 0.0417,
+   "f1": 0.0794,
+   "fpr": 0.0117,
+   "precision_at_prev_0.01": 0.0347,
+   "precision_at_prev_0.001": 0.0036,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.56,
+   "tp": 132,
+   "fp": 19,
+   "fn": 3298,
+   "tn": 2460,
+   "precision": 0.8742,
+   "recall": 0.0385,
+   "f1": 0.0737,
+   "fpr": 0.0077,
+   "precision_at_prev_0.01": 0.0481,
+   "precision_at_prev_0.001": 0.005,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.58,
+   "tp": 132,
+   "fp": 13,
+   "fn": 3298,
+   "tn": 2466,
+   "precision": 0.9103,
+   "recall": 0.0385,
+   "f1": 0.0738,
+   "fpr": 0.0052,
+   "precision_at_prev_0.01": 0.0696,
+   "precision_at_prev_0.001": 0.0074,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.6,
+   "tp": 132,
+   "fp": 10,
+   "fn": 3298,
+   "tn": 2469,
+   "precision": 0.9296,
+   "recall": 0.0385,
+   "f1": 0.0739,
+   "fpr": 0.004,
+   "precision_at_prev_0.01": 0.0886,
+   "precision_at_prev_0.001": 0.0095,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.62,
+   "tp": 131,
+   "fp": 8,
+   "fn": 3299,
+   "tn": 2471,
+   "precision": 0.9424,
+   "recall": 0.0382,
+   "f1": 0.0734,
+   "fpr": 0.0032,
+   "precision_at_prev_0.01": 0.1076,
+   "precision_at_prev_0.001": 0.0118,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.64,
+   "tp": 130,
+   "fp": 6,
+   "fn": 3300,
+   "tn": 2473,
+   "precision": 0.9559,
+   "recall": 0.0379,
+   "f1": 0.0729,
+   "fpr": 0.0024,
+   "precision_at_prev_0.01": 0.1376,
+   "precision_at_prev_0.001": 0.0156,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.66,
+   "tp": 130,
+   "fp": 5,
+   "fn": 3300,
+   "tn": 2474,
+   "precision": 0.963,
+   "recall": 0.0379,
+   "f1": 0.0729,
+   "fpr": 0.002,
+   "precision_at_prev_0.01": 0.1607,
+   "precision_at_prev_0.001": 0.0186,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.68,
+   "tp": 130,
+   "fp": 4,
+   "fn": 3300,
+   "tn": 2475,
+   "precision": 0.9701,
+   "recall": 0.0379,
+   "f1": 0.073,
+   "fpr": 0.0016,
+   "precision_at_prev_0.01": 0.1931,
+   "precision_at_prev_0.001": 0.0232,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.7,
+   "tp": 130,
+   "fp": 4,
+   "fn": 3300,
+   "tn": 2475,
+   "precision": 0.9701,
+   "recall": 0.0379,
+   "f1": 0.073,
+   "fpr": 0.0016,
+   "precision_at_prev_0.01": 0.1931,
+   "precision_at_prev_0.001": 0.0232,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.72,
+   "tp": 130,
+   "fp": 2,
+   "fn": 3300,
+   "tn": 2477,
+   "precision": 0.9848,
+   "recall": 0.0379,
+   "f1": 0.073,
+   "fpr": 0.0008,
+   "precision_at_prev_0.01": 0.3237,
+   "precision_at_prev_0.001": 0.0453,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.74,
+   "tp": 120,
+   "fp": 1,
+   "fn": 3310,
+   "tn": 2478,
+   "precision": 0.9917,
+   "recall": 0.035,
+   "f1": 0.0676,
+   "fpr": 0.0004,
+   "precision_at_prev_0.01": 0.4692,
+   "precision_at_prev_0.001": 0.0805,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.76,
+   "tp": 120,
+   "fp": 1,
+   "fn": 3310,
+   "tn": 2478,
+   "precision": 0.9917,
+   "recall": 0.035,
+   "f1": 0.0676,
+   "fpr": 0.0004,
+   "precision_at_prev_0.01": 0.4692,
+   "precision_at_prev_0.001": 0.0805,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.78,
+   "tp": 120,
+   "fp": 1,
+   "fn": 3310,
+   "tn": 2478,
+   "precision": 0.9917,
+   "recall": 0.035,
+   "f1": 0.0676,
+   "fpr": 0.0004,
+   "precision_at_prev_0.01": 0.4692,
+   "precision_at_prev_0.001": 0.0805,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.8,
+   "tp": 120,
+   "fp": 1,
+   "fn": 3310,
+   "tn": 2478,
+   "precision": 0.9917,
+   "recall": 0.035,
+   "f1": 0.0676,
+   "fpr": 0.0004,
+   "precision_at_prev_0.01": 0.4692,
+   "precision_at_prev_0.001": 0.0805,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.82,
+   "tp": 120,
+   "fp": 1,
+   "fn": 3310,
+   "tn": 2478,
+   "precision": 0.9917,
+   "recall": 0.035,
+   "f1": 0.0676,
+   "fpr": 0.0004,
+   "precision_at_prev_0.01": 0.4692,
+   "precision_at_prev_0.001": 0.0805,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.84,
+   "tp": 120,
+   "fp": 1,
+   "fn": 3310,
+   "tn": 2478,
+   "precision": 0.9917,
+   "recall": 0.035,
+   "f1": 0.0676,
+   "fpr": 0.0004,
+   "precision_at_prev_0.01": 0.4692,
+   "precision_at_prev_0.001": 0.0805,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.86,
+   "tp": 1,
+   "fp": 0,
+   "fn": 3429,
+   "tn": 2479,
+   "precision": 1.0,
+   "recall": 0.0003,
+   "f1": 0.0006,
+   "fpr": 0.0,
+   "precision_at_prev_0.01": 1.0,
+   "precision_at_prev_0.001": 1.0,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.88,
+   "tp": 1,
+   "fp": 0,
+   "fn": 3429,
+   "tn": 2479,
+   "precision": 1.0,
+   "recall": 0.0003,
+   "f1": 0.0006,
+   "fpr": 0.0,
+   "precision_at_prev_0.01": 1.0,
+   "precision_at_prev_0.001": 1.0,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.9,
+   "tp": 1,
+   "fp": 0,
+   "fn": 3429,
+   "tn": 2479,
+   "precision": 1.0,
+   "recall": 0.0003,
+   "f1": 0.0006,
+   "fpr": 0.0,
+   "precision_at_prev_0.01": 1.0,
+   "precision_at_prev_0.001": 1.0,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.92,
+   "tp": 0,
+   "fp": 0,
+   "fn": 3430,
+   "tn": 2479,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0.0,
+   "fpr": 0.0,
+   "precision_at_prev_0.01": 0.0,
+   "precision_at_prev_0.001": 0.0,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.94,
+   "tp": 0,
+   "fp": 0,
+   "fn": 3430,
+   "tn": 2479,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0.0,
+   "fpr": 0.0,
+   "precision_at_prev_0.01": 0.0,
+   "precision_at_prev_0.001": 0.0,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.96,
+   "tp": 0,
+   "fp": 0,
+   "fn": 3430,
+   "tn": 2479,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0.0,
+   "fpr": 0.0,
+   "precision_at_prev_0.01": 0.0,
+   "precision_at_prev_0.001": 0.0,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.98,
+   "tp": 0,
+   "fp": 0,
+   "fn": 3430,
+   "tn": 2479,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0.0,
+   "fpr": 0.0,
+   "precision_at_prev_0.01": 0.0,
+   "precision_at_prev_0.001": 0.0,
+   "recall_typo_labelled": 0.0
+  }
+ ],
+ "bootstrap": {
+  "n_boot": 1000,
+  "seed": 0,
+  "method": "stratified percentile bootstrap, 95%",
+  "ci": {
+   "mvp-difflib (14 names)": {
+    "precision": [
+     0.9824,
+     0.9979
+    ],
+    "recall": [
+     0.1213,
+     0.1446
+    ],
+    "f1": [
+     0.2162,
+     0.252
+    ],
+    "fpr": [
+     0.0004,
+     0.0032
+    ]
+   },
+   "lev1 (top-5k)": {
+    "precision": [
+     0.6578,
+     0.7812
+    ],
+    "recall": [
+     0.0364,
+     0.0504
+    ],
+    "f1": [
+     0.0692,
+     0.0948
+    ],
+    "fpr": [
+     0.0173,
+     0.029
+    ]
+   },
+   "typomania/TypoGard (top-5k)": {
+    "precision": [
+     0.4021,
+     0.5902
+    ],
+    "recall": [
+     0.0117,
+     0.0204
+    ],
+    "f1": [
+     0.0227,
+     0.0393
+    ],
+    "fpr": [
+     0.0169,
+     0.0286
+    ]
+   },
+   "pypi-scan (top-50)": {
+    "precision": [
+     0.9752,
+     1.0
+    ],
+    "recall": [
+     0.0306,
+     0.0434
+    ],
+    "f1": [
+     0.0594,
+     0.0832
+    ],
+    "fpr": [
+     0.0,
+     0.0012
+    ]
+   },
+   "pypi-scan (top-5k)": {
+    "precision": [
+     0.7059,
+     0.8323
+    ],
+    "recall": [
+     0.035,
+     0.0487
+    ],
+    "f1": [
+     0.0669,
+     0.0921
+    ],
+    "fpr": [
+     0.0121,
+     0.0222
+    ]
+   },
+   "tracegate (th=0.58)": {
+    "precision": [
+     0.8639,
+     0.9538
+    ],
+    "recall": [
+     0.0321,
+     0.0452
+    ],
+    "f1": [
+     0.0619,
+     0.086
+    ],
+    "fpr": [
+     0.0028,
+     0.0081
+    ]
+   },
+   "tracegate (th=0.46, FPR-matched to lev1)": {
+    "precision": [
+     0.6793,
+     0.8028
+    ],
+    "recall": [
+     0.0367,
+     0.051
+    ],
+    "f1": [
+     0.0697,
+     0.0956
+    ],
+    "fpr": [
+     0.0153,
+     0.0266
+    ]
+   }
+  },
+  "f1_diff_vs_lev1 (top-5k)": {
+   "mvp-difflib (14 names)": {
+    "ci": [
+     0.1366,
+     0.1687
+    ],
+    "p_le_0": 0.0
+   },
+   "typomania/TypoGard (top-5k)": {
+    "ci": [
+     -0.0613,
+     -0.041
+    ],
+    "p_le_0": 1.0
+   },
+   "pypi-scan (top-50)": {
+    "ci": [
+     -0.0166,
+     -0.0063
+    ],
+    "p_le_0": 1.0
+   },
+   "pypi-scan (top-5k)": {
+    "ci": [
+     -0.005,
+     -0.0002
+    ],
+    "p_le_0": 0.991
+   },
+   "tracegate (th=0.58)": {
+    "ci": [
+     -0.0131,
+     -0.0034
+    ],
+    "p_le_0": 1.0
+   },
+   "tracegate (th=0.46, FPR-matched to lev1)": {
+    "ci": [
+     -0.0012,
+     0.0027
+    ],
+    "p_le_0": 0.263
+   }
+  }
+ },
+ "ablation": {
+  "separator": {
+   "tp": 0,
+   "fp": 6,
+   "fn": 3430,
+   "tn": 2473,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0.0,
+   "fpr": 0.0024,
+   "precision_at_prev_0.01": 0.0,
+   "precision_at_prev_0.001": 0.0,
+   "recall_typo_labelled": 0.0
+  },
+  "homoglyph": {
+   "tp": 1,
+   "fp": 3,
+   "fn": 3429,
+   "tn": 2476,
+   "precision": 0.25,
+   "recall": 0.0003,
+   "f1": 0.0006,
+   "fpr": 0.0012,
+   "precision_at_prev_0.01": 0.0025,
+   "precision_at_prev_0.001": 0.0003,
+   "recall_typo_labelled": 0.0
+  },
+  "typo1": {
+   "tp": 131,
+   "fp": 9,
+   "fn": 3299,
+   "tn": 2470,
+   "precision": 0.9357,
+   "recall": 0.0382,
+   "f1": 0.0734,
+   "fpr": 0.0036,
+   "precision_at_prev_0.01": 0.0968,
+   "precision_at_prev_0.001": 0.0105,
+   "recall_typo_labelled": 0.0
+  },
+  "typo2": {
+   "tp": 0,
+   "fp": 0,
+   "fn": 3430,
+   "tn": 2479,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0.0,
+   "fpr": 0.0,
+   "precision_at_prev_0.01": 0.0,
+   "precision_at_prev_0.001": 0.0,
+   "recall_typo_labelled": 0.0
+  },
+  "reorder": {
+   "tp": 0,
+   "fp": 0,
+   "fn": 3430,
+   "tn": 2479,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0.0,
+   "fpr": 0.0,
+   "precision_at_prev_0.01": 0.0,
+   "precision_at_prev_0.001": 0.0,
+   "recall_typo_labelled": 0.0
+  },
+  "combosquat": {
+   "tp": 1,
+   "fp": 0,
+   "fn": 3429,
+   "tn": 2479,
+   "precision": 1.0,
+   "recall": 0.0003,
+   "f1": 0.0006,
+   "fpr": 0.0,
+   "precision_at_prev_0.01": 1.0,
+   "precision_at_prev_0.001": 1.0,
+   "recall_typo_labelled": 0.0
+  },
+  "suffix": {
+   "tp": 0,
+   "fp": 0,
+   "fn": 3430,
+   "tn": 2479,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0.0,
+   "fpr": 0.0,
+   "precision_at_prev_0.01": 0.0,
+   "precision_at_prev_0.001": 0.0,
+   "recall_typo_labelled": 0.0
+  },
+  "brandjack": {
+   "tp": 0,
+   "fp": 0,
+   "fn": 3430,
+   "tn": 2479,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0.0,
+   "fpr": 0.0,
+   "precision_at_prev_0.01": 0.0,
+   "precision_at_prev_0.001": 0.0,
+   "recall_typo_labelled": 0.0
+  }
+ },
+ "by_technique": {
+  "typo1": {
+   "tp": 130,
+   "fp": 7
+  },
+  "homoglyph": {
+   "tp": 1,
+   "fp": 0
+  },
+  "combosquat": {
+   "tp": 1,
+   "fp": 0
+  },
+  "separator": {
+   "tp": 0,
+   "fp": 6
+  }
+ },
+ "examples_tp": [
+  [
+   "bundier",
+   "bundler",
+   "homoglyph",
+   0.9
+  ],
+  [
+   "abundler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "aundler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "bandler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "baundler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "bbundler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "bendler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "beundler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "bhndler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "biundler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "bjndler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "bjundler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "bkundler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "blundler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "bnudler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "bnundler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "bondler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "boundler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "brundler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "bsndler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "bsundler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "buadler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "buandler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "bubdler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "budler",
+   "bundler",
+   "typo1",
+   0.85
+  ]
+ ],
+ "examples_fp": [
+  [
+   "jbundler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "ir-b",
+   "irb",
+   "separator",
+   0.728
+  ],
+  [
+   "jsonschema",
+   "json-schema",
+   "separator",
+   0.7169
+  ],
+  [
+   "papertrail",
+   "paper-trail",
+   "separator",
+   0.708
+  ],
+  [
+   "httpparty",
+   "httparty",
+   "typo1",
+   0.6775
+  ],
+  [
+   "dry-rails",
+   "pry-rails",
+   "typo1",
+   0.6478
+  ],
+  [
+   "sysloglogger",
+   "syslog-logger",
+   "separator",
+   0.6393
+  ],
+  [
+   "open-api-parser",
+   "openapi-parser",
+   "separator",
+   0.6363
+  ],
+  [
+   "rucaptcha",
+   "recaptcha",
+   "typo1",
+   0.6131
+  ],
+  [
+   "capybara-select2",
+   "capybara-select-2",
+   "separator",
+   0.6064
+  ],
+  [
+   "inflections",
+   "inflection",
+   "typo1",
+   0.5912
+  ],
+  [
+   "omniauth-twitter2",
+   "omniauth-twitter",
+   "typo1",
+   0.5876
+  ],
+  [
+   "sprig",
+   "spring",
+   "typo1",
+   0.5874
+  ]
+ ],
+ "sources": {
+  "malicious": "OSV MAL-* (ossf/malicious-packages) via osv-vulnerabilities bulk dump",
+  "popular": "packages.ecosyste.ms (rubygems.org, by downloads)"
+ }
+}

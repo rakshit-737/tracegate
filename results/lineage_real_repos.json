@@ -1,55 +1,170 @@
 {
  "summary": {
   "tracegate": {
-   "correct": 356,
-   "total": 365,
-   "accuracy": 0.9753
+   "correct": 2846,
+   "total": 3205,
+   "accuracy": 0.888,
+   "wilson95": [
+    0.8766,
+    0.8984
+   ]
   },
   "last-manifest-commit": {
-   "correct": 63,
-   "total": 365,
-   "accuracy": 0.1726
+   "correct": 459,
+   "total": 3205,
+   "accuracy": 0.1432,
+   "wilson95": [
+    0.1315,
+    0.1558
+   ]
   },
   "pickaxe-first": {
-   "correct": 34,
-   "total": 365,
-   "accuracy": 0.0932
+   "correct": 477,
+   "total": 3205,
+   "accuracy": 0.1488,
+   "wilson95": [
+    0.1369,
+    0.1616
+   ]
   },
-  "scanner-only": {
-   "correct": 0,
-   "total": 365,
-   "accuracy": 0.0
+  "pickaxe-exact-pin": {
+   "correct": 2389,
+   "total": 3205,
+   "accuracy": 0.7454,
+   "wilson95": [
+    0.73,
+    0.7602
+   ]
   }
  },
+ "summary_by_ecosystem": {
+  "pypi": {
+   "tracegate": {
+    "correct": 356,
+    "total": 364,
+    "accuracy": 0.978
+   },
+   "last-manifest-commit": {
+    "correct": 66,
+    "total": 364,
+    "accuracy": 0.1813
+   },
+   "pickaxe-first": {
+    "correct": 32,
+    "total": 364,
+    "accuracy": 0.0879
+   },
+   "pickaxe-exact-pin": {
+    "correct": 364,
+    "total": 364,
+    "accuracy": 1.0
+   }
+  },
+  "golang": {
+   "tracegate": {
+    "correct": 327,
+    "total": 328,
+    "accuracy": 0.997
+   },
+   "last-manifest-commit": {
+    "correct": 40,
+    "total": 328,
+    "accuracy": 0.122
+   },
+   "pickaxe-first": {
+    "correct": 29,
+    "total": 328,
+    "accuracy": 0.0884
+   },
+   "pickaxe-exact-pin": {
+    "correct": 328,
+    "total": 328,
+    "accuracy": 1.0
+   }
+  },
+  "cargo": {
+   "tracegate": {
+    "correct": 459,
+    "total": 483,
+    "accuracy": 0.9503
+   },
+   "last-manifest-commit": {
+    "correct": 37,
+    "total": 483,
+    "accuracy": 0.0766
+   },
+   "pickaxe-first": {
+    "correct": 105,
+    "total": 483,
+    "accuracy": 0.2174
+   },
+   "pickaxe-exact-pin": {
+    "correct": 264,
+    "total": 483,
+    "accuracy": 0.5466
+   }
+  },
+  "npm": {
+   "tracegate": {
+    "correct": 1704,
+    "total": 2030,
+    "accuracy": 0.8394
+   },
+   "last-manifest-commit": {
+    "correct": 316,
+    "total": 2030,
+    "accuracy": 0.1557
+   },
+   "pickaxe-first": {
+    "correct": 311,
+    "total": 2030,
+    "accuracy": 0.1532
+   },
+   "pickaxe-exact-pin": {
+    "correct": 1433,
+    "total": 2030,
+    "accuracy": 0.7059
+   }
+  }
+ },
+ "mode": "HEAD sources",
+ "materialize": false,
  "repos": [
   {
    "repo": "healthchecks",
    "manifest": "requirements.txt",
+   "ecosystem": "pypi",
    "manifest_commits": 236,
    "snapshots": 12,
-   "history_walk_s": 16.81,
-   "gate_ms_median": 37.1,
-   "gate_ms_max": 287.4,
+   "history_walk_s": 0.47,
+   "gate_ms_median": 5.6,
+   "gate_ms_max": 9.8,
    "attribution": {
     "tracegate": {
-     "correct": 21,
-     "total": 21,
+     "correct": 22,
+     "total": 22,
      "accuracy": 1.0
     },
     "last-manifest-commit": {
      "correct": 9,
-     "total": 21,
-     "accuracy": 0.4286
+     "total": 22,
+     "accuracy": 0.4091
     },
     "pickaxe-first": {
      "correct": 5,
-     "total": 21,
-     "accuracy": 0.2381
+     "total": 22,
+     "accuracy": 0.2273
+    },
+    "pickaxe-exact-pin": {
+     "correct": 22,
+     "total": 22,
+     "accuracy": 1.0
     },
     "scanner-only": {
-     "correct": 0,
-     "total": 21,
-     "accuracy": 0.0
+     "correct": null,
+     "total": 22,
+     "accuracy": null,
+     "note": "n/a: scanner output carries no commit"
     }
    },
    "disagreements": [],
@@ -59,16 +174,17 @@
      "date": "2015-06-11",
      "pins": 2,
      "vulnerable_pkgs": 1,
-     "findings": 31,
+     "findings": 32,
      "backtrack_correct": 1,
      "verdict": "block",
+     "coverage": 1.0,
      "graph": {
       "nodes": 5,
       "edges": 6,
-      "findings": 31
+      "findings": 32
      },
-     "high_plus": 12,
-     "high_plus_actionable": 12,
+     "high_plus": 13,
+     "high_plus_actionable": 13,
      "verdict_after_reachability": "block",
      "warden_flags": []
     },
@@ -77,16 +193,17 @@
      "date": "2018-08-03",
      "pins": 5,
      "vulnerable_pkgs": 2,
-     "findings": 32,
+     "findings": 33,
      "backtrack_correct": 2,
      "verdict": "block",
+     "coverage": 1.0,
      "graph": {
       "nodes": 73,
       "edges": 56,
-      "findings": 32
+      "findings": 33
      },
-     "high_plus": 14,
-     "high_plus_actionable": 13,
+     "high_plus": 15,
+     "high_plus_actionable": 14,
      "verdict_after_reachability": "block",
      "warden_flags": []
     },
@@ -95,16 +212,17 @@
      "date": "2019-12-02",
      "pins": 6,
      "vulnerable_pkgs": 2,
-     "findings": 38,
+     "findings": 39,
      "backtrack_correct": 2,
      "verdict": "block",
+     "coverage": 1.0,
      "graph": {
       "nodes": 145,
       "edges": 107,
-      "findings": 38
+      "findings": 39
      },
-     "high_plus": 16,
-     "high_plus_actionable": 16,
+     "high_plus": 17,
+     "high_plus_actionable": 17,
      "verdict_after_reachability": "block",
      "warden_flags": []
     },
@@ -113,16 +231,17 @@
      "date": "2021-02-01",
      "pins": 8,
      "vulnerable_pkgs": 2,
-     "findings": 24,
+     "findings": 25,
      "backtrack_correct": 2,
      "verdict": "block",
+     "coverage": 1.0,
      "graph": {
       "nodes": 210,
       "edges": 153,
-      "findings": 24
+      "findings": 25
      },
-     "high_plus": 7,
-     "high_plus_actionable": 7,
+     "high_plus": 8,
+     "high_plus_actionable": 8,
      "verdict_after_reachability": "block",
      "warden_flags": []
     },
@@ -131,16 +250,17 @@
      "date": "2021-12-07",
      "pins": 12,
      "vulnerable_pkgs": 2,
-     "findings": 35,
+     "findings": 36,
      "backtrack_correct": 2,
      "verdict": "block",
+     "coverage": 1.0,
      "graph": {
       "nodes": 275,
       "edges": 201,
-      "findings": 35
+      "findings": 36
      },
-     "high_plus": 18,
-     "high_plus_actionable": 18,
+     "high_plus": 19,
+     "high_plus_actionable": 19,
      "verdict_after_reachability": "block",
      "warden_flags": []
     },
@@ -149,16 +269,17 @@
      "date": "2022-10-04",
      "pins": 11,
      "vulnerable_pkgs": 1,
-     "findings": 19,
+     "findings": 20,
      "backtrack_correct": 1,
      "verdict": "block",
+     "coverage": 1.0,
      "graph": {
       "nodes": 348,
       "edges": 252,
-      "findings": 19
+      "findings": 20
      },
-     "high_plus": 9,
-     "high_plus_actionable": 9,
+     "high_plus": 10,
+     "high_plus_actionable": 10,
      "verdict_after_reachability": "block",
      "warden_flags": []
     },
@@ -167,16 +288,17 @@
      "date": "2023-09-05",
      "pins": 12,
      "vulnerable_pkgs": 3,
-     "findings": 50,
+     "findings": 51,
      "backtrack_correct": 3,
      "verdict": "block",
+     "coverage": 1.0,
      "graph": {
       "nodes": 423,
       "edges": 307,
-      "findings": 50
+      "findings": 51
      },
-     "high_plus": 17,
-     "high_plus_actionable": 17,
+     "high_plus": 18,
+     "high_plus_actionable": 18,
      "verdict_after_reachability": "block",
      "warden_flags": []
     },
@@ -185,16 +307,17 @@
      "date": "2024-04-03",
      "pins": 14,
      "vulnerable_pkgs": 2,
-     "findings": 27,
+     "findings": 28,
      "backtrack_correct": 2,
      "verdict": "block",
+     "coverage": 1.0,
      "graph": {
       "nodes": 498,
       "edges": 363,
-      "findings": 27
+      "findings": 28
      },
-     "high_plus": 8,
-     "high_plus_actionable": 8,
+     "high_plus": 9,
+     "high_plus_actionable": 9,
      "verdict_after_reachability": "block",
      "warden_flags": []
     },
@@ -203,16 +326,17 @@
      "date": "2025-02-19",
      "pins": 15,
      "vulnerable_pkgs": 2,
-     "findings": 25,
+     "findings": 34,
      "backtrack_correct": 2,
      "verdict": "block",
+     "coverage": 1.0,
      "graph": {
       "nodes": 574,
       "edges": 419,
-      "findings": 25
+      "findings": 34
      },
-     "high_plus": 7,
-     "high_plus_actionable": 7,
+     "high_plus": 11,
+     "high_plus_actionable": 11,
      "verdict_after_reachability": "block",
      "warden_flags": []
     },
@@ -221,16 +345,17 @@
      "date": "2025-10-08",
      "pins": 15,
      "vulnerable_pkgs": 2,
-     "findings": 36,
+     "findings": 45,
      "backtrack_correct": 2,
      "verdict": "block",
+     "coverage": 1.0,
      "graph": {
       "nodes": 645,
       "edges": 469,
-      "findings": 36
+      "findings": 45
      },
-     "high_plus": 10,
-     "high_plus_actionable": 10,
+     "high_plus": 14,
+     "high_plus_actionable": 14,
      "verdict_after_reachability": "block",
      "warden_flags": []
     },
@@ -239,16 +364,17 @@
      "date": "2026-03-18",
      "pins": 15,
      "vulnerable_pkgs": 2,
-     "findings": 22,
+     "findings": 32,
      "backtrack_correct": 2,
      "verdict": "block",
+     "coverage": 1.0,
      "graph": {
       "nodes": 714,
       "edges": 516,
-      "findings": 22
+      "findings": 32
      },
-     "high_plus": 3,
-     "high_plus_actionable": 3,
+     "high_plus": 7,
+     "high_plus_actionable": 7,
      "verdict_after_reachability": "block",
      "warden_flags": []
     },
@@ -256,18 +382,19 @@
      "sha": "5bd5d9d38d",
      "date": "2026-09-21",
      "pins": 15,
-     "vulnerable_pkgs": 0,
-     "findings": 0,
-     "backtrack_correct": 0,
-     "verdict": "pass",
+     "vulnerable_pkgs": 1,
+     "findings": 13,
+     "backtrack_correct": 1,
+     "verdict": "block",
+     "coverage": 1.0,
      "graph": {
       "nodes": 784,
       "edges": 565,
-      "findings": 0
+      "findings": 13
      },
-     "high_plus": 0,
-     "high_plus_actionable": 0,
-     "verdict_after_reachability": "pass",
+     "high_plus": 6,
+     "high_plus_actionable": 6,
+     "verdict_after_reachability": "block",
      "warden_flags": []
     }
    ],
@@ -288,8 +415,8 @@
     "trivy_unmatched": 0
    },
    "reachability": {
-    "high_plus_total": 121,
-    "actionable_total": 120,
+    "high_plus_total": 147,
+    "actionable_total": 146,
     "downgraded_examples": [
      "CVE-2018-18074 requests==2.9.1"
     ],
@@ -299,76 +426,77 @@
   {
    "repo": "netbox",
    "manifest": "requirements.txt",
-   "manifest_commits": 215,
+   "ecosystem": "pypi",
+   "manifest_commits": 216,
    "snapshots": 12,
-   "history_walk_s": 16.16,
-   "gate_ms_median": 70.0,
-   "gate_ms_max": 175.6,
+   "history_walk_s": 0.44,
+   "gate_ms_median": 11.8,
+   "gate_ms_max": 21.1,
    "attribution": {
     "tracegate": {
      "correct": 108,
-     "total": 109,
-     "accuracy": 0.9908
+     "total": 108,
+     "accuracy": 1.0
     },
     "last-manifest-commit": {
-     "correct": 39,
-     "total": 109,
-     "accuracy": 0.3578
+     "correct": 43,
+     "total": 108,
+     "accuracy": 0.3981
     },
     "pickaxe-first": {
      "correct": 16,
-     "total": 109,
-     "accuracy": 0.1468
+     "total": 108,
+     "accuracy": 0.1481
+    },
+    "pickaxe-exact-pin": {
+     "correct": 108,
+     "total": 108,
+     "accuracy": 1.0
     },
     "scanner-only": {
-     "correct": 0,
-     "total": 109,
-     "accuracy": 0.0
+     "correct": null,
+     "total": 108,
+     "accuracy": null,
+     "note": "n/a: scanner output carries no commit"
     }
    },
-   "disagreements": [
-    {
-     "snapshot": "6b6ea36b4c",
-     "package": "social-auth-core",
-     "tracegate": "7c09259b7d",
-     "blame": "f1a7bceef2",
-     "blame_subject": "Merge pull request #10758 from netbox-community/develop"
-    }
-   ],
+   "disagreements": [],
    "per_snapshot": [
     {
      "sha": "27b289ee3b",
      "date": "2016-03-01",
      "pins": 25,
      "vulnerable_pkgs": 11,
-     "findings": 58,
+     "findings": 59,
      "backtrack_correct": 11,
      "verdict": "block",
+     "coverage": 1.0,
      "graph": {
       "nodes": 28,
       "edges": 52,
-      "findings": 58
+      "findings": 59
      },
-     "high_plus": 27,
-     "high_plus_actionable": 18,
+     "high_plus": 28,
+     "high_plus_actionable": 19,
      "verdict_after_reachability": "block",
      "warden_flags": []
     },
     {
-     "sha": "cb83eb204b",
-     "date": "2018-11-06",
-     "pins": 21,
+     "sha": "8863a3126d",
+     "date": "2018-12-10",
+     "pins": 18,
      "vulnerable_pkgs": 7,
-     "findings": 66,
+     "findings": 91,
      "backtrack_correct": 7,
      "verdict": "block",
+     "coverage": 1.0,
      "graph": {
-      "nodes": 114,
-      "edges": 117,
-      "findings": 66
+      "nodes": 129,
+      "edges": 128,
+      "findings": 91
      },
-     "high_plus": 48,
-     "high_plus_actionable": 46,
+     "high_plus": 61,
+     "high_plus_actionable": 60,
      "verdict_after_reachability": "block",
      "warden_flags": []
     },
@@ -377,39 +505,41 @@
      "date": "2021-04-12",
      "pins": 23,
      "vulnerable_pkgs": 8,
-     "findings": 59,
+     "findings": 60,
      "backtrack_correct": 8,
      "verdict": "block",
+     "coverage": 1.0,
      "graph": {
       "nodes": 265,
       "edges": 250,
-      "findings": 60
+      "findings": 61
      },
-     "high_plus": 31,
-     "high_plus_actionable": 30,
+     "high_plus": 32,
+     "high_plus_actionable": 31,
      "verdict_after_reachability": "block",
      "warden_flags": [
-      "Warden risk 0.55: possible typo1 of 'django-pglock' (insertion; target rank #3478)"
+      "Warden risk 0.56: possible typo1 of 'django-pglock' (insertion; target rank #2856)"
      ]
     },
     {
-     "sha": "f5356b84f6",
-     "date": "2021-11-03",
+     "sha": "b29a5511df",
+     "date": "2021-11-12",
      "pins": 28,
      "vulnerable_pkgs": 8,
-     "findings": 71,
+     "findings": 72,
      "backtrack_correct": 8,
      "verdict": "block",
+     "coverage": 1.0,
      "graph": {
-      "nodes": 351,
-      "edges": 322,
-      "findings": 72
+      "nodes": 355,
+      "edges": 325,
+      "findings": 73
      },
-     "high_plus": 38,
-     "high_plus_actionable": 38,
+     "high_plus": 39,
+     "high_plus_actionable": 39,
      "verdict_after_reachability": "block",
      "warden_flags": [
-      "Warden risk 0.55: possible typo1 of 'django-pglock' (insertion; target rank #3478)"
+      "Warden risk 0.56: possible typo1 of 'django-pglock' (insertion; target rank #2856)"
      ]
     },
     {
@@ -417,39 +547,41 @@
      "date": "2022-06-20",
      "pins": 34,
      "vulnerable_pkgs": 12,
-     "findings": 65,
+     "findings": 66,
      "backtrack_correct": 12,
      "verdict": "block",
+     "coverage": 1.0,
      "graph": {
       "nodes": 452,
       "edges": 409,
-      "findings": 66
+      "findings": 67
      },
-     "high_plus": 29,
-     "high_plus_actionable": 29,
+     "high_plus": 30,
+     "high_plus_actionable": 30,
      "verdict_after_reachability": "block",
      "warden_flags": [
-      "Warden risk 0.55: possible typo1 of 'django-pglock' (insertion; target rank #3478)"
+      "Warden risk 0.56: possible typo1 of 'django-pglock' (insertion; target rank #2856)"
      ]
     },
     {
-     "sha": "6b6ea36b4c",
-     "date": "2023-03-13",
+     "sha": "4eaba7993f",
+     "date": "2023-03-28",
      "pins": 34,
      "vulnerable_pkgs": 12,
-     "findings": 59,
-     "backtrack_correct": 11,
+     "findings": 60,
+     "backtrack_correct": 12,
      "verdict": "block",
+     "coverage": 1.0,
      "graph": {
-      "nodes": 563,
-      "edges": 502,
-      "findings": 60
+      "nodes": 571,
+      "edges": 509,
+      "findings": 61
      },
-     "high_plus": 24,
-     "high_plus_actionable": 24,
+     "high_plus": 25,
+     "high_plus_actionable": 25,
      "verdict_after_reachability": "block",
      "warden_flags": [
-      "Warden risk 0.55: possible typo1 of 'django-pglock' (insertion; target rank #3478)"
+      "Warden risk 0.56: possible typo1 of 'django-pglock' (insertion; target rank #2856)"
      ]
     },
     {
@@ -457,39 +589,41 @@
      "date": "2023-11-30",
      "pins": 36,
      "vulnerable_pkgs": 13,
-     "findings": 87,
+     "findings": 88,
      "backtrack_correct": 13,
      "verdict": "block",
+     "coverage": 1.0,
      "graph": {
       "nodes": 727,
       "edges": 649,
-      "findings": 88
+      "findings": 89
      },
-     "high_plus": 30,
-     "high_plus_actionable": 30,
+     "high_plus": 31,
+     "high_plus_actionable": 31,
      "verdict_after_reachability": "block",
      "warden_flags": [
-      "Warden risk 0.55: possible typo1 of 'django-pglock' (insertion; target rank #3478)"
+      "Warden risk 0.56: possible typo1 of 'django-pglock' (insertion; target rank #2856)"
      ]
     },
     {
-     "sha": "cbf84a6b95",
-     "date": "2024-07-26",
+     "sha": "09d6b9c62f",
+     "date": "2024-08-14",
      "pins": 37,
      "vulnerable_pkgs": 11,
-     "findings": 61,
+     "findings": 58,
      "backtrack_correct": 11,
      "verdict": "block",
+     "coverage": 1.0,
      "graph": {
-      "nodes": 868,
-      "edges": 773,
-      "findings": 62
+      "nodes": 876,
+      "edges": 780,
+      "findings": 59
      },
      "high_plus": 21,
      "high_plus_actionable": 21,
      "verdict_after_reachability": "block",
      "warden_flags": [
-      "Warden risk 0.55: possible typo1 of 'django-pglock' (insertion; target rank #3478)"
+      "Warden risk 0.56: possible typo1 of 'django-pglock' (insertion; target rank #2856)"
      ]
     },
     {
@@ -497,39 +631,41 @@
      "date": "2025-02-21",
      "pins": 38,
      "vulnerable_pkgs": 11,
-     "findings": 53,
+     "findings": 54,
      "backtrack_correct": 11,
      "verdict": "block",
+     "coverage": 1.0,
      "graph": {
       "nodes": 993,
       "edges": 880,
-      "findings": 54
+      "findings": 55
      },
-     "high_plus": 20,
-     "high_plus_actionable": 20,
+     "high_plus": 21,
+     "high_plus_actionable": 21,
      "verdict_after_reachability": "block",
      "warden_flags": [
-      "Warden risk 0.55: possible typo1 of 'django-pglock' (insertion; target rank #3478)"
+      "Warden risk 0.56: possible typo1 of 'django-pglock' (insertion; target rank #2856)"
      ]
     },
     {
-     "sha": "c9386bc9c3",
-     "date": "2025-10-13",
+     "sha": "a69bbcf651",
+     "date": "2025-10-14",
      "pins": 43,
-     "vulnerable_pkgs": 9,
+     "vulnerable_pkgs": 8,
      "findings": 62,
-     "backtrack_correct": 9,
+     "backtrack_correct": 8,
      "verdict": "block",
+     "coverage": 1.0,
      "graph": {
-      "nodes": 1133,
-      "edges": 1006,
+      "nodes": 1144,
+      "edges": 1016,
       "findings": 63
      },
-     "high_plus": 23,
-     "high_plus_actionable": 23,
+     "high_plus": 24,
+     "high_plus_actionable": 24,
      "verdict_after_reachability": "block",
      "warden_flags": [
-      "Warden risk 0.55: possible typo1 of 'django-pglock' (insertion; target rank #3478)"
+      "Warden risk 0.56: possible typo1 of 'django-pglock' (insertion; target rank #2856)"
      ]
     },
     {
@@ -537,44 +673,46 @@
      "date": "2026-04-28",
      "pins": 44,
      "vulnerable_pkgs": 7,
-     "findings": 37,
+     "findings": 38,
      "backtrack_correct": 7,
      "verdict": "block",
+     "coverage": 1.0,
      "graph": {
       "nodes": 1279,
       "edges": 1133,
-      "findings": 38
+      "findings": 39
      },
-     "high_plus": 11,
-     "high_plus_actionable": 11,
+     "high_plus": 12,
+     "high_plus_actionable": 12,
      "verdict_after_reachability": "block",
      "warden_flags": [
-      "Warden risk 0.55: possible typo1 of 'django-pglock' (insertion; target rank #3478)"
+      "Warden risk 0.56: possible typo1 of 'django-pglock' (insertion; target rank #2856)"
      ]
     },
     {
-     "sha": "abccf4e036",
-     "date": "2026-09-15",
+     "sha": "251458b89a",
+     "date": "2026-09-29",
      "pins": 45,
      "vulnerable_pkgs": 0,
      "findings": 0,
      "backtrack_correct": 0,
      "verdict": "warn",
+     "coverage": 1.0,
      "graph": {
-      "nodes": 1408,
-      "edges": 1244,
+      "nodes": 1416,
+      "edges": 1251,
       "findings": 1
      },
      "high_plus": 0,
      "high_plus_actionable": 0,
      "verdict_after_reachability": "warn",
      "warden_flags": [
-      "Warden risk 0.55: possible typo1 of 'django-pglock' (insertion; target rank #3478)"
+      "Warden risk 0.56: possible typo1 of 'django-pglock' (insertion; target rank #2856)"
      ]
     }
    ],
    "head": {
-    "sha": "abccf4e03650",
+    "sha": "251458b89a5e",
     "pins": 45,
     "reach_status_counts": {
      "imported": 35,
@@ -597,8 +735,8 @@
     "trivy_unmatched": 0
    },
    "reachability": {
-    "high_plus_total": 302,
-    "actionable_total": 290,
+    "high_plus_total": 324,
+    "actionable_total": 313,
     "downgraded_examples": [
      "CVE-2013-7459 pycrypto==2.6.1",
      "CVE-2018-1000805 paramiko==1.15.2",
@@ -607,9 +745,8 @@
      "CVE-2019-14853 ecdsa==0.13",
      "CVE-2019-14859 ecdsa==0.13",
      "CVE-2022-24302 paramiko==1.15.2",
-     "CVE-2022-24302 paramiko==2.4.2",
      "CVE-2023-52323 pycryptodome==3.10.1",
-     "CVE-2023-52323 pycryptodome==3.6.6",
+     "CVE-2023-52323 pycryptodome==3.7.2",
      "CVE-2024-23342 ecdsa==0.13",
      "CVE-2026-41066 lxml==3.5.0"
     ],
@@ -619,85 +756,92 @@
   {
    "repo": "warehouse",
    "manifest": "requirements/main.txt",
-   "manifest_commits": 2514,
+   "ecosystem": "pypi",
+   "manifest_commits": 2521,
    "snapshots": 12,
-   "history_walk_s": 185.31,
-   "gate_ms_median": 447.5,
-   "gate_ms_max": 2989.3,
+   "history_walk_s": 9.38,
+   "gate_ms_median": 62.1,
+   "gate_ms_max": 553.9,
    "attribution": {
     "tracegate": {
-     "correct": 227,
-     "total": 235,
-     "accuracy": 0.966
+     "correct": 226,
+     "total": 234,
+     "accuracy": 0.9658
     },
     "last-manifest-commit": {
-     "correct": 15,
-     "total": 235,
-     "accuracy": 0.0638
+     "correct": 14,
+     "total": 234,
+     "accuracy": 0.0598
     },
     "pickaxe-first": {
-     "correct": 13,
-     "total": 235,
-     "accuracy": 0.0553
+     "correct": 11,
+     "total": 234,
+     "accuracy": 0.047
+    },
+    "pickaxe-exact-pin": {
+     "correct": 234,
+     "total": 234,
+     "accuracy": 1.0
     },
     "scanner-only": {
-     "correct": 0,
-     "total": 235,
-     "accuracy": 0.0
+     "correct": null,
+     "total": 234,
+     "accuracy": null,
+     "note": "n/a: scanner output carries no commit"
     }
    },
    "disagreements": [
     {
-     "snapshot": "ca80b3c923",
+     "snapshot": "2fd1fb6b26",
      "package": "html5lib",
      "tracegate": "d20db4e0e5",
      "blame": "3932163e87",
      "blame_subject": "Merge pull request #1044 from dstufft/hashes"
     },
     {
-     "snapshot": "ca80b3c923",
+     "snapshot": "2fd1fb6b26",
      "package": "pygments",
      "tracegate": "d92a5bae5c",
      "blame": "3932163e87",
      "blame_subject": "Merge pull request #1044 from dstufft/hashes"
     },
     {
-     "snapshot": "2d2f589c8c",
+     "snapshot": "4dbf0b4b75",
      "package": "babel",
      "tracegate": "3ba9bb9c6f",
      "blame": "d8bb63bf22",
      "blame_subject": "Bump boto3 from 1.9.31 to 1.9.32 (#4934)"
     },
     {
-     "snapshot": "2d2f589c8c",
+     "snapshot": "4dbf0b4b75",
      "package": "celery",
      "tracegate": "373abd4886",
      "blame": "d8bb63bf22",
      "blame_subject": "Bump boto3 from 1.9.31 to 1.9.32 (#4934)"
     },
     {
-     "snapshot": "2d2f589c8c",
+     "snapshot": "4dbf0b4b75",
      "package": "jinja2",
      "tracegate": "75ed5f8809",
      "blame": "d8bb63bf22",
      "blame_subject": "Bump boto3 from 1.9.31 to 1.9.32 (#4934)"
     },
     {
-     "snapshot": "2d2f589c8c",
+     "snapshot": "4dbf0b4b75",
      "package": "mako",
      "tracegate": "49df5fda37",
      "blame": "d8bb63bf22",
      "blame_subject": "Bump boto3 from 1.9.31 to 1.9.32 (#4934)"
     },
     {
-     "snapshot": "2d2f589c8c",
+     "snapshot": "4dbf0b4b75",
      "package": "pygments",
      "tracegate": "6e1554f23c",
      "blame": "d8bb63bf22",
      "blame_subject": "Bump boto3 from 1.9.31 to 1.9.32 (#4934)"
     },
     {
-     "snapshot": "db49f34adc",
+     "snapshot": "66d1d26368",
      "package": "celery",
      "tracegate": "93deda17e6",
      "blame": "502a42b536",
@@ -713,207 +857,219 @@
      "findings": 25,
      "backtrack_correct": 9,
      "verdict": "block",
+     "coverage": 1.0,
      "graph": {
       "nodes": 54,
       "edges": 104,
       "findings": 25
      },
      "high_plus": 16,
-     "high_plus_actionable": 10,
+     "high_plus_actionable": 14,
      "verdict_after_reachability": "block",
      "warden_flags": []
     },
     {
-     "sha": "ca80b3c923",
-     "date": "2017-01-07",
+     "sha": "2fd1fb6b26",
+     "date": "2017-01-08",
      "pins": 76,
      "vulnerable_pkgs": 16,
-     "findings": 72,
+     "findings": 73,
      "backtrack_correct": 14,
      "verdict": "block",
+     "coverage": 1.0,
      "graph": {
-      "nodes": 995,
-      "edges": 844,
-      "findings": 72
+      "nodes": 998,
+      "edges": 846,
+      "findings": 73
      },
-     "high_plus": 26,
-     "high_plus_actionable": 18,
-     "verdict_after_reachability": "block",
-     "warden_flags": []
-    },
-    {
-     "sha": "c23f9e163a",
-     "date": "2017-07-31",
-     "pins": 94,
-     "vulnerable_pkgs": 20,
-     "findings": 87,
-     "backtrack_correct": 20,
-     "verdict": "block",
-     "graph": {
-      "nodes": 1705,
-      "edges": 1348,
-      "findings": 87
-     },
-     "high_plus": 39,
+     "high_plus": 27,
      "high_plus_actionable": 23,
      "verdict_after_reachability": "block",
      "warden_flags": []
     },
     {
-     "sha": "8e71d85a1d",
-     "date": "2018-02-08",
+     "sha": "87b6892a16",
+     "date": "2017-08-01",
      "pins": 94,
      "vulnerable_pkgs": 20,
-     "findings": 84,
+     "findings": 88,
      "backtrack_correct": 20,
      "verdict": "block",
+     "coverage": 1.0,
      "graph": {
-      "nodes": 2403,
-      "edges": 1818,
-      "findings": 84
+      "nodes": 1708,
+      "edges": 1350,
+      "findings": 88
      },
-     "high_plus": 38,
-     "high_plus_actionable": 23,
-     "verdict_after_reachability": "block",
-     "warden_flags": []
-    },
-    {
-     "sha": "8239a732f5",
-     "date": "2018-06-27",
-     "pins": 104,
-     "vulnerable_pkgs": 22,
-     "findings": 97,
-     "backtrack_correct": 22,
-     "verdict": "block",
-     "graph": {
-      "nodes": 3103,
-      "edges": 2302,
-      "findings": 97
-     },
-     "high_plus": 45,
-     "high_plus_actionable": 31,
-     "verdict_after_reachability": "block",
-     "warden_flags": []
-    },
-    {
-     "sha": "2d2f589c8c",
-     "date": "2018-11-20",
-     "pins": 107,
-     "vulnerable_pkgs": 21,
-     "findings": 96,
-     "backtrack_correct": 16,
-     "verdict": "block",
-     "graph": {
-      "nodes": 3804,
-      "edges": 2780,
-      "findings": 96
-     },
-     "high_plus": 45,
-     "high_plus_actionable": 31,
-     "verdict_after_reachability": "block",
-     "warden_flags": []
-    },
-    {
-     "sha": "76e3cc31d4",
-     "date": "2019-06-04",
-     "pins": 108,
-     "vulnerable_pkgs": 20,
-     "findings": 92,
-     "backtrack_correct": 20,
-     "verdict": "block",
-     "graph": {
-      "nodes": 4548,
-      "edges": 3302,
-      "findings": 92
-     },
-     "high_plus": 42,
+     "high_plus": 40,
      "high_plus_actionable": 28,
      "verdict_after_reachability": "block",
      "warden_flags": []
     },
     {
-     "sha": "c339820283",
-     "date": "2020-03-13",
-     "pins": 118,
-     "vulnerable_pkgs": 25,
-     "findings": 99,
-     "backtrack_correct": 25,
+     "sha": "c41d6bc5e6",
+     "date": "2018-02-08",
+     "pins": 94,
+     "vulnerable_pkgs": 20,
+     "findings": 85,
+     "backtrack_correct": 20,
      "verdict": "block",
+     "coverage": 1.0,
      "graph": {
-      "nodes": 5256,
-      "edges": 3795,
-      "findings": 99
+      "nodes": 2409,
+      "edges": 1822,
+      "findings": 85
      },
-     "high_plus": 46,
+     "high_plus": 39,
      "high_plus_actionable": 29,
      "verdict_after_reachability": "block",
      "warden_flags": []
     },
     {
-     "sha": "db49f34adc",
-     "date": "2021-03-12",
-     "pins": 122,
-     "vulnerable_pkgs": 26,
-     "findings": 90,
-     "backtrack_correct": 25,
+     "sha": "f281980bb7",
+     "date": "2018-06-29",
+     "pins": 104,
+     "vulnerable_pkgs": 22,
+     "findings": 98,
+     "backtrack_correct": 22,
      "verdict": "block",
+     "coverage": 1.0,
      "graph": {
-      "nodes": 6093,
-      "edges": 4414,
-      "findings": 90
+      "nodes": 3109,
+      "edges": 2306,
+      "findings": 98
      },
-     "high_plus": 40,
+     "high_plus": 46,
      "high_plus_actionable": 36,
      "verdict_after_reachability": "block",
      "warden_flags": []
     },
     {
-     "sha": "1023676124",
-     "date": "2022-11-02",
-     "pins": 144,
-     "vulnerable_pkgs": 30,
-     "findings": 105,
-     "backtrack_correct": 30,
+     "sha": "4dbf0b4b75",
+     "date": "2018-11-21",
+     "pins": 107,
+     "vulnerable_pkgs": 21,
+     "findings": 97,
+     "backtrack_correct": 16,
      "verdict": "block",
+     "coverage": 1.0,
      "graph": {
-      "nodes": 7215,
-      "edges": 5339,
-      "findings": 105
+      "nodes": 3812,
+      "edges": 2787,
+      "findings": 97
+     },
+     "high_plus": 46,
+     "high_plus_actionable": 36,
+     "verdict_after_reachability": "block",
+     "warden_flags": []
+    },
+    {
+     "sha": "6bddefe980",
+     "date": "2019-06-05",
+     "pins": 108,
+     "vulnerable_pkgs": 20,
+     "findings": 93,
+     "backtrack_correct": 20,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 4561,
+      "edges": 3311,
+      "findings": 93
      },
      "high_plus": 43,
-     "high_plus_actionable": 39,
+     "high_plus_actionable": 33,
      "verdict_after_reachability": "block",
      "warden_flags": []
     },
     {
-     "sha": "f6cfcb2b23",
-     "date": "2024-09-06",
-     "pins": 187,
+     "sha": "c62ea26263",
+     "date": "2020-03-16",
+     "pins": 118,
      "vulnerable_pkgs": 25,
-     "findings": 62,
+     "findings": 100,
      "backtrack_correct": 25,
      "verdict": "block",
+     "coverage": 1.0,
      "graph": {
-      "nodes": 8697,
-      "edges": 6675,
-      "findings": 62
+      "nodes": 5273,
+      "edges": 3807,
+      "findings": 100
      },
-     "high_plus": 26,
-     "high_plus_actionable": 26,
+     "high_plus": 47,
+     "high_plus_actionable": 34,
      "verdict_after_reachability": "block",
      "warden_flags": []
     },
     {
-     "sha": "0df9b03693",
-     "date": "2026-09-25",
-     "pins": 184,
+     "sha": "66d1d26368",
+     "date": "2021-05-20",
+     "pins": 122,
+     "vulnerable_pkgs": 26,
+     "findings": 90,
+     "backtrack_correct": 25,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 6123,
+      "edges": 4439,
+      "findings": 90
+     },
+     "high_plus": 42,
+     "high_plus_actionable": 38,
+     "verdict_after_reachability": "block",
+     "warden_flags": []
+    },
+    {
+     "sha": "d878f1b8f2",
+     "date": "2022-12-15",
+     "pins": 141,
+     "vulnerable_pkgs": 29,
+     "findings": 110,
+     "backtrack_correct": 29,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 7248,
+      "edges": 5363,
+      "findings": 110
+     },
+     "high_plus": 46,
+     "high_plus_actionable": 42,
+     "verdict_after_reachability": "block",
+     "warden_flags": []
+    },
+    {
+     "sha": "6b5f6bf005",
+     "date": "2024-09-12",
+     "pins": 187,
+     "vulnerable_pkgs": 25,
+     "findings": 72,
+     "backtrack_correct": 25,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 8723,
+      "edges": 6698,
+      "findings": 72
+     },
+     "high_plus": 32,
+     "high_plus_actionable": 32,
+     "verdict_after_reachability": "block",
+     "warden_flags": []
+    },
+    {
+     "sha": "457504b02c",
+     "date": "2026-10-01",
+     "pins": 182,
      "vulnerable_pkgs": 1,
      "findings": 1,
      "backtrack_correct": 1,
      "verdict": "warn",
+     "coverage": 1.0,
      "graph": {
-      "nodes": 10210,
-      "edges": 7777,
+      "nodes": 10240,
+      "edges": 7982,
       "findings": 1
      },
      "high_plus": 0,
@@ -923,48 +1079,2962 @@
     }
    ],
    "head": {
-    "sha": "0df9b036934b",
-    "pins": 184,
+    "sha": "457504b02c02",
+    "pins": 182,
     "reach_status_counts": {
-     "imported": 81,
+     "imported": 76,
      "entrypoint": 2,
-     "referenced": 2,
-     "transitive": 99,
-     "unreached": 0
+     "referenced": 3,
+     "transitive": 98,
+     "unreached": 3
     },
-    "unreached": [],
-    "direct_deps": 79,
-    "direct_deps_marked_unreached": [],
+    "unreached": [
+     "disposable-email-domains",
+     "pyqrcode-binary",
+     "yara-x"
+    ],
+    "direct_deps": 78,
+    "direct_deps_marked_unreached": [
+     "disposable-email-domains",
+     "pyqrcode-binary",
+     "yara-x"
+    ],
     "trivy_findings": 0,
     "trivy_unmatched": 0
    },
    "reachability": {
-    "high_plus_total": 406,
-    "actionable_total": 294,
+    "high_plus_total": 424,
+    "actionable_total": 345,
     "downgraded_examples": [
      "CVE-2017-18342 pyyaml==3.11",
-     "CVE-2018-7753 bleach==2.1.2",
      "CVE-2020-13757 rsa==3.4.2",
      "CVE-2020-13757 rsa==4.0",
      "CVE-2020-14343 pyyaml==3.11",
      "CVE-2020-25658 rsa==3.4.2",
      "CVE-2020-25658 rsa==4.0",
-     "CVE-2020-6817 bleach==1.4.1",
-     "CVE-2020-6817 bleach==1.5.0",
-     "CVE-2020-6817 bleach==2.0.0",
-     "CVE-2020-6817 bleach==2.1.2",
-     "CVE-2020-6817 bleach==2.1.3",
-     "CVE-2020-6817 bleach==3.0.2",
-     "CVE-2020-6817 bleach==3.1.0",
-     "CVE-2020-6817 bleach==3.1.1",
      "CVE-2021-21240 httplib2==0.10.3",
-     "CVE-2022-40023 mako==1.0.1",
-     "CVE-2022-40023 mako==1.0.11",
-     "CVE-2022-40023 mako==1.0.6",
-     "CVE-2022-40023 mako==1.0.7"
+     "CVE-2024-26134 cbor2==5.0.1",
+     "CVE-2025-64076 cbor2==5.0.1",
+     "CVE-2026-26209 cbor2==5.0.1",
+     "CVE-2026-30922 pyasn1==0.3.1",
+     "CVE-2026-30922 pyasn1==0.4.2",
+     "CVE-2026-30922 pyasn1==0.4.3",
+     "CVE-2026-30922 pyasn1==0.4.4",
+     "CVE-2026-30922 pyasn1==0.4.5",
+     "CVE-2026-30922 pyasn1==0.4.8",
+     "CVE-2026-49851 mistune==0.7.3",
+     "CVE-2026-49851 mistune==0.7.4",
+     "CVE-2026-49851 mistune==0.8.3",
+     "CVE-2026-49851 mistune==0.8.4"
     ],
     "note": "historical snapshots analysed against HEAD sources"
    }
+  },
+  {
+   "repo": "caddy",
+   "manifest": "go.sum",
+   "ecosystem": "golang",
+   "manifest_commits": 332,
+   "snapshots": 12,
+   "history_walk_s": 1.27,
+   "gate_ms_median": 291.0,
+   "gate_ms_max": 892.7,
+   "attribution": {
+    "tracegate": {
+     "correct": 195,
+     "total": 195,
+     "accuracy": 1.0
+    },
+    "last-manifest-commit": {
+     "correct": 27,
+     "total": 195,
+     "accuracy": 0.1385
+    },
+    "pickaxe-first": {
+     "correct": 20,
+     "total": 195,
+     "accuracy": 0.1026
+    },
+    "pickaxe-exact-pin": {
+     "correct": 195,
+     "total": 195,
+     "accuracy": 1.0
+    },
+    "scanner-only": {
+     "correct": null,
+     "total": 195,
+     "accuracy": null,
+     "note": "n/a: scanner output carries no commit"
+    }
+   },
+   "disagreements": [],
+   "per_snapshot": [
+    {
+     "sha": "8eba582efe",
+     "date": "2019-05-06",
+     "pins": 11,
+     "vulnerable_pkgs": 7,
+     "findings": 65,
+     "backtrack_correct": 7,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 14,
+      "edges": 24,
+      "findings": 65
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "7ff02f37b6",
+     "date": "2019-11-09",
+     "pins": 67,
+     "vulnerable_pkgs": 10,
+     "findings": 67,
+     "backtrack_correct": 10,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 188,
+      "edges": 242,
+      "findings": 67
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "05164c895a",
+     "date": "2020-04-03",
+     "pins": 122,
+     "vulnerable_pkgs": 14,
+     "findings": 77,
+     "backtrack_correct": 14,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 411,
+      "edges": 491,
+      "findings": 77
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "997ef522bc",
+     "date": "2020-08-21",
+     "pins": 124,
+     "vulnerable_pkgs": 15,
+     "findings": 78,
+     "backtrack_correct": 15,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 673,
+      "edges": 755,
+      "findings": 78
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "f6d5ec2fd6",
+     "date": "2021-08-25",
+     "pins": 137,
+     "vulnerable_pkgs": 16,
+     "findings": 75,
+     "backtrack_correct": 16,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 910,
+      "edges": 983,
+      "findings": 75
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "8bac134f26",
+     "date": "2022-07-06",
+     "pins": 169,
+     "vulnerable_pkgs": 19,
+     "findings": 78,
+     "backtrack_correct": 19,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 1157,
+      "edges": 1234,
+      "findings": 78
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "36546cd8b9",
+     "date": "2023-05-15",
+     "pins": 180,
+     "vulnerable_pkgs": 24,
+     "findings": 83,
+     "backtrack_correct": 24,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 1526,
+      "edges": 1589,
+      "findings": 83
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "dc12bd9743",
+     "date": "2023-12-13",
+     "pins": 182,
+     "vulnerable_pkgs": 22,
+     "findings": 80,
+     "backtrack_correct": 22,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 1758,
+      "edges": 1796,
+      "findings": 80
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "ff67b97126",
+     "date": "2024-09-21",
+     "pins": 202,
+     "vulnerable_pkgs": 20,
+     "findings": 71,
+     "backtrack_correct": 20,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 2028,
+      "edges": 2058,
+      "findings": 71
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "137711ae3e",
+     "date": "2025-04-15",
+     "pins": 205,
+     "vulnerable_pkgs": 21,
+     "findings": 69,
+     "backtrack_correct": 21,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 2279,
+      "edges": 2366,
+      "findings": 69
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "f2213e943e",
+     "date": "2026-02-16",
+     "pins": 214,
+     "vulnerable_pkgs": 26,
+     "findings": 65,
+     "backtrack_correct": 26,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 2746,
+      "edges": 2821,
+      "findings": 65
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "90efc8fe64",
+     "date": "2026-09-30",
+     "pins": 217,
+     "vulnerable_pkgs": 1,
+     "findings": 1,
+     "backtrack_correct": 1,
+     "verdict": "warn",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 3227,
+      "edges": 3304,
+      "findings": 1
+     },
+     "warden_flags": []
+    }
+   ],
+   "head": {},
+   "reachability": null
+  },
+  {
+   "repo": "hugo",
+   "manifest": "go.mod",
+   "ecosystem": "golang",
+   "manifest_commits": 1028,
+   "snapshots": 12,
+   "history_walk_s": 2.48,
+   "gate_ms_median": 290.2,
+   "gate_ms_max": 773.2,
+   "attribution": {
+    "tracegate": {
+     "correct": 132,
+     "total": 133,
+     "accuracy": 0.9925
+    },
+    "last-manifest-commit": {
+     "correct": 13,
+     "total": 133,
+     "accuracy": 0.0977
+    },
+    "pickaxe-first": {
+     "correct": 9,
+     "total": 133,
+     "accuracy": 0.0677
+    },
+    "pickaxe-exact-pin": {
+     "correct": 133,
+     "total": 133,
+     "accuracy": 1.0
+    },
+    "scanner-only": {
+     "correct": null,
+     "total": 133,
+     "accuracy": null,
+     "note": "n/a: scanner output carries no commit"
+    }
+   },
+   "disagreements": [
+    {
+     "snapshot": "78db8aebca",
+     "package": "github.com/aws/aws-sdk-go",
+     "tracegate": "4d98b0ed6a",
+     "blame": "a1c64989df",
+     "blame_subject": "Upgrade to deploy to use AWS SDK V2"
+    }
+   ],
+   "per_snapshot": [
+    {
+     "sha": "fce32c07fb",
+     "date": "2018-08-25",
+     "pins": 64,
+     "vulnerable_pkgs": 7,
+     "findings": 55,
+     "backtrack_correct": 7,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 67,
+      "edges": 130,
+      "findings": 55
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "8585b388d2",
+     "date": "2020-01-20",
+     "pins": 68,
+     "vulnerable_pkgs": 9,
+     "findings": 50,
+     "backtrack_correct": 9,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 433,
+      "edges": 418,
+      "findings": 50
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "32471b57bd",
+     "date": "2020-11-30",
+     "pins": 64,
+     "vulnerable_pkgs": 7,
+     "findings": 48,
+     "backtrack_correct": 7,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 722,
+      "edges": 611,
+      "findings": 48
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "04b5959961",
+     "date": "2021-08-30",
+     "pins": 66,
+     "vulnerable_pkgs": 7,
+     "findings": 45,
+     "backtrack_correct": 7,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 1014,
+      "edges": 813,
+      "findings": 45
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "c2fa0a3320",
+     "date": "2022-05-14",
+     "pins": 117,
+     "vulnerable_pkgs": 13,
+     "findings": 83,
+     "backtrack_correct": 13,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 1403,
+      "edges": 1191,
+      "findings": 83
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "f6269ee928",
+     "date": "2023-05-19",
+     "pins": 129,
+     "vulnerable_pkgs": 14,
+     "findings": 77,
+     "backtrack_correct": 14,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 1765,
+      "edges": 1507,
+      "findings": 77
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "a9079d7a63",
+     "date": "2023-11-01",
+     "pins": 150,
+     "vulnerable_pkgs": 17,
+     "findings": 75,
+     "backtrack_correct": 17,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 2197,
+      "edges": 1993,
+      "findings": 75
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "78db8aebca",
+     "date": "2024-07-30",
+     "pins": 155,
+     "vulnerable_pkgs": 16,
+     "findings": 69,
+     "backtrack_correct": 15,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 2587,
+      "edges": 2295,
+      "findings": 69
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "93d9c0533a",
+     "date": "2025-02-27",
+     "pins": 166,
+     "vulnerable_pkgs": 15,
+     "findings": 66,
+     "backtrack_correct": 15,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 3039,
+      "edges": 2667,
+      "findings": 66
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "3d45d30a41",
+     "date": "2025-10-14",
+     "pins": 187,
+     "vulnerable_pkgs": 15,
+     "findings": 60,
+     "backtrack_correct": 15,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 3473,
+      "edges": 3030,
+      "findings": 60
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "0eda24e65f",
+     "date": "2026-04-03",
+     "pins": 184,
+     "vulnerable_pkgs": 12,
+     "findings": 51,
+     "backtrack_correct": 12,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 3907,
+      "edges": 3367,
+      "findings": 51
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "1567bdef12",
+     "date": "2026-09-24",
+     "pins": 180,
+     "vulnerable_pkgs": 1,
+     "findings": 1,
+     "backtrack_correct": 1,
+     "verdict": "warn",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 4282,
+      "edges": 3645,
+      "findings": 1
+     },
+     "warden_flags": []
+    }
+   ],
+   "head": {},
+   "reachability": null
+  },
+  {
+   "repo": "ripgrep",
+   "manifest": "Cargo.lock",
+   "ecosystem": "cargo",
+   "manifest_commits": 434,
+   "snapshots": 12,
+   "history_walk_s": 1.21,
+   "gate_ms_median": 35.9,
+   "gate_ms_max": 76.3,
+   "attribution": {
+    "tracegate": {
+     "correct": 70,
+     "total": 72,
+     "accuracy": 0.9722
+    },
+    "last-manifest-commit": {
+     "correct": 8,
+     "total": 72,
+     "accuracy": 0.1111
+    },
+    "pickaxe-first": {
+     "correct": 10,
+     "total": 72,
+     "accuracy": 0.1389
+    },
+    "pickaxe-exact-pin": {
+     "correct": 49,
+     "total": 72,
+     "accuracy": 0.6806
+    },
+    "scanner-only": {
+     "correct": null,
+     "total": 72,
+     "accuracy": null,
+     "note": "n/a: scanner output carries no commit"
+    }
+   },
+   "disagreements": [
+    {
+     "snapshot": "e940bc956d",
+     "package": "term_size",
+     "tracegate": "495e13cc61",
+     "blame": "883d8fc72f",
+     "blame_subject": "Merge pull request #240 from BurntSushi/color"
+    },
+    {
+     "snapshot": "e940bc956d",
+     "package": "thread_local",
+     "tracegate": "163e00677a",
+     "blame": "d58236fbdc",
+     "blame_subject": "bump various versions"
+    }
+   ],
+   "per_snapshot": [
+    {
+     "sha": "cf3a33cea7",
+     "date": "2016-09-11",
+     "pins": 26,
+     "vulnerable_pkgs": 6,
+     "findings": 12,
+     "backtrack_correct": 6,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 29,
+      "edges": 54,
+      "findings": 12
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "e940bc956d",
+     "date": "2017-01-10",
+     "pins": 38,
+     "vulnerable_pkgs": 6,
+     "findings": 10,
+     "backtrack_correct": 4,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 180,
+      "edges": 180,
+      "findings": 10
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "5e73075ef5",
+     "date": "2017-11-30",
+     "pins": 49,
+     "vulnerable_pkgs": 8,
+     "findings": 12,
+     "backtrack_correct": 8,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 385,
+      "edges": 370,
+      "findings": 12
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "d17ca45063",
+     "date": "2018-07-17",
+     "pins": 47,
+     "vulnerable_pkgs": 9,
+     "findings": 14,
+     "backtrack_correct": 9,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 526,
+      "edges": 471,
+      "findings": 14
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "17ef4c40f3",
+     "date": "2018-12-30",
+     "pins": 93,
+     "vulnerable_pkgs": 15,
+     "findings": 26,
+     "backtrack_correct": 15,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 804,
+      "edges": 760,
+      "findings": 26
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "973de50c9e",
+     "date": "2019-04-16",
+     "pins": 81,
+     "vulnerable_pkgs": 11,
+     "findings": 19,
+     "backtrack_correct": 11,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 989,
+      "edges": 893,
+      "findings": 19
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "3fd2694fbc",
+     "date": "2020-05-09",
+     "pins": 65,
+     "vulnerable_pkgs": 8,
+     "findings": 12,
+     "backtrack_correct": 8,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 1276,
+      "edges": 1125,
+      "findings": 12
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "191315a2ea",
+     "date": "2022-03-21",
+     "pins": 65,
+     "vulnerable_pkgs": 2,
+     "findings": 4,
+     "backtrack_correct": 2,
+     "verdict": "warn",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 1523,
+      "edges": 1332,
+      "findings": 4
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "61733f6378",
+     "date": "2023-08-05",
+     "pins": 61,
+     "vulnerable_pkgs": 1,
+     "findings": 1,
+     "backtrack_correct": 1,
+     "verdict": "warn",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 1721,
+      "edges": 1487,
+      "findings": 1
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "fee7ac79f1",
+     "date": "2023-11-26",
+     "pins": 59,
+     "vulnerable_pkgs": 3,
+     "findings": 3,
+     "backtrack_correct": 3,
+     "verdict": "warn",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 1903,
+      "edges": 1628,
+      "findings": 3
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "81bed78654",
+     "date": "2025-09-21",
+     "pins": 68,
+     "vulnerable_pkgs": 3,
+     "findings": 3,
+     "backtrack_correct": 3,
+     "verdict": "warn",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 2168,
+      "edges": 1862,
+      "findings": 3
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "3fce3b5bb0",
+     "date": "2026-08-04",
+     "pins": 62,
+     "vulnerable_pkgs": 0,
+     "findings": 0,
+     "backtrack_correct": 0,
+     "verdict": "pass",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 2381,
+      "edges": 2030,
+      "findings": 0
+     },
+     "warden_flags": []
+    }
+   ],
+   "head": {},
+   "reachability": null
+  },
+  {
+   "repo": "bat",
+   "manifest": "Cargo.lock",
+   "ecosystem": "cargo",
+   "manifest_commits": 515,
+   "snapshots": 12,
+   "history_walk_s": 1.9,
+   "gate_ms_median": 63.1,
+   "gate_ms_max": 121.4,
+   "attribution": {
+    "tracegate": {
+     "correct": 168,
+     "total": 178,
+     "accuracy": 0.9438
+    },
+    "last-manifest-commit": {
+     "correct": 22,
+     "total": 178,
+     "accuracy": 0.1236
+    },
+    "pickaxe-first": {
+     "correct": 44,
+     "total": 178,
+     "accuracy": 0.2472
+    },
+    "pickaxe-exact-pin": {
+     "correct": 108,
+     "total": 178,
+     "accuracy": 0.6067
+    },
+    "scanner-only": {
+     "correct": null,
+     "total": 178,
+     "accuracy": null,
+     "note": "n/a: scanner output carries no commit"
+    }
+   },
+   "disagreements": [
+    {
+     "snapshot": "de7872f8a8",
+     "package": "ansi_term",
+     "tracegate": "5b421b455d",
+     "blame": "8f5a80ea07",
+     "blame_subject": "Initial commit"
+    },
+    {
+     "snapshot": "d1b0e955ea",
+     "package": "ansi_term",
+     "tracegate": "5b421b455d",
+     "blame": "8f5a80ea07",
+     "blame_subject": "Initial commit"
+    },
+    {
+     "snapshot": "75246fb25b",
+     "package": "ansi_term",
+     "tracegate": "5b421b455d",
+     "blame": "8f5a80ea07",
+     "blame_subject": "Initial commit"
+    },
+    {
+     "snapshot": "75246fb25b",
+     "package": "idna",
+     "tracegate": "75246fb25b",
+     "blame": "8e2c6abb13",
+     "blame_subject": "Update dependencies"
+    },
+    {
+     "snapshot": "75246fb25b",
+     "package": "smallvec",
+     "tracegate": "3447a03433",
+     "blame": "bd17fd571f",
+     "blame_subject": "Switch from path-absolutize to path_abs"
+    },
+    {
+     "snapshot": "49f8bbfee4",
+     "package": "ansi_term",
+     "tracegate": "5b421b455d",
+     "blame": "8f5a80ea07",
+     "blame_subject": "Initial commit"
+    },
+    {
+     "snapshot": "95796a9cc0",
+     "package": "ansi_term",
+     "tracegate": "8072d5a3e3",
+     "blame": "8d0aa39181",
+     "blame_subject": "Bump ansi_term from 0.12.0 to 0.12.1"
+    },
+    {
+     "snapshot": "12affef049",
+     "package": "ansi_term",
+     "tracegate": "8072d5a3e3",
+     "blame": "8d0aa39181",
+     "blame_subject": "Bump ansi_term from 0.12.0 to 0.12.1"
+    },
+    {
+     "snapshot": "7dbc6e3da4",
+     "package": "rustix",
+     "tracegate": "82664e3c82",
+     "blame": "ba95955fe6",
+     "blame_subject": "Bump tempfile from 3.3.0 to 3.5.0"
+    },
+    {
+     "snapshot": "0acf9417cd",
+     "package": "yaml-rust",
+     "tracegate": "8e4b0b4377",
+     "blame": "8f70e0cf00",
+     "blame_subject": "Merge pull request #3703 from blinxen/master"
+    }
+   ],
+   "per_snapshot": [
+    {
+     "sha": "8f5a80ea07",
+     "date": "2018-04-21",
+     "pins": 78,
+     "vulnerable_pkgs": 14,
+     "findings": 20,
+     "backtrack_correct": 14,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 81,
+      "edges": 158,
+      "findings": 20
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "de7872f8a8",
+     "date": "2019-01-14",
+     "pins": 120,
+     "vulnerable_pkgs": 21,
+     "findings": 35,
+     "backtrack_correct": 20,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 428,
+      "edges": 500,
+      "findings": 35
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "d1b0e955ea",
+     "date": "2020-02-28",
+     "pins": 164,
+     "vulnerable_pkgs": 26,
+     "findings": 36,
+     "backtrack_correct": 25,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 839,
+      "edges": 912,
+      "findings": 36
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "75246fb25b",
+     "date": "2020-08-01",
+     "pins": 160,
+     "vulnerable_pkgs": 23,
+     "findings": 33,
+     "backtrack_correct": 20,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 1070,
+      "edges": 1221,
+      "findings": 33
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "49f8bbfee4",
+     "date": "2021-06-01",
+     "pins": 144,
+     "vulnerable_pkgs": 19,
+     "findings": 29,
+     "backtrack_correct": 18,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 1421,
+      "edges": 1601,
+      "findings": 29
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "95796a9cc0",
+     "date": "2022-03-01",
+     "pins": 143,
+     "vulnerable_pkgs": 14,
+     "findings": 23,
+     "backtrack_correct": 13,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 1638,
+      "edges": 1770,
+      "findings": 23
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "12affef049",
+     "date": "2022-11-02",
+     "pins": 155,
+     "vulnerable_pkgs": 15,
+     "findings": 24,
+     "backtrack_correct": 14,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 1865,
+      "edges": 1963,
+      "findings": 24
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "7dbc6e3da4",
+     "date": "2023-09-01",
+     "pins": 161,
+     "vulnerable_pkgs": 12,
+     "findings": 18,
+     "backtrack_correct": 11,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 2073,
+      "edges": 2130,
+      "findings": 18
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "06aef22943",
+     "date": "2024-01-01",
+     "pins": 162,
+     "vulnerable_pkgs": 12,
+     "findings": 19,
+     "backtrack_correct": 12,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 2262,
+      "edges": 2276,
+      "findings": 19
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "f1c5c02713",
+     "date": "2024-12-01",
+     "pins": 180,
+     "vulnerable_pkgs": 10,
+     "findings": 16,
+     "backtrack_correct": 10,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 2455,
+      "edges": 2440,
+      "findings": 16
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "d6ffe3a9be",
+     "date": "2025-12-02",
+     "pins": 227,
+     "vulnerable_pkgs": 8,
+     "findings": 12,
+     "backtrack_correct": 8,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 2796,
+      "edges": 2793,
+      "findings": 12
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "0acf9417cd",
+     "date": "2026-09-01",
+     "pins": 306,
+     "vulnerable_pkgs": 4,
+     "findings": 4,
+     "backtrack_correct": 3,
+     "verdict": "warn",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 3212,
+      "edges": 3253,
+      "findings": 4
+     },
+     "warden_flags": []
+    }
+   ],
+   "head": {},
+   "reachability": null
+  },
+  {
+   "repo": "alacritty",
+   "manifest": "Cargo.lock",
+   "ecosystem": "cargo",
+   "manifest_commits": 378,
+   "snapshots": 12,
+   "history_walk_s": 1.81,
+   "gate_ms_median": 110.2,
+   "gate_ms_max": 227.3,
+   "attribution": {
+    "tracegate": {
+     "correct": 221,
+     "total": 233,
+     "accuracy": 0.9485
+    },
+    "last-manifest-commit": {
+     "correct": 7,
+     "total": 233,
+     "accuracy": 0.03
+    },
+    "pickaxe-first": {
+     "correct": 51,
+     "total": 233,
+     "accuracy": 0.2189
+    },
+    "pickaxe-exact-pin": {
+     "correct": 107,
+     "total": 233,
+     "accuracy": 0.4592
+    },
+    "scanner-only": {
+     "correct": null,
+     "total": 233,
+     "accuracy": null,
+     "note": "n/a: scanner output carries no commit"
+    }
+   },
+   "disagreements": [
+    {
+     "snapshot": "e72a649794",
+     "package": "memmap",
+     "tracegate": "8aa8422bcc",
+     "blame": "15e0deae2b",
+     "blame_subject": "Add support for Windows (#1374)"
+    },
+    {
+     "snapshot": "e72a649794",
+     "package": "miow",
+     "tracegate": "26c4043aaf",
+     "blame": "a3d35ec185",
+     "blame_subject": "Update most remaining deps"
+    },
+    {
+     "snapshot": "dbd8538762",
+     "package": "miow",
+     "tracegate": "26c4043aaf",
+     "blame": "a3d35ec185",
+     "blame_subject": "Update most remaining deps"
+    },
+    {
+     "snapshot": "dbd8538762",
+     "package": "ordered-float",
+     "tracegate": "e98ea64c74",
+     "blame": "0f96a62218",
+     "blame_subject": "Update glutin to version 0.20"
+    },
+    {
+     "snapshot": "5ea4fb6034",
+     "package": "instant",
+     "tracegate": "d76bb0c697",
+     "blame": "53a5a96fdd",
+     "blame_subject": "Update lockfile"
+    },
+    {
+     "snapshot": "5ea4fb6034",
+     "package": "miow",
+     "tracegate": "26c4043aaf",
+     "blame": "a3d35ec185",
+     "blame_subject": "Update most remaining deps"
+    },
+    {
+     "snapshot": "5ea4fb6034",
+     "package": "ordered-float",
+     "tracegate": "e98ea64c74",
+     "blame": "0f96a62218",
+     "blame_subject": "Update glutin to version 0.20"
+    },
+    {
+     "snapshot": "88d87cfa86",
+     "package": "miow",
+     "tracegate": "26c4043aaf",
+     "blame": "a3d35ec185",
+     "blame_subject": "Update most remaining deps"
+    },
+    {
+     "snapshot": "88d87cfa86",
+     "package": "ordered-float",
+     "tracegate": "e98ea64c74",
+     "blame": "0f96a62218",
+     "blame_subject": "Update glutin to version 0.20"
+    },
+    {
+     "snapshot": "88d87cfa86",
+     "package": "rand",
+     "tracegate": "2ac017fa64",
+     "blame": "c2c8d6bf37",
+     "blame_subject": "Move Alacritty to organization"
+    },
+    {
+     "snapshot": "88d87cfa86",
+     "package": "thread_local",
+     "tracegate": "eb1a28ce58",
+     "blame": "12e211d82a",
+     "blame_subject": "Bump VTE to 0.5.0"
+    },
+    {
+     "snapshot": "9575aed681",
+     "package": "nix",
+     "tracegate": "67db9b228d",
+     "blame": "b39c791649",
+     "blame_subject": "Update smithay-clipboard to 0.5.2"
+    }
+   ],
+   "per_snapshot": [
+    {
+     "sha": "2a7dc1deb8",
+     "date": "2016-02-21",
+     "pins": 8,
+     "vulnerable_pkgs": 1,
+     "findings": 1,
+     "backtrack_correct": 1,
+     "verdict": "warn",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 11,
+      "edges": 18,
+      "findings": 1
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "08f348ecea",
+     "date": "2017-01-13",
+     "pins": 134,
+     "vulnerable_pkgs": 16,
+     "findings": 25,
+     "backtrack_correct": 16,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 422,
+      "edges": 524,
+      "findings": 25
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "958a32767f",
+     "date": "2017-12-12",
+     "pins": 155,
+     "vulnerable_pkgs": 16,
+     "findings": 25,
+     "backtrack_correct": 16,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 752,
+      "edges": 848,
+      "findings": 25
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "e72a649794",
+     "date": "2018-11-18",
+     "pins": 278,
+     "vulnerable_pkgs": 49,
+     "findings": 82,
+     "backtrack_correct": 47,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 1388,
+      "edges": 1592,
+      "findings": 82
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "dbd8538762",
+     "date": "2019-04-28",
+     "pins": 297,
+     "vulnerable_pkgs": 48,
+     "findings": 91,
+     "backtrack_correct": 46,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 1853,
+      "edges": 2056,
+      "findings": 91
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "5ea4fb6034",
+     "date": "2019-11-21",
+     "pins": 264,
+     "vulnerable_pkgs": 32,
+     "findings": 58,
+     "backtrack_correct": 29,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 2263,
+      "edges": 2406,
+      "findings": 58
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "88d87cfa86",
+     "date": "2020-05-24",
+     "pins": 245,
+     "vulnerable_pkgs": 28,
+     "findings": 55,
+     "backtrack_correct": 24,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 2613,
+      "edges": 2711,
+      "findings": 55
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "9575aed681",
+     "date": "2021-01-25",
+     "pins": 192,
+     "vulnerable_pkgs": 15,
+     "findings": 20,
+     "backtrack_correct": 14,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 3009,
+      "edges": 3024,
+      "findings": 20
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "f2e74d9947",
+     "date": "2022-09-12",
+     "pins": 210,
+     "vulnerable_pkgs": 11,
+     "findings": 16,
+     "backtrack_correct": 11,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 3429,
+      "edges": 3451,
+      "findings": 16
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "727531406c",
+     "date": "2023-06-17",
+     "pins": 233,
+     "vulnerable_pkgs": 8,
+     "findings": 9,
+     "backtrack_correct": 8,
+     "verdict": "warn",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 3771,
+      "edges": 3784,
+      "findings": 9
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "82f41ed65c",
+     "date": "2024-05-03",
+     "pins": 239,
+     "vulnerable_pkgs": 6,
+     "findings": 7,
+     "backtrack_correct": 6,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 4237,
+      "edges": 4221,
+      "findings": 7
+     },
+     "warden_flags": []
+    },
+    {
+     "sha": "a19d9c894d",
+     "date": "2026-03-21",
+     "pins": 259,
+     "vulnerable_pkgs": 3,
+     "findings": 4,
+     "backtrack_correct": 3,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 4872,
+      "edges": 4843,
+      "findings": 4
+     },
+     "warden_flags": []
+    }
+   ],
+   "head": {},
+   "reachability": null
+  },
+  {
+   "repo": "excalidraw",
+   "manifest": "yarn.lock",
+   "ecosystem": "npm",
+   "manifest_commits": 265,
+   "snapshots": 12,
+   "history_walk_s": 3.53,
+   "gate_ms_median": 98.8,
+   "gate_ms_max": 510.5,
+   "attribution": {
+    "tracegate": {
+     "correct": 899,
+     "total": 925,
+     "accuracy": 0.9719
+    },
+    "last-manifest-commit": {
+     "correct": 189,
+     "total": 925,
+     "accuracy": 0.2043
+    },
+    "pickaxe-first": {
+     "correct": 108,
+     "total": 925,
+     "accuracy": 0.1168
+    },
+    "pickaxe-exact-pin": {
+     "correct": 697,
+     "total": 925,
+     "accuracy": 0.7535
+    },
+    "scanner-only": {
+     "correct": null,
+     "total": 925,
+     "accuracy": null,
+     "note": "n/a: scanner output carries no commit"
+    }
+   },
+   "disagreements": [
+    {
+     "snapshot": "933c6a2237",
+     "package": "flatted",
+     "tracegate": "7cf766630d",
+     "blame": "58a7568c9f",
+     "blame_subject": "chore(deps): bump nanoid from 3.1.21 to 3.1.22 (#3350)"
+    },
+    {
+     "snapshot": "933c6a2237",
+     "package": "jws",
+     "tracegate": "618a846451",
+     "blame": "58a7568c9f",
+     "blame_subject": "chore(deps): bump nanoid from 3.1.21 to 3.1.22 (#3350)"
+    },
+    {
+     "snapshot": "933c6a2237",
+     "package": "tar",
+     "tracegate": "618a846451",
+     "blame": "2c8d041987",
+     "blame_subject": "Migrate the implementation back to browser-fs-access (#4106)"
+    },
+    {
+     "snapshot": "9391a09e54",
+     "package": "braces",
+     "tracegate": "52c96a6870",
+     "blame": "58a7568c9f",
+     "blame_subject": "chore(deps): bump nanoid from 3.1.21 to 3.1.22 (#3350)"
+    },
+    {
+     "snapshot": "9391a09e54",
+     "package": "js-yaml",
+     "tracegate": "58a7568c9f",
+     "blame": "8104068bd5",
+     "blame_subject": "revert: \"build: Migrate to Vite \ud83d\ude80\" (#6814)"
+    },
+    {
+     "snapshot": "9391a09e54",
+     "package": "micromatch",
+     "tracegate": "52c96a6870",
+     "blame": "4d26993c8f",
+     "blame_subject": "chore: fix yarn.lock file (#5803)"
+    },
+    {
+     "snapshot": "9391a09e54",
+     "package": "minimatch",
+     "tracegate": "52c96a6870",
+     "blame": "4d26993c8f",
+     "blame_subject": "chore: fix yarn.lock file (#5803)"
+    },
+    {
+     "snapshot": "9391a09e54",
+     "package": "qs",
+     "tracegate": "48924688c7",
+     "blame": "5b7596582f",
+     "blame_subject": "feat: color picker redesign (#6216)"
+    },
+    {
+     "snapshot": "9391a09e54",
+     "package": "semver",
+     "tracegate": "41ed019bc2",
+     "blame": "58a7568c9f",
+     "blame_subject": "chore(deps): bump nanoid from 3.1.21 to 3.1.22 (#3350)"
+    },
+    {
+     "snapshot": "9391a09e54",
+     "package": "ws",
+     "tracegate": "48924688c7",
+     "blame": "5b7596582f",
+     "blame_subject": "feat: color picker redesign (#6216)"
+    },
+    {
+     "snapshot": "32df5502ae",
+     "package": "braces",
+     "tracegate": "52c96a6870",
+     "blame": "58a7568c9f",
+     "blame_subject": "chore(deps): bump nanoid from 3.1.21 to 3.1.22 (#3350)"
+    },
+    {
+     "snapshot": "32df5502ae",
+     "package": "js-yaml",
+     "tracegate": "58a7568c9f",
+     "blame": "8104068bd5",
+     "blame_subject": "revert: \"build: Migrate to Vite \ud83d\ude80\" (#6814)"
+    },
+    {
+     "snapshot": "32df5502ae",
+     "package": "micromatch",
+     "tracegate": "52c96a6870",
+     "blame": "4d26993c8f",
+     "blame_subject": "chore: fix yarn.lock file (#5803)"
+    },
+    {
+     "snapshot": "32df5502ae",
+     "package": "minimatch",
+     "tracegate": "52c96a6870",
+     "blame": "4d26993c8f",
+     "blame_subject": "chore: fix yarn.lock file (#5803)"
+    },
+    {
+     "snapshot": "32df5502ae",
+     "package": "qs",
+     "tracegate": "a8064ba3ee",
+     "blame": "5b7596582f",
+     "blame_subject": "feat: color picker redesign (#6216)"
+    }
+   ],
+   "per_snapshot": [
+    {
+     "sha": "d399af0923",
+     "date": "2020-01-02",
+     "pins": 1169,
+     "vulnerable_pkgs": 83,
+     "findings": 197,
+     "backtrack_correct": 83,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 1172,
+      "edges": 2340,
+      "findings": 199
+     },
+     "warden_flags": [
+      "Warden risk 0.66: possible typo1 of 'flatted' (substitution; target rank #176)",
+      "Warden risk 0.55: possible typo1 of 'json5' (substitution; target rank #74)"
+     ]
+    },
+    {
+     "sha": "2964d36d9a",
+     "date": "2021-03-14",
+     "pins": 1628,
+     "vulnerable_pkgs": 103,
+     "findings": 251,
+     "backtrack_correct": 103,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 2435,
+      "edges": 6343,
+      "findings": 258
+     },
+     "warden_flags": [
+      "Warden risk 0.66: possible typo1 of 'flatted' (substitution; target rank #176)",
+      "Warden risk 0.55: possible typo1 of 'json5' (substitution; target rank #74)",
+      "Warden risk 0.54: possible typo1 of 'listr2' (omission; target rank #994)",
+      "Warden risk 0.53: possible reorder of 'semver-compare' (tokens reordered; target rank #2251)",
+      "Warden risk 0.56: possible typo1 of 'parsers' (substitution; target rank #2857)",
+      "Warden risk 0.66: possible homoglyph of 'parseurl' (confusable characters; target rank #447)",
+      "Warden risk 0.60: possible typo1 of 'css-tokenizer' (insertion; target rank #777)"
+     ]
+    },
+    {
+     "sha": "422149c249",
+     "date": "2021-04-12",
+     "pins": 1639,
+     "vulnerable_pkgs": 100,
+     "findings": 233,
+     "backtrack_correct": 100,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 2669,
+      "edges": 9722,
+      "findings": 240
+     },
+     "warden_flags": [
+      "Warden risk 0.66: possible typo1 of 'flatted' (substitution; target rank #176)",
+      "Warden risk 0.55: possible typo1 of 'json5' (substitution; target rank #74)",
+      "Warden risk 0.54: possible typo1 of 'listr2' (omission; target rank #994)",
+      "Warden risk 0.53: possible reorder of 'semver-compare' (tokens reordered; target rank #2251)",
+      "Warden risk 0.56: possible typo1 of 'parsers' (substitution; target rank #2857)",
+      "Warden risk 0.66: possible homoglyph of 'parseurl' (confusable characters; target rank #447)",
+      "Warden risk 0.60: possible typo1 of 'css-tokenizer' (insertion; target rank #777)"
+     ]
+    },
+    {
+     "sha": "d89fb3371b",
+     "date": "2021-10-27",
+     "pins": 1672,
+     "vulnerable_pkgs": 95,
+     "findings": 224,
+     "backtrack_correct": 95,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 2805,
+      "edges": 9872,
+      "findings": 232
+     },
+     "warden_flags": [
+      "Warden risk 0.66: possible typo1 of 'flatted' (substitution; target rank #176)",
+      "Warden risk 0.55: possible typo1 of 'json5' (substitution; target rank #74)",
+      "Warden risk 0.54: possible typo1 of 'listr2' (omission; target rank #994)",
+      "Warden risk 0.53: possible reorder of 'semver-compare' (tokens reordered; target rank #2251)",
+      "Warden risk 0.56: possible typo1 of 'parsers' (substitution; target rank #2857)",
+      "Warden risk 0.66: possible homoglyph of 'parseurl' (confusable characters; target rank #447)",
+      "Warden risk 0.60: possible typo1 of 'css-tokenizer' (insertion; target rank #777)",
+      "Warden risk 0.56: possible typo1 of 'multimatch' (omission; target rank #2879)"
+     ]
+    },
+    {
+     "sha": "56b4a29aaa",
+     "date": "2021-11-07",
+     "pins": 1669,
+     "vulnerable_pkgs": 92,
+     "findings": 263,
+     "backtrack_correct": 92,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 2896,
+      "edges": 9937,
+      "findings": 271
+     },
+     "warden_flags": [
+      "Warden risk 0.66: possible typo1 of 'flatted' (substitution; target rank #176)",
+      "Warden risk 0.55: possible typo1 of 'json5' (substitution; target rank #74)",
+      "Warden risk 0.54: possible typo1 of 'listr2' (omission; target rank #994)",
+      "Warden risk 0.53: possible reorder of 'semver-compare' (tokens reordered; target rank #2251)",
+      "Warden risk 0.56: possible typo1 of 'parsers' (substitution; target rank #2857)",
+      "Warden risk 0.66: possible homoglyph of 'parseurl' (confusable characters; target rank #447)",
+      "Warden risk 0.60: possible typo1 of 'css-tokenizer' (insertion; target rank #777)",
+      "Warden risk 0.56: possible typo1 of 'multimatch' (omission; target rank #2879)"
+     ]
+    },
+    {
+     "sha": "74c3fea7f5",
+     "date": "2021-12-31",
+     "pins": 1668,
+     "vulnerable_pkgs": 92,
+     "findings": 263,
+     "backtrack_correct": 92,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 2980,
+      "edges": 9998,
+      "findings": 271
+     },
+     "warden_flags": [
+      "Warden risk 0.66: possible typo1 of 'flatted' (substitution; target rank #176)",
+      "Warden risk 0.55: possible typo1 of 'json5' (substitution; target rank #74)",
+      "Warden risk 0.54: possible typo1 of 'listr2' (omission; target rank #994)",
+      "Warden risk 0.53: possible reorder of 'semver-compare' (tokens reordered; target rank #2251)",
+      "Warden risk 0.56: possible typo1 of 'parsers' (substitution; target rank #2857)",
+      "Warden risk 0.66: possible homoglyph of 'parseurl' (confusable characters; target rank #447)",
+      "Warden risk 0.60: possible typo1 of 'css-tokenizer' (insertion; target rank #777)",
+      "Warden risk 0.56: possible typo1 of 'multimatch' (omission; target rank #2879)"
+     ]
+    },
+    {
+     "sha": "9745461db7",
+     "date": "2022-02-22",
+     "pins": 1671,
+     "vulnerable_pkgs": 93,
+     "findings": 263,
+     "backtrack_correct": 93,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 3057,
+      "edges": 10054,
+      "findings": 271
+     },
+     "warden_flags": [
+      "Warden risk 0.66: possible typo1 of 'flatted' (substitution; target rank #176)",
+      "Warden risk 0.55: possible typo1 of 'json5' (substitution; target rank #74)",
+      "Warden risk 0.54: possible typo1 of 'listr2' (omission; target rank #994)",
+      "Warden risk 0.53: possible reorder of 'semver-compare' (tokens reordered; target rank #2251)",
+      "Warden risk 0.56: possible typo1 of 'parsers' (substitution; target rank #2857)",
+      "Warden risk 0.66: possible homoglyph of 'parseurl' (confusable characters; target rank #447)",
+      "Warden risk 0.60: possible typo1 of 'css-tokenizer' (insertion; target rank #777)",
+      "Warden risk 0.56: possible typo1 of 'multimatch' (omission; target rank #2879)"
+     ]
+    },
+    {
+     "sha": "933c6a2237",
+     "date": "2022-09-07",
+     "pins": 1417,
+     "vulnerable_pkgs": 75,
+     "findings": 185,
+     "backtrack_correct": 72,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 3186,
+      "edges": 9913,
+      "findings": 193
+     },
+     "warden_flags": [
+      "Warden risk 0.66: possible typo1 of 'flatted' (substitution; target rank #176)",
+      "Warden risk 0.55: possible typo1 of 'json5' (substitution; target rank #74)",
+      "Warden risk 0.54: possible typo1 of 'listr2' (omission; target rank #994)",
+      "Warden risk 0.53: possible reorder of 'semver-compare' (tokens reordered; target rank #2251)",
+      "Warden risk 0.56: possible typo1 of 'parsers' (substitution; target rank #2857)",
+      "Warden risk 0.66: possible homoglyph of 'parseurl' (confusable characters; target rank #447)",
+      "Warden risk 0.60: possible typo1 of 'css-tokenizer' (insertion; target rank #777)",
+      "Warden risk 0.56: possible typo1 of 'multimatch' (omission; target rank #2879)"
+     ]
+    },
+    {
+     "sha": "9391a09e54",
+     "date": "2023-08-01",
+     "pins": 904,
+     "vulnerable_pkgs": 46,
+     "findings": 117,
+     "backtrack_correct": 39,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 4468,
+      "edges": 11372,
+      "findings": 125
+     },
+     "warden_flags": [
+      "Warden risk 0.66: possible typo1 of 'flatted' (substitution; target rank #176)",
+      "Warden risk 0.55: possible typo1 of 'json5' (substitution; target rank #74)",
+      "Warden risk 0.54: possible typo1 of 'listr2' (omission; target rank #994)",
+      "Warden risk 0.53: possible reorder of 'semver-compare' (tokens reordered; target rank #2251)",
+      "Warden risk 0.56: possible typo1 of 'parsers' (substitution; target rank #2857)",
+      "Warden risk 0.66: possible homoglyph of 'parseurl' (confusable characters; target rank #447)",
+      "Warden risk 0.60: possible typo1 of 'css-tokenizer' (insertion; target rank #777)",
+      "Warden risk 0.56: possible typo1 of 'multimatch' (omission; target rank #2879)"
+     ]
+    },
+    {
+     "sha": "32df5502ae",
+     "date": "2024-04-04",
+     "pins": 1184,
+     "vulnerable_pkgs": 54,
+     "findings": 186,
+     "backtrack_correct": 48,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 4952,
+      "edges": 12407,
+      "findings": 194
+     },
+     "warden_flags": [
+      "Warden risk 0.66: possible typo1 of 'flatted' (substitution; target rank #176)",
+      "Warden risk 0.55: possible typo1 of 'json5' (substitution; target rank #74)",
+      "Warden risk 0.54: possible typo1 of 'listr2' (omission; target rank #994)",
+      "Warden risk 0.53: possible reorder of 'semver-compare' (tokens reordered; target rank #2251)",
+      "Warden risk 0.56: possible typo1 of 'parsers' (substitution; target rank #2857)",
+      "Warden risk 0.66: possible homoglyph of 'parseurl' (confusable characters; target rank #447)",
+      "Warden risk 0.60: possible typo1 of 'css-tokenizer' (insertion; target rank #777)",
+      "Warden risk 0.56: possible typo1 of 'multimatch' (omission; target rank #2879)"
+     ]
+    },
+    {
+     "sha": "16b86d7d16",
+     "date": "2025-02-13",
+     "pins": 1242,
+     "vulnerable_pkgs": 48,
+     "findings": 191,
+     "backtrack_correct": 43,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 5651,
+      "edges": 13147,
+      "findings": 200
+     },
+     "warden_flags": [
+      "Warden risk 0.66: possible typo1 of 'flatted' (substitution; target rank #176)",
+      "Warden risk 0.55: possible typo1 of 'json5' (substitution; target rank #74)",
+      "Warden risk 0.54: possible typo1 of 'listr2' (omission; target rank #994)",
+      "Warden risk 0.53: possible reorder of 'semver-compare' (tokens reordered; target rank #2251)",
+      "Warden risk 0.56: possible typo1 of 'parsers' (substitution; target rank #2857)",
+      "Warden risk 0.66: possible homoglyph of 'parseurl' (confusable characters; target rank #447)",
+      "Warden risk 0.60: possible typo1 of 'css-tokenizer' (insertion; target rank #777)",
+      "Warden risk 0.56: possible typo1 of 'multimatch' (omission; target rank #2879)",
+      "Warden risk 0.55: possible typo1 of 'ansicolors' (omission; target rank #3459)"
+     ]
+    },
+    {
+     "sha": "cd514d72d6",
+     "date": "2026-06-24",
+     "pins": 1243,
+     "vulnerable_pkgs": 44,
+     "findings": 192,
+     "backtrack_correct": 39,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 6299,
+      "edges": 13790,
+      "findings": 201
+     },
+     "warden_flags": [
+      "Warden risk 0.66: possible typo1 of 'flatted' (substitution; target rank #176)",
+      "Warden risk 0.55: possible typo1 of 'json5' (substitution; target rank #74)",
+      "Warden risk 0.54: possible typo1 of 'listr2' (omission; target rank #994)",
+      "Warden risk 0.53: possible reorder of 'semver-compare' (tokens reordered; target rank #2251)",
+      "Warden risk 0.56: possible typo1 of 'parsers' (substitution; target rank #2857)",
+      "Warden risk 0.66: possible homoglyph of 'parseurl' (confusable characters; target rank #447)",
+      "Warden risk 0.60: possible typo1 of 'css-tokenizer' (insertion; target rank #777)",
+      "Warden risk 0.56: possible typo1 of 'multimatch' (omission; target rank #2879)",
+      "Warden risk 0.55: possible typo1 of 'ansicolors' (omission; target rank #3459)"
+     ]
+    }
+   ],
+   "head": {},
+   "reachability": null
+  },
+  {
+   "repo": "mastodon",
+   "manifest": "yarn.lock",
+   "ecosystem": "npm",
+   "manifest_commits": 2651,
+   "snapshots": 12,
+   "history_walk_s": 44.16,
+   "gate_ms_median": 440.0,
+   "gate_ms_max": 879.5,
+   "attribution": {
+    "tracegate": {
+     "correct": 565,
+     "total": 720,
+     "accuracy": 0.7847
+    },
+    "last-manifest-commit": {
+     "correct": 72,
+     "total": 720,
+     "accuracy": 0.1
+    },
+    "pickaxe-first": {
+     "correct": 115,
+     "total": 720,
+     "accuracy": 0.1597
+    },
+    "pickaxe-exact-pin": {
+     "correct": 361,
+     "total": 720,
+     "accuracy": 0.5014
+    },
+    "scanner-only": {
+     "correct": null,
+     "total": 720,
+     "accuracy": null,
+     "note": "n/a: scanner output carries no commit"
+    }
+   },
+   "disagreements": [
+    {
+     "snapshot": "4500dc2385",
+     "package": "@babel/traverse",
+     "tracegate": "e2b3437a84",
+     "blame": "4e03e50c37",
+     "blame_subject": "Bump @babel/* from 7.3.4 to 7.4.5 (#10936)"
+    },
+    {
+     "snapshot": "4500dc2385",
+     "package": "braces",
+     "tracegate": "8347479f5d",
+     "blame": "e9b322d0a6",
+     "blame_subject": "Upgrade webpack to version v4.x (#6655)"
+    },
+    {
+     "snapshot": "4500dc2385",
+     "package": "cross-spawn",
+     "tracegate": "8347479f5d",
+     "blame": "e9b322d0a6",
+     "blame_subject": "Upgrade webpack to version v4.x (#6655)"
+    },
+    {
+     "snapshot": "4500dc2385",
+     "package": "json5",
+     "tracegate": "e0ada97770",
+     "blame": "f5bf5ebb82",
+     "blame_subject": "Replace sprockets/browserify with Webpack (#2617)"
+    },
+    {
+     "snapshot": "4500dc2385",
+     "package": "micromatch",
+     "tracegate": "8347479f5d",
+     "blame": "e9b322d0a6",
+     "blame_subject": "Upgrade webpack to version v4.x (#6655)"
+    },
+    {
+     "snapshot": "4500dc2385",
+     "package": "request",
+     "tracegate": "8f5fdab5bf",
+     "blame": "0ddbccf7e6",
+     "blame_subject": "Upgrade Babel to version 7.0.0 (#5925)"
+    },
+    {
+     "snapshot": "4500dc2385",
+     "package": "serialize-javascript",
+     "tracegate": "1a8bbcdca4",
+     "blame": "da38c0a6b8",
+     "blame_subject": "Replace from uglifyjs to terser (#10956)"
+    },
+    {
+     "snapshot": "4500dc2385",
+     "package": "ssri",
+     "tracegate": "8f5fdab5bf",
+     "blame": "0ddbccf7e6",
+     "blame_subject": "Upgrade Babel to version 7.0.0 (#5925)"
+    },
+    {
+     "snapshot": "4500dc2385",
+     "package": "ws",
+     "tracegate": "8f5fdab5bf",
+     "blame": "0ddbccf7e6",
+     "blame_subject": "Upgrade Babel to version 7.0.0 (#5925)"
+    },
+    {
+     "snapshot": "4500dc2385",
+     "package": "y18n",
+     "tracegate": "8347479f5d",
+     "blame": "e9b322d0a6",
+     "blame_subject": "Upgrade webpack to version v4.x (#6655)"
+    },
+    {
+     "snapshot": "4500dc2385",
+     "package": "yargs-parser",
+     "tracegate": "ced51d8878",
+     "blame": "8f5fdab5bf",
+     "blame_subject": "Update dependencies for Node.js (2018-12-31) (#9669)"
+    },
+    {
+     "snapshot": "0321cf87b9",
+     "package": "braces",
+     "tracegate": "8347479f5d",
+     "blame": "e9b322d0a6",
+     "blame_subject": "Upgrade webpack to version v4.x (#6655)"
+    },
+    {
+     "snapshot": "0321cf87b9",
+     "package": "cross-spawn",
+     "tracegate": "8347479f5d",
+     "blame": "e9b322d0a6",
+     "blame_subject": "Upgrade webpack to version v4.x (#6655)"
+    },
+    {
+     "snapshot": "0321cf87b9",
+     "package": "ejs",
+     "tracegate": "da67b1fa37",
+     "blame": "f7c146a9e1",
+     "blame_subject": "Bump webpack from 4.35.3 to 4.41.0 (#12026)"
+    },
+    {
+     "snapshot": "0321cf87b9",
+     "package": "json5",
+     "tracegate": "e0ada97770",
+     "blame": "f5bf5ebb82",
+     "blame_subject": "Replace sprockets/browserify with Webpack (#2617)"
+    }
+   ],
+   "per_snapshot": [
+    {
+     "sha": "e2ff39bf5d",
+     "date": "2016-10-12",
+     "pins": 695,
+     "vulnerable_pkgs": 70,
+     "findings": 173,
+     "backtrack_correct": 70,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 698,
+      "edges": 1392,
+      "findings": 180
+     },
+     "warden_flags": [
+      "Warden risk 0.66: possible typo1 of 'flatted' (substitution; target rank #176)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 0.56: possible typo1 of 'https-browserify' (omission; target rank #2456)",
+      "Warden risk 0.55: possible typo1 of 'json5' (substitution; target rank #74)",
+      "Warden risk 0.51: possible combosquat of 'uuid' ('uuid' + affix ['node']; target rank #38)",
+      "Warden risk 0.52: possible typo2 of 'is-number' (2 edits; target rank #92)",
+      "Warden risk 0.51: possible reorder of 'core-webpack' (tokens reordered; target rank #3690)"
+     ]
+    },
+    {
+     "sha": "4500dc2385",
+     "date": "2019-08-28",
+     "pins": 1230,
+     "vulnerable_pkgs": 87,
+     "findings": 234,
+     "backtrack_correct": 76,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 4664,
+      "edges": 5807,
+      "findings": 257
+     },
+     "warden_flags": [
+      "Warden risk 0.66: possible typo1 of 'flatted' (substitution; target rank #176)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 0.56: possible typo1 of 'https-browserify' (omission; target rank #2456)",
+      "Warden risk 0.55: possible typo1 of 'json5' (substitution; target rank #74)",
+      "Warden risk 0.51: possible combosquat of 'uuid' ('uuid' + affix ['node']; target rank #38)",
+      "Warden risk 0.52: possible typo2 of 'is-number' (2 edits; target rank #92)",
+      "Warden risk 0.51: possible reorder of 'core-webpack' (tokens reordered; target rank #3690)",
+      "Warden risk 0.51: possible reorder of 'core-webpack' (tokens reordered; target rank #3690)",
+      "Warden risk 0.61: possible typo1 of 'is-promise' (substitution; target rank #650)",
+      "Warden risk 0.54: possible typo1 of 'postcss-scss' (substitution; target rank #4015)",
+      "Warden risk 0.62: possible separator of 'seedrandom' (separator-only difference; target rank #3028)",
+      "Warden risk 0.60: possible typo1 of 'css-tokenizer' (insertion; target rank #777)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 0.62: possible separator of 'tinyqueue' (separator-only difference; target rank #2813)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 0.54: possible typo1 of 'postcss-scss' (substitution; target rank #4015)",
+      "Warden risk 0.60: possible typo1 of 'uglify-js' (substitution; target rank #894)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2025-20690)",
+      "Warden risk 0.51: possible typo1 of 'motion' (insertion; target rank #2274)",
+      "Warden risk 0.51: possible typo1 of 'motion' (insertion; target rank #2274)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)"
+     ]
+    },
+    {
+     "sha": "0321cf87b9",
+     "date": "2020-05-21",
+     "pins": 1276,
+     "vulnerable_pkgs": 84,
+     "findings": 211,
+     "backtrack_correct": 73,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 6173,
+      "edges": 7127,
+      "findings": 235
+     },
+     "warden_flags": [
+      "Warden risk 0.66: possible typo1 of 'flatted' (substitution; target rank #176)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 0.56: possible typo1 of 'https-browserify' (omission; target rank #2456)",
+      "Warden risk 0.55: possible typo1 of 'json5' (substitution; target rank #74)",
+      "Warden risk 0.51: possible combosquat of 'uuid' ('uuid' + affix ['node']; target rank #38)",
+      "Warden risk 0.52: possible typo2 of 'is-number' (2 edits; target rank #92)",
+      "Warden risk 0.51: possible reorder of 'core-webpack' (tokens reordered; target rank #3690)",
+      "Warden risk 0.51: possible reorder of 'core-webpack' (tokens reordered; target rank #3690)",
+      "Warden risk 0.61: possible typo1 of 'is-promise' (substitution; target rank #650)",
+      "Warden risk 0.54: possible typo1 of 'postcss-scss' (substitution; target rank #4015)",
+      "Warden risk 0.62: possible separator of 'seedrandom' (separator-only difference; target rank #3028)",
+      "Warden risk 0.60: possible typo1 of 'css-tokenizer' (insertion; target rank #777)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 0.62: possible separator of 'tinyqueue' (separator-only difference; target rank #2813)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 0.54: possible typo1 of 'postcss-scss' (substitution; target rank #4015)",
+      "Warden risk 0.60: possible typo1 of 'uglify-js' (substitution; target rank #894)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2025-20690)",
+      "Warden risk 0.51: possible typo1 of 'motion' (insertion; target rank #2274)",
+      "Warden risk 0.51: possible typo1 of 'motion' (insertion; target rank #2274)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 0.55: possible typo1 of 'json5' (substitution; target rank #74)"
+     ]
+    },
+    {
+     "sha": "6477faef0c",
+     "date": "2020-09-29",
+     "pins": 1264,
+     "vulnerable_pkgs": 79,
+     "findings": 202,
+     "backtrack_correct": 68,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 7392,
+      "edges": 8118,
+      "findings": 226
+     },
+     "warden_flags": [
+      "Warden risk 0.66: possible typo1 of 'flatted' (substitution; target rank #176)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 0.56: possible typo1 of 'https-browserify' (omission; target rank #2456)",
+      "Warden risk 0.55: possible typo1 of 'json5' (substitution; target rank #74)",
+      "Warden risk 0.51: possible combosquat of 'uuid' ('uuid' + affix ['node']; target rank #38)",
+      "Warden risk 0.52: possible typo2 of 'is-number' (2 edits; target rank #92)",
+      "Warden risk 0.51: possible reorder of 'core-webpack' (tokens reordered; target rank #3690)",
+      "Warden risk 0.51: possible reorder of 'core-webpack' (tokens reordered; target rank #3690)",
+      "Warden risk 0.61: possible typo1 of 'is-promise' (substitution; target rank #650)",
+      "Warden risk 0.54: possible typo1 of 'postcss-scss' (substitution; target rank #4015)",
+      "Warden risk 0.62: possible separator of 'seedrandom' (separator-only difference; target rank #3028)",
+      "Warden risk 0.60: possible typo1 of 'css-tokenizer' (insertion; target rank #777)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 0.62: possible separator of 'tinyqueue' (separator-only difference; target rank #2813)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 0.54: possible typo1 of 'postcss-scss' (substitution; target rank #4015)",
+      "Warden risk 0.60: possible typo1 of 'uglify-js' (substitution; target rank #894)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2025-20690)",
+      "Warden risk 0.51: possible typo1 of 'motion' (insertion; target rank #2274)",
+      "Warden risk 0.51: possible typo1 of 'motion' (insertion; target rank #2274)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 0.55: possible typo1 of 'json5' (substitution; target rank #74)"
+     ]
+    },
+    {
+     "sha": "9e6a9e0774",
+     "date": "2021-05-27",
+     "pins": 1280,
+     "vulnerable_pkgs": 74,
+     "findings": 195,
+     "backtrack_correct": 64,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 8675,
+      "edges": 9210,
+      "findings": 219
+     },
+     "warden_flags": [
+      "Warden risk 0.66: possible typo1 of 'flatted' (substitution; target rank #176)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 0.56: possible typo1 of 'https-browserify' (omission; target rank #2456)",
+      "Warden risk 0.55: possible typo1 of 'json5' (substitution; target rank #74)",
+      "Warden risk 0.51: possible combosquat of 'uuid' ('uuid' + affix ['node']; target rank #38)",
+      "Warden risk 0.52: possible typo2 of 'is-number' (2 edits; target rank #92)",
+      "Warden risk 0.51: possible reorder of 'core-webpack' (tokens reordered; target rank #3690)",
+      "Warden risk 0.51: possible reorder of 'core-webpack' (tokens reordered; target rank #3690)",
+      "Warden risk 0.61: possible typo1 of 'is-promise' (substitution; target rank #650)",
+      "Warden risk 0.54: possible typo1 of 'postcss-scss' (substitution; target rank #4015)",
+      "Warden risk 0.62: possible separator of 'seedrandom' (separator-only difference; target rank #3028)",
+      "Warden risk 0.60: possible typo1 of 'css-tokenizer' (insertion; target rank #777)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 0.62: possible separator of 'tinyqueue' (separator-only difference; target rank #2813)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 0.54: possible typo1 of 'postcss-scss' (substitution; target rank #4015)",
+      "Warden risk 0.60: possible typo1 of 'uglify-js' (substitution; target rank #894)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2025-20690)",
+      "Warden risk 0.51: possible typo1 of 'motion' (insertion; target rank #2274)",
+      "Warden risk 0.51: possible typo1 of 'motion' (insertion; target rank #2274)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 0.55: possible typo1 of 'json5' (substitution; target rank #74)"
+     ]
+    },
+    {
+     "sha": "d96000bd31",
+     "date": "2022-05-03",
+     "pins": 1269,
+     "vulnerable_pkgs": 65,
+     "findings": 171,
+     "backtrack_correct": 56,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 10327,
+      "edges": 10621,
+      "findings": 195
+     },
+     "warden_flags": [
+      "Warden risk 0.66: possible typo1 of 'flatted' (substitution; target rank #176)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 0.56: possible typo1 of 'https-browserify' (omission; target rank #2456)",
+      "Warden risk 0.55: possible typo1 of 'json5' (substitution; target rank #74)",
+      "Warden risk 0.51: possible combosquat of 'uuid' ('uuid' + affix ['node']; target rank #38)",
+      "Warden risk 0.52: possible typo2 of 'is-number' (2 edits; target rank #92)",
+      "Warden risk 0.51: possible reorder of 'core-webpack' (tokens reordered; target rank #3690)",
+      "Warden risk 0.51: possible reorder of 'core-webpack' (tokens reordered; target rank #3690)",
+      "Warden risk 0.61: possible typo1 of 'is-promise' (substitution; target rank #650)",
+      "Warden risk 0.54: possible typo1 of 'postcss-scss' (substitution; target rank #4015)",
+      "Warden risk 0.62: possible separator of 'seedrandom' (separator-only difference; target rank #3028)",
+      "Warden risk 0.60: possible typo1 of 'css-tokenizer' (insertion; target rank #777)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 0.62: possible separator of 'tinyqueue' (separator-only difference; target rank #2813)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 0.54: possible typo1 of 'postcss-scss' (substitution; target rank #4015)",
+      "Warden risk 0.60: possible typo1 of 'uglify-js' (substitution; target rank #894)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2025-20690)",
+      "Warden risk 0.51: possible typo1 of 'motion' (insertion; target rank #2274)",
+      "Warden risk 0.51: possible typo1 of 'motion' (insertion; target rank #2274)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 0.55: possible typo1 of 'json5' (substitution; target rank #74)"
+     ]
+    },
+    {
+     "sha": "3d46823e9f",
+     "date": "2023-03-08",
+     "pins": 1346,
+     "vulnerable_pkgs": 60,
+     "findings": 173,
+     "backtrack_correct": 48,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 12136,
+      "edges": 12360,
+      "findings": 197
+     },
+     "warden_flags": [
+      "Warden risk 0.66: possible typo1 of 'flatted' (substitution; target rank #176)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 0.56: possible typo1 of 'https-browserify' (omission; target rank #2456)",
+      "Warden risk 0.55: possible typo1 of 'json5' (substitution; target rank #74)",
+      "Warden risk 0.51: possible combosquat of 'uuid' ('uuid' + affix ['node']; target rank #38)",
+      "Warden risk 0.52: possible typo2 of 'is-number' (2 edits; target rank #92)",
+      "Warden risk 0.51: possible reorder of 'core-webpack' (tokens reordered; target rank #3690)",
+      "Warden risk 0.51: possible reorder of 'core-webpack' (tokens reordered; target rank #3690)",
+      "Warden risk 0.61: possible typo1 of 'is-promise' (substitution; target rank #650)",
+      "Warden risk 0.54: possible typo1 of 'postcss-scss' (substitution; target rank #4015)",
+      "Warden risk 0.62: possible separator of 'seedrandom' (separator-only difference; target rank #3028)",
+      "Warden risk 0.60: possible typo1 of 'css-tokenizer' (insertion; target rank #777)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 0.62: possible separator of 'tinyqueue' (separator-only difference; target rank #2813)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 0.54: possible typo1 of 'postcss-scss' (substitution; target rank #4015)",
+      "Warden risk 0.60: possible typo1 of 'uglify-js' (substitution; target rank #894)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2025-20690)",
+      "Warden risk 0.51: possible typo1 of 'motion' (insertion; target rank #2274)",
+      "Warden risk 0.51: possible typo1 of 'motion' (insertion; target rank #2274)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 0.55: possible typo1 of 'json5' (substitution; target rank #74)"
+     ]
+    },
+    {
+     "sha": "134de736dc",
+     "date": "2023-10-24",
+     "pins": 1470,
+     "vulnerable_pkgs": 56,
+     "findings": 164,
+     "backtrack_correct": 47,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 14353,
+      "edges": 14555,
+      "findings": 188
+     },
+     "warden_flags": [
+      "Warden risk 0.66: possible typo1 of 'flatted' (substitution; target rank #176)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 0.56: possible typo1 of 'https-browserify' (omission; target rank #2456)",
+      "Warden risk 0.55: possible typo1 of 'json5' (substitution; target rank #74)",
+      "Warden risk 0.51: possible combosquat of 'uuid' ('uuid' + affix ['node']; target rank #38)",
+      "Warden risk 0.52: possible typo2 of 'is-number' (2 edits; target rank #92)",
+      "Warden risk 0.51: possible reorder of 'core-webpack' (tokens reordered; target rank #3690)",
+      "Warden risk 0.51: possible reorder of 'core-webpack' (tokens reordered; target rank #3690)",
+      "Warden risk 0.61: possible typo1 of 'is-promise' (substitution; target rank #650)",
+      "Warden risk 0.54: possible typo1 of 'postcss-scss' (substitution; target rank #4015)",
+      "Warden risk 0.62: possible separator of 'seedrandom' (separator-only difference; target rank #3028)",
+      "Warden risk 0.60: possible typo1 of 'css-tokenizer' (insertion; target rank #777)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 0.62: possible separator of 'tinyqueue' (separator-only difference; target rank #2813)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 0.54: possible typo1 of 'postcss-scss' (substitution; target rank #4015)",
+      "Warden risk 0.60: possible typo1 of 'uglify-js' (substitution; target rank #894)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2025-20690)",
+      "Warden risk 0.51: possible typo1 of 'motion' (insertion; target rank #2274)",
+      "Warden risk 0.51: possible typo1 of 'motion' (insertion; target rank #2274)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 0.55: possible typo1 of 'json5' (substitution; target rank #74)"
+     ]
+    },
+    {
+     "sha": "ad3e200bf7",
+     "date": "2024-05-30",
+     "pins": 1526,
+     "vulnerable_pkgs": 56,
+     "findings": 163,
+     "backtrack_correct": 15,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 16267,
+      "edges": 16300,
+      "findings": 187
+     },
+     "warden_flags": [
+      "Warden risk 0.66: possible typo1 of 'flatted' (substitution; target rank #176)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 0.56: possible typo1 of 'https-browserify' (omission; target rank #2456)",
+      "Warden risk 0.55: possible typo1 of 'json5' (substitution; target rank #74)",
+      "Warden risk 0.51: possible combosquat of 'uuid' ('uuid' + affix ['node']; target rank #38)",
+      "Warden risk 0.52: possible typo2 of 'is-number' (2 edits; target rank #92)",
+      "Warden risk 0.51: possible reorder of 'core-webpack' (tokens reordered; target rank #3690)",
+      "Warden risk 0.51: possible reorder of 'core-webpack' (tokens reordered; target rank #3690)",
+      "Warden risk 0.61: possible typo1 of 'is-promise' (substitution; target rank #650)",
+      "Warden risk 0.54: possible typo1 of 'postcss-scss' (substitution; target rank #4015)",
+      "Warden risk 0.62: possible separator of 'seedrandom' (separator-only difference; target rank #3028)",
+      "Warden risk 0.60: possible typo1 of 'css-tokenizer' (insertion; target rank #777)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 0.62: possible separator of 'tinyqueue' (separator-only difference; target rank #2813)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 0.54: possible typo1 of 'postcss-scss' (substitution; target rank #4015)",
+      "Warden risk 0.60: possible typo1 of 'uglify-js' (substitution; target rank #894)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2025-20690)",
+      "Warden risk 0.51: possible typo1 of 'motion' (insertion; target rank #2274)",
+      "Warden risk 0.51: possible typo1 of 'motion' (insertion; target rank #2274)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 0.55: possible typo1 of 'json5' (substitution; target rank #74)"
+     ]
+    },
+    {
+     "sha": "82acef50b0",
+     "date": "2025-03-24",
+     "pins": 1565,
+     "vulnerable_pkgs": 51,
+     "findings": 153,
+     "backtrack_correct": 17,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 18204,
+      "edges": 18045,
+      "findings": 177
+     },
+     "warden_flags": [
+      "Warden risk 0.66: possible typo1 of 'flatted' (substitution; target rank #176)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 0.56: possible typo1 of 'https-browserify' (omission; target rank #2456)",
+      "Warden risk 0.55: possible typo1 of 'json5' (substitution; target rank #74)",
+      "Warden risk 0.51: possible combosquat of 'uuid' ('uuid' + affix ['node']; target rank #38)",
+      "Warden risk 0.52: possible typo2 of 'is-number' (2 edits; target rank #92)",
+      "Warden risk 0.51: possible reorder of 'core-webpack' (tokens reordered; target rank #3690)",
+      "Warden risk 0.51: possible reorder of 'core-webpack' (tokens reordered; target rank #3690)",
+      "Warden risk 0.61: possible typo1 of 'is-promise' (substitution; target rank #650)",
+      "Warden risk 0.54: possible typo1 of 'postcss-scss' (substitution; target rank #4015)",
+      "Warden risk 0.62: possible separator of 'seedrandom' (separator-only difference; target rank #3028)",
+      "Warden risk 0.60: possible typo1 of 'css-tokenizer' (insertion; target rank #777)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 0.62: possible separator of 'tinyqueue' (separator-only difference; target rank #2813)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 0.54: possible typo1 of 'postcss-scss' (substitution; target rank #4015)",
+      "Warden risk 0.60: possible typo1 of 'uglify-js' (substitution; target rank #894)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2025-20690)",
+      "Warden risk 0.51: possible typo1 of 'motion' (insertion; target rank #2274)",
+      "Warden risk 0.51: possible typo1 of 'motion' (insertion; target rank #2274)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 0.55: possible typo1 of 'json5' (substitution; target rank #74)"
+     ]
+    },
+    {
+     "sha": "e203795ebd",
+     "date": "2026-01-23",
+     "pins": 1315,
+     "vulnerable_pkgs": 37,
+     "findings": 127,
+     "backtrack_correct": 30,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 20410,
+      "edges": 20138,
+      "findings": 153
+     },
+     "warden_flags": [
+      "Warden risk 0.66: possible typo1 of 'flatted' (substitution; target rank #176)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 0.56: possible typo1 of 'https-browserify' (omission; target rank #2456)",
+      "Warden risk 0.55: possible typo1 of 'json5' (substitution; target rank #74)",
+      "Warden risk 0.51: possible combosquat of 'uuid' ('uuid' + affix ['node']; target rank #38)",
+      "Warden risk 0.52: possible typo2 of 'is-number' (2 edits; target rank #92)",
+      "Warden risk 0.51: possible reorder of 'core-webpack' (tokens reordered; target rank #3690)",
+      "Warden risk 0.51: possible reorder of 'core-webpack' (tokens reordered; target rank #3690)",
+      "Warden risk 0.61: possible typo1 of 'is-promise' (substitution; target rank #650)",
+      "Warden risk 0.54: possible typo1 of 'postcss-scss' (substitution; target rank #4015)",
+      "Warden risk 0.62: possible separator of 'seedrandom' (separator-only difference; target rank #3028)",
+      "Warden risk 0.60: possible typo1 of 'css-tokenizer' (insertion; target rank #777)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 0.62: possible separator of 'tinyqueue' (separator-only difference; target rank #2813)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 0.54: possible typo1 of 'postcss-scss' (substitution; target rank #4015)",
+      "Warden risk 0.60: possible typo1 of 'uglify-js' (substitution; target rank #894)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2025-20690)",
+      "Warden risk 0.51: possible typo1 of 'motion' (insertion; target rank #2274)",
+      "Warden risk 0.51: possible typo1 of 'motion' (insertion; target rank #2274)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 0.55: possible typo1 of 'json5' (substitution; target rank #74)",
+      "Warden risk 0.53: possible typo1 of 'stylis' (adjacent-key substitution; target rank #1033)",
+      "Warden risk 0.54: possible typo1 of 'base64' (substitution; target rank #978)"
+     ]
+    },
+    {
+     "sha": "541166cdbf",
+     "date": "2026-10-01",
+     "pins": 1252,
+     "vulnerable_pkgs": 1,
+     "findings": 1,
+     "backtrack_correct": 1,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 23179,
+      "edges": 22643,
+      "findings": 42
+     },
+     "warden_flags": [
+      "Warden risk 0.66: possible typo1 of 'flatted' (substitution; target rank #176)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 0.56: possible typo1 of 'https-browserify' (omission; target rank #2456)",
+      "Warden risk 0.55: possible typo1 of 'json5' (substitution; target rank #74)",
+      "Warden risk 0.51: possible combosquat of 'uuid' ('uuid' + affix ['node']; target rank #38)",
+      "Warden risk 0.52: possible typo2 of 'is-number' (2 edits; target rank #92)",
+      "Warden risk 0.51: possible reorder of 'core-webpack' (tokens reordered; target rank #3690)",
+      "Warden risk 0.51: possible reorder of 'core-webpack' (tokens reordered; target rank #3690)",
+      "Warden risk 0.61: possible typo1 of 'is-promise' (substitution; target rank #650)",
+      "Warden risk 0.54: possible typo1 of 'postcss-scss' (substitution; target rank #4015)",
+      "Warden risk 0.62: possible separator of 'seedrandom' (separator-only difference; target rank #3028)",
+      "Warden risk 0.60: possible typo1 of 'css-tokenizer' (insertion; target rank #777)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 0.62: possible separator of 'tinyqueue' (separator-only difference; target rank #2813)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 0.54: possible typo1 of 'postcss-scss' (substitution; target rank #4015)",
+      "Warden risk 0.60: possible typo1 of 'uglify-js' (substitution; target rank #894)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2025-20690)",
+      "Warden risk 0.51: possible typo1 of 'motion' (insertion; target rank #2274)",
+      "Warden risk 0.51: possible typo1 of 'motion' (insertion; target rank #2274)",
+      "Warden risk 1.00: known malicious package (OSV MAL-2023-462)",
+      "Warden risk 0.55: possible typo1 of 'json5' (substitution; target rank #74)",
+      "Warden risk 0.53: possible typo1 of 'stylis' (adjacent-key substitution; target rank #1033)",
+      "Warden risk 0.54: possible typo1 of 'base64' (substitution; target rank #978)",
+      "Warden risk 0.50: possible typo1 of 'bundle' (insertion; target rank #2781)",
+      "Warden risk 0.55: possible reorder of 'sdk-logs' (tokens reordered; target rank #1277)",
+      "Warden risk 0.50: possible typo1 of 'bundle' (insertion; target rank #2781)",
+      "Warden risk 0.50: possible typo1 of 'bundle' (insertion; target rank #2781)",
+      "Warden risk 0.50: possible typo1 of 'bundle' (insertion; target rank #2781)",
+      "Warden risk 0.50: possible typo1 of 'bundle' (insertion; target rank #2781)",
+      "Warden risk 0.50: possible typo1 of 'bundle' (insertion; target rank #2781)",
+      "Warden risk 0.50: possible typo1 of 'bundle' (insertion; target rank #2781)",
+      "Warden risk 0.50: possible typo1 of 'bundle' (insertion; target rank #2781)",
+      "Warden risk 0.50: possible typo1 of 'bundle' (insertion; target rank #2781)",
+      "Warden risk 0.50: possible typo1 of 'bundle' (insertion; target rank #2781)",
+      "Warden risk 0.50: possible typo1 of 'bundle' (insertion; target rank #2781)",
+      "Warden risk 0.50: possible typo1 of 'bundle' (insertion; target rank #2781)",
+      "Warden risk 0.50: possible typo1 of 'bundle' (insertion; target rank #2781)",
+      "Warden risk 0.56: possible typo1 of 'astring' (omission; target rank #2621)"
+     ]
+    }
+   ],
+   "head": {},
+   "reachability": null
+  },
+  {
+   "repo": "vue-core",
+   "manifest": "pnpm-lock.yaml",
+   "ecosystem": "npm",
+   "manifest_commits": 418,
+   "snapshots": 12,
+   "history_walk_s": 4.4,
+   "gate_ms_median": 119.6,
+   "gate_ms_max": 708.0,
+   "attribution": {
+    "tracegate": {
+     "correct": 240,
+     "total": 385,
+     "accuracy": 0.6234
+    },
+    "last-manifest-commit": {
+     "correct": 55,
+     "total": 385,
+     "accuracy": 0.1429
+    },
+    "pickaxe-first": {
+     "correct": 88,
+     "total": 385,
+     "accuracy": 0.2286
+    },
+    "pickaxe-exact-pin": {
+     "correct": 375,
+     "total": 385,
+     "accuracy": 0.974
+    },
+    "scanner-only": {
+     "correct": null,
+     "total": 385,
+     "accuracy": null,
+     "note": "n/a: scanner output carries no commit"
+    }
+   },
+   "disagreements": [
+    {
+     "snapshot": "20ea62da3c",
+     "package": "ajv",
+     "tracegate": "61c5fbd3e3",
+     "blame": "ec4531a6b3",
+     "blame_subject": "chore: bump vite and esbuild"
+    },
+    {
+     "snapshot": "20ea62da3c",
+     "package": "bl",
+     "tracegate": "61c5fbd3e3",
+     "blame": "ec4531a6b3",
+     "blame_subject": "chore: bump vite and esbuild"
+    },
+    {
+     "snapshot": "20ea62da3c",
+     "package": "bn.js",
+     "tracegate": "61c5fbd3e3",
+     "blame": "ec4531a6b3",
+     "blame_subject": "chore: bump vite and esbuild"
+    },
+    {
+     "snapshot": "20ea62da3c",
+     "package": "brace-expansion",
+     "tracegate": "61c5fbd3e3",
+     "blame": "ec4531a6b3",
+     "blame_subject": "chore: bump vite and esbuild"
+    },
+    {
+     "snapshot": "20ea62da3c",
+     "package": "braces",
+     "tracegate": "61c5fbd3e3",
+     "blame": "ec4531a6b3",
+     "blame_subject": "chore: bump vite and esbuild"
+    },
+    {
+     "snapshot": "20ea62da3c",
+     "package": "browserify-sign",
+     "tracegate": "61c5fbd3e3",
+     "blame": "ec4531a6b3",
+     "blame_subject": "chore: bump vite and esbuild"
+    },
+    {
+     "snapshot": "20ea62da3c",
+     "package": "cipher-base",
+     "tracegate": "61c5fbd3e3",
+     "blame": "ec4531a6b3",
+     "blame_subject": "chore: bump vite and esbuild"
+    },
+    {
+     "snapshot": "20ea62da3c",
+     "package": "cross-spawn",
+     "tracegate": "61c5fbd3e3",
+     "blame": "ec4531a6b3",
+     "blame_subject": "chore: bump vite and esbuild"
+    },
+    {
+     "snapshot": "20ea62da3c",
+     "package": "elliptic",
+     "tracegate": "61c5fbd3e3",
+     "blame": "ec4531a6b3",
+     "blame_subject": "chore: bump vite and esbuild"
+    },
+    {
+     "snapshot": "20ea62da3c",
+     "package": "js-yaml",
+     "tracegate": "20ea62da3c",
+     "blame": "53e3533b75",
+     "blame_subject": "chore: bump deps"
+    },
+    {
+     "snapshot": "20ea62da3c",
+     "package": "nanoid",
+     "tracegate": "53e3533b75",
+     "blame": "03b03eee44",
+     "blame_subject": "chore: bump vite"
+    },
+    {
+     "snapshot": "20ea62da3c",
+     "package": "picomatch",
+     "tracegate": "53e3533b75",
+     "blame": "f2c46ed9cf",
+     "blame_subject": "build(deps): upgrade rollup@2 to rollup@3 (#6990)"
+    },
+    {
+     "snapshot": "b775b71c78",
+     "package": "@babel/core",
+     "tracegate": "b7bd50f505",
+     "blame": "847658b7a2",
+     "blame_subject": "release: v3.3.0-beta.5"
+    },
+    {
+     "snapshot": "b775b71c78",
+     "package": "@babel/helpers",
+     "tracegate": "b7bd50f505",
+     "blame": "847658b7a2",
+     "blame_subject": "release: v3.3.0-beta.5"
+    },
+    {
+     "snapshot": "b775b71c78",
+     "package": "@babel/traverse",
+     "tracegate": "b7bd50f505",
+     "blame": "847658b7a2",
+     "blame_subject": "release: v3.3.0-beta.5"
+    }
+   ],
+   "per_snapshot": [
+    {
+     "sha": "61c5fbd3e3",
+     "date": "2021-10-08",
+     "pins": 772,
+     "vulnerable_pkgs": 52,
+     "findings": 122,
+     "backtrack_correct": 52,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 775,
+      "edges": 1546,
+      "findings": 123
+     },
+     "warden_flags": [
+      "Warden risk 0.67: possible separator of 'is-buffer' (separator-only difference; target rank #801)"
+     ]
+    },
+    {
+     "sha": "20ea62da3c",
+     "date": "2023-02-03",
+     "pins": 710,
+     "vulnerable_pkgs": 46,
+     "findings": 114,
+     "backtrack_correct": 34,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 1451,
+      "edges": 2163,
+      "findings": 115
+     },
+     "warden_flags": [
+      "Warden risk 0.67: possible separator of 'is-buffer' (separator-only difference; target rank #801)"
+     ]
+    },
+    {
+     "sha": "b775b71c78",
+     "date": "2023-09-06",
+     "pins": 665,
+     "vulnerable_pkgs": 40,
+     "findings": 105,
+     "backtrack_correct": 7,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 1803,
+      "edges": 2441,
+      "findings": 108
+     },
+     "warden_flags": [
+      "Warden risk 0.67: possible separator of 'is-buffer' (separator-only difference; target rank #801)",
+      "Warden risk 0.58: possible typo1 of 'css-loader' (substitution; target rank #1410)",
+      "Warden risk 0.56: possible typo1 of 'core-util' (insertion; target rank #2550)"
+     ]
+    },
+    {
+     "sha": "7b8c95a43d",
+     "date": "2024-01-03",
+     "pins": 672,
+     "vulnerable_pkgs": 35,
+     "findings": 99,
+     "backtrack_correct": 15,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 2377,
+      "edges": 2984,
+      "findings": 104
+     },
+     "warden_flags": [
+      "Warden risk 0.67: possible separator of 'is-buffer' (separator-only difference; target rank #801)",
+      "Warden risk 0.58: possible typo1 of 'css-loader' (substitution; target rank #1410)",
+      "Warden risk 0.56: possible typo1 of 'core-util' (insertion; target rank #2550)",
+      "Warden risk 0.56: possible typo1 of 'core-util' (insertion; target rank #2550)",
+      "Warden risk 0.55: possible typo1 of 'eslint-plugin-n' (substitution; target rank #3147)"
+     ]
+    },
+    {
+     "sha": "43ccad4ea1",
+     "date": "2024-08-12",
+     "pins": 620,
+     "vulnerable_pkgs": 33,
+     "findings": 95,
+     "backtrack_correct": 18,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 3403,
+      "edges": 3924,
+      "findings": 104
+     },
+     "warden_flags": [
+      "Warden risk 0.67: possible separator of 'is-buffer' (separator-only difference; target rank #801)",
+      "Warden risk 0.58: possible typo1 of 'css-loader' (substitution; target rank #1410)",
+      "Warden risk 0.56: possible typo1 of 'core-util' (insertion; target rank #2550)",
+      "Warden risk 0.56: possible typo1 of 'core-util' (insertion; target rank #2550)",
+      "Warden risk 0.55: possible typo1 of 'eslint-plugin-n' (substitution; target rank #3147)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)"
+     ]
+    },
+    {
+     "sha": "ed01d92571",
+     "date": "2024-10-22",
+     "pins": 609,
+     "vulnerable_pkgs": 31,
+     "findings": 94,
+     "backtrack_correct": 18,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 3719,
+      "edges": 4193,
+      "findings": 105
+     },
+     "warden_flags": [
+      "Warden risk 0.67: possible separator of 'is-buffer' (separator-only difference; target rank #801)",
+      "Warden risk 0.58: possible typo1 of 'css-loader' (substitution; target rank #1410)",
+      "Warden risk 0.56: possible typo1 of 'core-util' (insertion; target rank #2550)",
+      "Warden risk 0.56: possible typo1 of 'core-util' (insertion; target rank #2550)",
+      "Warden risk 0.55: possible typo1 of 'eslint-plugin-n' (substitution; target rank #3147)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)"
+     ]
+    },
+    {
+     "sha": "26162b4999",
+     "date": "2025-01-20",
+     "pins": 618,
+     "vulnerable_pkgs": 30,
+     "findings": 92,
+     "backtrack_correct": 19,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 4116,
+      "edges": 4562,
+      "findings": 105
+     },
+     "warden_flags": [
+      "Warden risk 0.67: possible separator of 'is-buffer' (separator-only difference; target rank #801)",
+      "Warden risk 0.58: possible typo1 of 'css-loader' (substitution; target rank #1410)",
+      "Warden risk 0.56: possible typo1 of 'core-util' (insertion; target rank #2550)",
+      "Warden risk 0.56: possible typo1 of 'core-util' (insertion; target rank #2550)",
+      "Warden risk 0.55: possible typo1 of 'eslint-plugin-n' (substitution; target rank #3147)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)"
+     ]
+    },
+    {
+     "sha": "9d84d64fee",
+     "date": "2025-04-14",
+     "pins": 634,
+     "vulnerable_pkgs": 30,
+     "findings": 83,
+     "backtrack_correct": 18,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 4600,
+      "edges": 5024,
+      "findings": 96
+     },
+     "warden_flags": [
+      "Warden risk 0.67: possible separator of 'is-buffer' (separator-only difference; target rank #801)",
+      "Warden risk 0.58: possible typo1 of 'css-loader' (substitution; target rank #1410)",
+      "Warden risk 0.56: possible typo1 of 'core-util' (insertion; target rank #2550)",
+      "Warden risk 0.56: possible typo1 of 'core-util' (insertion; target rank #2550)",
+      "Warden risk 0.55: possible typo1 of 'eslint-plugin-n' (substitution; target rank #3147)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)"
+     ]
+    },
+    {
+     "sha": "40654d4aa4",
+     "date": "2025-08-20",
+     "pins": 637,
+     "vulnerable_pkgs": 30,
+     "findings": 82,
+     "backtrack_correct": 19,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 5127,
+      "edges": 5516,
+      "findings": 95
+     },
+     "warden_flags": [
+      "Warden risk 0.67: possible separator of 'is-buffer' (separator-only difference; target rank #801)",
+      "Warden risk 0.58: possible typo1 of 'css-loader' (substitution; target rank #1410)",
+      "Warden risk 0.56: possible typo1 of 'core-util' (insertion; target rank #2550)",
+      "Warden risk 0.56: possible typo1 of 'core-util' (insertion; target rank #2550)",
+      "Warden risk 0.55: possible typo1 of 'eslint-plugin-n' (substitution; target rank #3147)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)"
+     ]
+    },
+    {
+     "sha": "2a2fd06d05",
+     "date": "2026-02-09",
+     "pins": 626,
+     "vulnerable_pkgs": 27,
+     "findings": 90,
+     "backtrack_correct": 17,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 5733,
+      "edges": 6075,
+      "findings": 104
+     },
+     "warden_flags": [
+      "Warden risk 0.67: possible separator of 'is-buffer' (separator-only difference; target rank #801)",
+      "Warden risk 0.58: possible typo1 of 'css-loader' (substitution; target rank #1410)",
+      "Warden risk 0.56: possible typo1 of 'core-util' (insertion; target rank #2550)",
+      "Warden risk 0.56: possible typo1 of 'core-util' (insertion; target rank #2550)",
+      "Warden risk 0.55: possible typo1 of 'eslint-plugin-n' (substitution; target rank #3147)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)"
+     ]
+    },
+    {
+     "sha": "3e42bb0715",
+     "date": "2026-05-26",
+     "pins": 641,
+     "vulnerable_pkgs": 22,
+     "findings": 101,
+     "backtrack_correct": 15,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 6457,
+      "edges": 6777,
+      "findings": 115
+     },
+     "warden_flags": [
+      "Warden risk 0.67: possible separator of 'is-buffer' (separator-only difference; target rank #801)",
+      "Warden risk 0.58: possible typo1 of 'css-loader' (substitution; target rank #1410)",
+      "Warden risk 0.56: possible typo1 of 'core-util' (insertion; target rank #2550)",
+      "Warden risk 0.56: possible typo1 of 'core-util' (insertion; target rank #2550)",
+      "Warden risk 0.55: possible typo1 of 'eslint-plugin-n' (substitution; target rank #3147)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)"
+     ]
+    },
+    {
+     "sha": "55a2b4517e",
+     "date": "2026-09-17",
+     "pins": 586,
+     "vulnerable_pkgs": 9,
+     "findings": 37,
+     "backtrack_correct": 8,
+     "verdict": "block",
+     "coverage": 1.0,
+     "graph": {
+      "nodes": 7141,
+      "edges": 7372,
+      "findings": 54
+     },
+     "warden_flags": [
+      "Warden risk 0.67: possible separator of 'is-buffer' (separator-only difference; target rank #801)",
+      "Warden risk 0.58: possible typo1 of 'css-loader' (substitution; target rank #1410)",
+      "Warden risk 0.56: possible typo1 of 'core-util' (insertion; target rank #2550)",
+      "Warden risk 0.56: possible typo1 of 'core-util' (insertion; target rank #2550)",
+      "Warden risk 0.55: possible typo1 of 'eslint-plugin-n' (substitution; target rank #3147)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)",
+      "Warden risk 0.55: possible typo1 of 'npm-run-all' (insertion; target rank #3746)"
+     ]
+    }
+   ],
+   "head": {},
+   "reachability": null
   }
  ]
 }

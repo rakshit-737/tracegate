@@ -1,0 +1,1208 @@
+{
+ "ecosystem": "RubyGems",
+ "reference_size": 5000,
+ "split": "50/50 by sha256(name); numbers are TEST half",
+ "chosen_threshold": 0.54,
+ "dev_positives": 2079,
+ "dev_negatives": 2486,
+ "positives": 2086,
+ "negatives": 2479,
+ "typo_labelled_positives": 0,
+ "results": {
+  "mvp-difflib (14 names)": {
+   "tp": 249,
+   "fp": 4,
+   "fn": 1837,
+   "tn": 2475,
+   "precision": 0.9842,
+   "recall": 0.1194,
+   "f1": 0.2129,
+   "fpr": 0.0016,
+   "precision_at_prev_0.01": 0.4298,
+   "precision_at_prev_0.001": 0.0695,
+   "recall_typo_labelled": 0.0,
+   "ms_per_name": 0.2602
+  },
+  "lev1 (top-5k)": {
+   "tp": 86,
+   "fp": 57,
+   "fn": 2000,
+   "tn": 2422,
+   "precision": 0.6014,
+   "recall": 0.0412,
+   "f1": 0.0772,
+   "fpr": 0.023,
+   "precision_at_prev_0.01": 0.0178,
+   "precision_at_prev_0.001": 0.0018,
+   "recall_typo_labelled": 0.0,
+   "ms_per_name": 0.0149
+  },
+  "typomania/TypoGard (top-5k)": {
+   "tp": 29,
+   "fp": 56,
+   "fn": 2057,
+   "tn": 2423,
+   "precision": 0.3412,
+   "recall": 0.0139,
+   "f1": 0.0267,
+   "fpr": 0.0226,
+   "precision_at_prev_0.01": 0.0062,
+   "precision_at_prev_0.001": 0.0006,
+   "recall_typo_labelled": 0.0,
+   "ms_per_name": 0.286
+  },
+  "pypi-scan (top-50)": {
+   "tp": 74,
+   "fp": 1,
+   "fn": 2012,
+   "tn": 2478,
+   "precision": 0.9867,
+   "recall": 0.0355,
+   "f1": 0.0685,
+   "fpr": 0.0004,
+   "precision_at_prev_0.01": 0.4727,
+   "precision_at_prev_0.001": 0.0816,
+   "recall_typo_labelled": 0.0,
+   "ms_per_name": 0.0071
+  },
+  "pypi-scan (top-5k)": {
+   "tp": 84,
+   "fp": 42,
+   "fn": 2002,
+   "tn": 2437,
+   "precision": 0.6667,
+   "recall": 0.0403,
+   "f1": 0.0759,
+   "fpr": 0.0169,
+   "precision_at_prev_0.01": 0.0235,
+   "precision_at_prev_0.001": 0.0024,
+   "recall_typo_labelled": 0.0,
+   "ms_per_name": 0.0089
+  },
+  "tracegate (th=0.54)": {
+   "tp": 82,
+   "fp": 29,
+   "fn": 2004,
+   "tn": 2450,
+   "precision": 0.7387,
+   "recall": 0.0393,
+   "f1": 0.0746,
+   "fpr": 0.0117,
+   "precision_at_prev_0.01": 0.0328,
+   "precision_at_prev_0.001": 0.0034,
+   "recall_typo_labelled": 0.0,
+   "ms_per_name": 0.1158
+  },
+  "tracegate (th=0.46, FPR-matched to lev1)": {
+   "tp": 87,
+   "fp": 52,
+   "fn": 1999,
+   "tn": 2427,
+   "precision": 0.6259,
+   "recall": 0.0417,
+   "f1": 0.0782,
+   "fpr": 0.021,
+   "precision_at_prev_0.01": 0.0197,
+   "precision_at_prev_0.001": 0.002,
+   "recall_typo_labelled": 0.0,
+   "ms_per_name": 0.1158
+  }
+ },
+ "curve": [
+  {
+   "threshold": 0.3,
+   "tp": 141,
+   "fp": 450,
+   "fn": 1945,
+   "tn": 2029,
+   "precision": 0.2386,
+   "recall": 0.0676,
+   "f1": 0.1053,
+   "fpr": 0.1815,
+   "precision_at_prev_0.01": 0.0037,
+   "precision_at_prev_0.001": 0.0004,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.32,
+   "tp": 141,
+   "fp": 450,
+   "fn": 1945,
+   "tn": 2029,
+   "precision": 0.2386,
+   "recall": 0.0676,
+   "f1": 0.1053,
+   "fpr": 0.1815,
+   "precision_at_prev_0.01": 0.0037,
+   "precision_at_prev_0.001": 0.0004,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.34,
+   "tp": 140,
+   "fp": 442,
+   "fn": 1946,
+   "tn": 2037,
+   "precision": 0.2405,
+   "recall": 0.0671,
+   "f1": 0.1049,
+   "fpr": 0.1783,
+   "precision_at_prev_0.01": 0.0038,
+   "precision_at_prev_0.001": 0.0004,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.36,
+   "tp": 135,
+   "fp": 341,
+   "fn": 1951,
+   "tn": 2138,
+   "precision": 0.2836,
+   "recall": 0.0647,
+   "f1": 0.1054,
+   "fpr": 0.1376,
+   "precision_at_prev_0.01": 0.0047,
+   "precision_at_prev_0.001": 0.0005,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.38,
+   "tp": 111,
+   "fp": 163,
+   "fn": 1975,
+   "tn": 2316,
+   "precision": 0.4051,
+   "recall": 0.0532,
+   "f1": 0.0941,
+   "fpr": 0.0658,
+   "precision_at_prev_0.01": 0.0081,
+   "precision_at_prev_0.001": 0.0008,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.4,
+   "tp": 104,
+   "fp": 95,
+   "fn": 1982,
+   "tn": 2384,
+   "precision": 0.5226,
+   "recall": 0.0499,
+   "f1": 0.091,
+   "fpr": 0.0383,
+   "precision_at_prev_0.01": 0.013,
+   "precision_at_prev_0.001": 0.0013,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.42,
+   "tp": 93,
+   "fp": 80,
+   "fn": 1993,
+   "tn": 2399,
+   "precision": 0.5376,
+   "recall": 0.0446,
+   "f1": 0.0823,
+   "fpr": 0.0323,
+   "precision_at_prev_0.01": 0.0138,
+   "precision_at_prev_0.001": 0.0014,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.44,
+   "tp": 92,
+   "fp": 67,
+   "fn": 1994,
+   "tn": 2412,
+   "precision": 0.5786,
+   "recall": 0.0441,
+   "f1": 0.082,
+   "fpr": 0.027,
+   "precision_at_prev_0.01": 0.0162,
+   "precision_at_prev_0.001": 0.0016,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.46,
+   "tp": 87,
+   "fp": 52,
+   "fn": 1999,
+   "tn": 2427,
+   "precision": 0.6259,
+   "recall": 0.0417,
+   "f1": 0.0782,
+   "fpr": 0.021,
+   "precision_at_prev_0.01": 0.0197,
+   "precision_at_prev_0.001": 0.002,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.48,
+   "tp": 87,
+   "fp": 41,
+   "fn": 1999,
+   "tn": 2438,
+   "precision": 0.6797,
+   "recall": 0.0417,
+   "f1": 0.0786,
+   "fpr": 0.0165,
+   "precision_at_prev_0.01": 0.0249,
+   "precision_at_prev_0.001": 0.0025,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.5,
+   "tp": 86,
+   "fp": 38,
+   "fn": 2000,
+   "tn": 2441,
+   "precision": 0.6935,
+   "recall": 0.0412,
+   "f1": 0.0778,
+   "fpr": 0.0153,
+   "precision_at_prev_0.01": 0.0265,
+   "precision_at_prev_0.001": 0.0027,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.52,
+   "tp": 83,
+   "fp": 34,
+   "fn": 2003,
+   "tn": 2445,
+   "precision": 0.7094,
+   "recall": 0.0398,
+   "f1": 0.0754,
+   "fpr": 0.0137,
+   "precision_at_prev_0.01": 0.0285,
+   "precision_at_prev_0.001": 0.0029,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.54,
+   "tp": 82,
+   "fp": 29,
+   "fn": 2004,
+   "tn": 2450,
+   "precision": 0.7387,
+   "recall": 0.0393,
+   "f1": 0.0746,
+   "fpr": 0.0117,
+   "precision_at_prev_0.01": 0.0328,
+   "precision_at_prev_0.001": 0.0034,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.56,
+   "tp": 77,
+   "fp": 19,
+   "fn": 2009,
+   "tn": 2460,
+   "precision": 0.8021,
+   "recall": 0.0369,
+   "f1": 0.0706,
+   "fpr": 0.0077,
+   "precision_at_prev_0.01": 0.0462,
+   "precision_at_prev_0.001": 0.0048,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.58,
+   "tp": 77,
+   "fp": 13,
+   "fn": 2009,
+   "tn": 2466,
+   "precision": 0.8556,
+   "recall": 0.0369,
+   "f1": 0.0708,
+   "fpr": 0.0052,
+   "precision_at_prev_0.01": 0.0669,
+   "precision_at_prev_0.001": 0.0071,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.6,
+   "tp": 76,
+   "fp": 10,
+   "fn": 2010,
+   "tn": 2469,
+   "precision": 0.8837,
+   "recall": 0.0364,
+   "f1": 0.07,
+   "fpr": 0.004,
+   "precision_at_prev_0.01": 0.0842,
+   "precision_at_prev_0.001": 0.009,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.62,
+   "tp": 76,
+   "fp": 8,
+   "fn": 2010,
+   "tn": 2471,
+   "precision": 0.9048,
+   "recall": 0.0364,
+   "f1": 0.07,
+   "fpr": 0.0032,
+   "precision_at_prev_0.01": 0.1031,
+   "precision_at_prev_0.001": 0.0113,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.64,
+   "tp": 75,
+   "fp": 6,
+   "fn": 2011,
+   "tn": 2473,
+   "precision": 0.9259,
+   "recall": 0.036,
+   "f1": 0.0692,
+   "fpr": 0.0024,
+   "precision_at_prev_0.01": 0.1316,
+   "precision_at_prev_0.001": 0.0148,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.66,
+   "tp": 75,
+   "fp": 5,
+   "fn": 2011,
+   "tn": 2474,
+   "precision": 0.9375,
+   "recall": 0.036,
+   "f1": 0.0693,
+   "fpr": 0.002,
+   "precision_at_prev_0.01": 0.1538,
+   "precision_at_prev_0.001": 0.0177,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.68,
+   "tp": 75,
+   "fp": 4,
+   "fn": 2011,
+   "tn": 2475,
+   "precision": 0.9494,
+   "recall": 0.036,
+   "f1": 0.0693,
+   "fpr": 0.0016,
+   "precision_at_prev_0.01": 0.1852,
+   "precision_at_prev_0.001": 0.022,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.7,
+   "tp": 75,
+   "fp": 4,
+   "fn": 2011,
+   "tn": 2475,
+   "precision": 0.9494,
+   "recall": 0.036,
+   "f1": 0.0693,
+   "fpr": 0.0016,
+   "precision_at_prev_0.01": 0.1852,
+   "precision_at_prev_0.001": 0.022,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.72,
+   "tp": 75,
+   "fp": 2,
+   "fn": 2011,
+   "tn": 2477,
+   "precision": 0.974,
+   "recall": 0.036,
+   "f1": 0.0693,
+   "fpr": 0.0008,
+   "precision_at_prev_0.01": 0.3125,
+   "precision_at_prev_0.001": 0.0431,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.74,
+   "tp": 69,
+   "fp": 1,
+   "fn": 2017,
+   "tn": 2478,
+   "precision": 0.9857,
+   "recall": 0.0331,
+   "f1": 0.064,
+   "fpr": 0.0004,
+   "precision_at_prev_0.01": 0.4553,
+   "precision_at_prev_0.001": 0.0765,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.76,
+   "tp": 69,
+   "fp": 1,
+   "fn": 2017,
+   "tn": 2478,
+   "precision": 0.9857,
+   "recall": 0.0331,
+   "f1": 0.064,
+   "fpr": 0.0004,
+   "precision_at_prev_0.01": 0.4553,
+   "precision_at_prev_0.001": 0.0765,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.78,
+   "tp": 69,
+   "fp": 1,
+   "fn": 2017,
+   "tn": 2478,
+   "precision": 0.9857,
+   "recall": 0.0331,
+   "f1": 0.064,
+   "fpr": 0.0004,
+   "precision_at_prev_0.01": 0.4553,
+   "precision_at_prev_0.001": 0.0765,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.8,
+   "tp": 69,
+   "fp": 1,
+   "fn": 2017,
+   "tn": 2478,
+   "precision": 0.9857,
+   "recall": 0.0331,
+   "f1": 0.064,
+   "fpr": 0.0004,
+   "precision_at_prev_0.01": 0.4553,
+   "precision_at_prev_0.001": 0.0765,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.82,
+   "tp": 69,
+   "fp": 1,
+   "fn": 2017,
+   "tn": 2478,
+   "precision": 0.9857,
+   "recall": 0.0331,
+   "f1": 0.064,
+   "fpr": 0.0004,
+   "precision_at_prev_0.01": 0.4553,
+   "precision_at_prev_0.001": 0.0765,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.84,
+   "tp": 69,
+   "fp": 1,
+   "fn": 2017,
+   "tn": 2478,
+   "precision": 0.9857,
+   "recall": 0.0331,
+   "f1": 0.064,
+   "fpr": 0.0004,
+   "precision_at_prev_0.01": 0.4553,
+   "precision_at_prev_0.001": 0.0765,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.86,
+   "tp": 0,
+   "fp": 0,
+   "fn": 2086,
+   "tn": 2479,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0.0,
+   "fpr": 0.0,
+   "precision_at_prev_0.01": 0.0,
+   "precision_at_prev_0.001": 0.0,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.88,
+   "tp": 0,
+   "fp": 0,
+   "fn": 2086,
+   "tn": 2479,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0.0,
+   "fpr": 0.0,
+   "precision_at_prev_0.01": 0.0,
+   "precision_at_prev_0.001": 0.0,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.9,
+   "tp": 0,
+   "fp": 0,
+   "fn": 2086,
+   "tn": 2479,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0.0,
+   "fpr": 0.0,
+   "precision_at_prev_0.01": 0.0,
+   "precision_at_prev_0.001": 0.0,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.92,
+   "tp": 0,
+   "fp": 0,
+   "fn": 2086,
+   "tn": 2479,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0.0,
+   "fpr": 0.0,
+   "precision_at_prev_0.01": 0.0,
+   "precision_at_prev_0.001": 0.0,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.94,
+   "tp": 0,
+   "fp": 0,
+   "fn": 2086,
+   "tn": 2479,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0.0,
+   "fpr": 0.0,
+   "precision_at_prev_0.01": 0.0,
+   "precision_at_prev_0.001": 0.0,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.96,
+   "tp": 0,
+   "fp": 0,
+   "fn": 2086,
+   "tn": 2479,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0.0,
+   "fpr": 0.0,
+   "precision_at_prev_0.01": 0.0,
+   "precision_at_prev_0.001": 0.0,
+   "recall_typo_labelled": 0.0
+  },
+  {
+   "threshold": 0.98,
+   "tp": 0,
+   "fp": 0,
+   "fn": 2086,
+   "tn": 2479,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0.0,
+   "fpr": 0.0,
+   "precision_at_prev_0.01": 0.0,
+   "precision_at_prev_0.001": 0.0,
+   "recall_typo_labelled": 0.0
+  }
+ ],
+ "bootstrap": {
+  "n_boot": 1000,
+  "seed": 0,
+  "method": "stratified percentile bootstrap, 95%",
+  "ci": {
+   "mvp-difflib (14 names)": {
+    "precision": [
+     0.968,
+     0.9963
+    ],
+    "recall": [
+     0.1055,
+     0.1337
+    ],
+    "f1": [
+     0.1906,
+     0.2356
+    ],
+    "fpr": [
+     0.0004,
+     0.0032
+    ]
+   },
+   "lev1 (top-5k)": {
+    "precision": [
+     0.5271,
+     0.68
+    ],
+    "recall": [
+     0.0326,
+     0.0503
+    ],
+    "f1": [
+     0.0618,
+     0.0934
+    ],
+    "fpr": [
+     0.0173,
+     0.0286
+    ]
+   },
+   "typomania/TypoGard (top-5k)": {
+    "precision": [
+     0.25,
+     0.4396
+    ],
+    "recall": [
+     0.0096,
+     0.0192
+    ],
+    "f1": [
+     0.0184,
+     0.0367
+    ],
+    "fpr": [
+     0.0169,
+     0.0282
+    ]
+   },
+   "pypi-scan (top-50)": {
+    "precision": [
+     0.9583,
+     1.0
+    ],
+    "recall": [
+     0.0278,
+     0.0441
+    ],
+    "f1": [
+     0.0541,
+     0.0845
+    ],
+    "fpr": [
+     0.0,
+     0.0012
+    ]
+   },
+   "pypi-scan (top-5k)": {
+    "precision": [
+     0.5841,
+     0.7444
+    ],
+    "recall": [
+     0.0321,
+     0.0494
+    ],
+    "f1": [
+     0.0611,
+     0.0922
+    ],
+    "fpr": [
+     0.0125,
+     0.0222
+    ]
+   },
+   "tracegate (th=0.54)": {
+    "precision": [
+     0.6632,
+     0.8132
+    ],
+    "recall": [
+     0.0312,
+     0.0484
+    ],
+    "f1": [
+     0.0596,
+     0.0907
+    ],
+    "fpr": [
+     0.0081,
+     0.0161
+    ]
+   },
+   "tracegate (th=0.46, FPR-matched to lev1)": {
+    "precision": [
+     0.5512,
+     0.7077
+    ],
+    "recall": [
+     0.0331,
+     0.0513
+    ],
+    "f1": [
+     0.0627,
+     0.0953
+    ],
+    "fpr": [
+     0.0157,
+     0.0266
+    ]
+   }
+  },
+  "f1_diff_vs_lev1 (top-5k)": {
+   "mvp-difflib (14 names)": {
+    "ci": [
+     0.1154,
+     0.1561
+    ],
+    "p_le_0": 0.0
+   },
+   "typomania/TypoGard (top-5k)": {
+    "ci": [
+     -0.0647,
+     -0.0378
+    ],
+    "p_le_0": 1.0
+   },
+   "pypi-scan (top-50)": {
+    "ci": [
+     -0.015,
+     -0.0033
+    ],
+    "p_le_0": 1.0
+   },
+   "pypi-scan (top-5k)": {
+    "ci": [
+     -0.004,
+     0.0006
+    ],
+    "p_le_0": 0.874
+   },
+   "tracegate (th=0.54)": {
+    "ci": [
+     -0.0061,
+     0.0004
+    ],
+    "p_le_0": 0.938
+   },
+   "tracegate (th=0.46, FPR-matched to lev1)": {
+    "ci": [
+     -0.0018,
+     0.0042
+    ],
+    "p_le_0": 0.232
+   }
+  }
+ },
+ "ablation": {
+  "separator": {
+   "tp": 0,
+   "fp": 6,
+   "fn": 2086,
+   "tn": 2473,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0.0,
+   "fpr": 0.0024,
+   "precision_at_prev_0.01": 0.0,
+   "precision_at_prev_0.001": 0.0,
+   "recall_typo_labelled": 0.0
+  },
+  "homoglyph": {
+   "tp": 0,
+   "fp": 3,
+   "fn": 2086,
+   "tn": 2476,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0.0,
+   "fpr": 0.0012,
+   "precision_at_prev_0.01": 0.0,
+   "precision_at_prev_0.001": 0.0,
+   "recall_typo_labelled": 0.0
+  },
+  "typo1": {
+   "tp": 82,
+   "fp": 27,
+   "fn": 2004,
+   "tn": 2452,
+   "precision": 0.7523,
+   "recall": 0.0393,
+   "f1": 0.0747,
+   "fpr": 0.0109,
+   "precision_at_prev_0.01": 0.0351,
+   "precision_at_prev_0.001": 0.0036,
+   "recall_typo_labelled": 0.0
+  },
+  "typo2": {
+   "tp": 0,
+   "fp": 0,
+   "fn": 2086,
+   "tn": 2479,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0.0,
+   "fpr": 0.0,
+   "precision_at_prev_0.01": 0.0,
+   "precision_at_prev_0.001": 0.0,
+   "recall_typo_labelled": 0.0
+  },
+  "reorder": {
+   "tp": 0,
+   "fp": 0,
+   "fn": 2086,
+   "tn": 2479,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0.0,
+   "fpr": 0.0,
+   "precision_at_prev_0.01": 0.0,
+   "precision_at_prev_0.001": 0.0,
+   "recall_typo_labelled": 0.0
+  },
+  "combosquat": {
+   "tp": 0,
+   "fp": 0,
+   "fn": 2086,
+   "tn": 2479,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0.0,
+   "fpr": 0.0,
+   "precision_at_prev_0.01": 0.0,
+   "precision_at_prev_0.001": 0.0,
+   "recall_typo_labelled": 0.0
+  },
+  "suffix": {
+   "tp": 0,
+   "fp": 1,
+   "fn": 2086,
+   "tn": 2478,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0.0,
+   "fpr": 0.0004,
+   "precision_at_prev_0.01": 0.0,
+   "precision_at_prev_0.001": 0.0,
+   "recall_typo_labelled": 0.0
+  },
+  "brandjack": {
+   "tp": 0,
+   "fp": 0,
+   "fn": 2086,
+   "tn": 2479,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0.0,
+   "fpr": 0.0,
+   "precision_at_prev_0.01": 0.0,
+   "precision_at_prev_0.001": 0.0,
+   "recall_typo_labelled": 0.0
+  }
+ },
+ "by_technique": {
+  "typo1": {
+   "tp": 82,
+   "fp": 22
+  },
+  "separator": {
+   "tp": 0,
+   "fp": 6
+  },
+  "suffix": {
+   "tp": 0,
+   "fp": 1
+  }
+ },
+ "examples_tp": [
+  [
+   "abundler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "aundler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "bandler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "bbundler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "bendler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "bjndler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "bjundler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "blundler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "bnudler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "boundler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "bsndler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "bsundler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "budndler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "buedler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "buhdler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "buidler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "buindler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "bukdler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "bulndler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "bumdler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "bunadler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "bunaler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "buncler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "bundaer",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "bunder",
+   "bundler",
+   "typo1",
+   0.85
+  ]
+ ],
+ "examples_fp": [
+  [
+   "jbundler",
+   "bundler",
+   "typo1",
+   0.85
+  ],
+  [
+   "ir-b",
+   "irb",
+   "separator",
+   0.728
+  ],
+  [
+   "jsonschema",
+   "json-schema",
+   "separator",
+   0.7169
+  ],
+  [
+   "papertrail",
+   "paper-trail",
+   "separator",
+   0.708
+  ],
+  [
+   "httpparty",
+   "httparty",
+   "typo1",
+   0.6775
+  ],
+  [
+   "dry-rails",
+   "pry-rails",
+   "typo1",
+   0.6478
+  ],
+  [
+   "sysloglogger",
+   "syslog-logger",
+   "separator",
+   0.6393
+  ],
+  [
+   "open-api-parser",
+   "openapi-parser",
+   "separator",
+   0.6363
+  ],
+  [
+   "rucaptcha",
+   "recaptcha",
+   "typo1",
+   0.6131
+  ],
+  [
+   "capybara-select2",
+   "capybara-select-2",
+   "separator",
+   0.6064
+  ],
+  [
+   "inflections",
+   "inflection",
+   "typo1",
+   0.5912
+  ],
+  [
+   "omniauth-twitter2",
+   "omniauth-twitter",
+   "typo1",
+   0.5876
+  ],
+  [
+   "sprig",
+   "spring",
+   "typo1",
+   0.5874
+  ],
+  [
+   "timer",
+   "timers",
+   "typo1",
+   0.5783
+  ],
+  [
+   "capistrano-nvm",
+   "capistrano-rvm",
+   "typo1",
+   0.5768
+  ],
+  [
+   "ts-routes",
+   "js-routes",
+   "typo1",
+   0.5715
+  ],
+  [
+   "geokit-rails3",
+   "geokit-rails",
+   "typo1",
+   0.5693
+  ],
+  [
+   "omniauth-cas",
+   "omniauth-cas3",
+   "typo1",
+   0.5678
+  ],
+  [
+   "bootstrap-datetimepicker-rails",
+   "bootstrap3-datetimepicker-rails",
+   "typo1",
+   0.5661
+  ],
+  [
+   "bootstrap5-kaminari-views",
+   "bootstrap-kaminari-views",
+   "typo1",
+   0.5563
+  ],
+  [
+   "tomlib",
+   "tomlrb",
+   "typo1",
+   0.5563
+  ],
+  [
+   "librarian",
+   "librarianp",
+   "typo1",
+   0.5527
+  ],
+  [
+   "fluent-plugin-sql",
+   "fluent-plugin-sqs",
+   "typo1",
+   0.5444
+  ],
+  [
+   "activerecord-redshift-adapter",
+   "activerecord6-redshift-adapter",
+   "typo1",
+   0.5443
+  ],
+  [
+   "activerecord5-redshift-adapter",
+   "activerecord6-redshift-adapter",
+   "typo1",
+   0.5443
+  ]
+ ],
+ "sources": {
+  "malicious": "OSV MAL-* (ossf/malicious-packages) via osv-vulnerabilities bulk dump",
+  "popular": "packages.ecosyste.ms (rubygems.org, by downloads)"
+ }
+}

@@ -50,7 +50,7 @@ Audit note: the previous release reported -15.1% (HEAD) and -25.8% (own sources)
 
 ## Typosquat detection
 
-Detectors: TRACEGATE (multi-technique, threshold tuned on dev), Damerau-1 (TRACEGATE's own `typo1` technique alone, top-5k reference), re-implementations of **typomania / TypoGard** (Rust Foundation port of Taylor et al., *Defending Against Package Typosquatting*, NSS 2020) and **pypi-scan** (IQT Labs), and the original 14-name difflib heuristic. The re-implementations live in `tracegate/baselines.py`; they were not validated against the original code, so every row labelled typomania/TypoGard or pypi-scan means *our port of* that tool. The TypoGard paper reports detecting about 60% of npm-security-team typosquats with its own popularity threshold; on the OSV labels here, where most names are not look-alikes, every detector's recall is far lower.
+Detectors: TRACEGATE (multi-technique, threshold tuned on dev), Damerau-1 (TRACEGATE's own `typo1` technique alone, top-5k reference), re-implementations of **typomania / TypoGard** (Rust Foundation port of Taylor et al., *Defending Against Package Typosquatting*, NSS 2020) and **pypi-scan** (IQT Labs), and the original 14-name difflib heuristic. The re-implementations live in `tracegate/baselines.py`; they were not validated against the original code, so every row labelled typomania/TypoGard or pypi-scan means *our port of* that tool. The TypoGard paper (arXiv 2003.03471v1, Section 4.3 "Signal Detection Rates") states that its signals "detected approximately 60% of known past attacks reported by the npm security team as typosquatting"; on the OSV labels here, where most names are not look-alikes, every detector's recall is far lower.
 
 ### PyPI, hash split
 

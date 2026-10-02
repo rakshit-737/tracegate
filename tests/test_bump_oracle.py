@@ -1,7 +1,12 @@
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "benchmarks"))
+import pytest
+
+_BENCH = Path(__file__).resolve().parents[1] / "benchmarks"
+if not (_BENCH / "bump_oracle.py").exists():  # the sdist ships tests but not benchmarks/
+    pytest.skip("benchmarks/ not present", allow_module_level=True)
+sys.path.insert(0, str(_BENCH))
 
 from bump_oracle import bot_bump, cluster_bootstrap  # noqa: E402
 

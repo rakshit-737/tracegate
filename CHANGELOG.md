@@ -18,6 +18,11 @@ All notable changes to this project are documented here. The format follows
 - Typosquat comparison with re-implementations of typomania/TypoGard and pypi-scan, a time split, more ecosystems and precision at realistic prevalence.
 - Exact-pin pickaxe baseline and Wilson intervals in the lineage benchmark.
 
+### Changed (published numbers, several worse)
+- Backtracking evaluated on 11 repos and 4 ecosystems: 88.8% agreement with blame (was 97.5% on 3 pip repos). A new exact-pin `git log -S` baseline reaches 100% on pip and Go, so the old 17.3% "best baseline" understated the competition; TRACEGATE leads only on Cargo and npm lock files.
+- Reachability reduction after the false-unreached audit: -10.2% (HEAD sources) and -5.7% (own sources), down from -15.1% / -25.8%.
+- Typosquat tables now include typomania/TypoGard and pypi-scan re-implementations, five ecosystems, a time split and precision at 1% prevalence.
+
 ### Fixed
 - Release notes extraction, duplicate `latest` tag, sdist missing test fixtures.
 - Audited false-`unreached` reachability cases (pycrypto, paramiko/ncclient/readme_renderer/alembic dependencies, Django ImageField -> Pillow).

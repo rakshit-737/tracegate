@@ -3,19 +3,19 @@
 ## Limitations
 
 - **Reachability is static and at module level.** Runtime facts are supported as events, but no eBPF or `/proc/*/maps` collector ships. Per-snapshot source materialisation is available in the lineage benchmark (`--materialize`); dynamic imports, plugins loaded by name from settings, and C-extension loading are still invisible.
-- **The 15% reduction has no false-negative audit.** There is no public ground truth for "exploitable in this app".
-- **Lineage covers `requirements*.txt`, `package-lock.json`, `poetry.lock` and `uv.lock`.** Go modules, Cargo and yarn/pnpm locks are not parsed yet. The real-repo lineage benchmark numbers are for pip manifests only.
-- **Signing uses Ed25519 or HMAC keys, not Sigstore keyless.** There is no Rekor transparency log.
-- **Warden is a stand-in.** The HTTP contract to the real Warden service (`GET /score`) is assumed.
-- **Typosquat recall is low in absolute terms** (see above). Treat it as one signal, not a malware detector.
+- **Reachability reductions have only a manual false-negative audit.** There is no public ground truth for "exploitable in this app"; an audit of the earlier run found packages the apps do load marked `unreached` (fixed rules are listed in the CHANGELOG). Static downgrades must not be trusted on untrusted PRs.
+- **Lock-file parsers keep one version per package name.** yarn, pnpm, npm and Cargo locks that hold several versions of one package (7-14% of entries on the real lock files we checked) contribute only one of them, so the others are never matched against OSV or attributed. go.sum is used as published; go.mod is authoritative for Go.
+- **Keyless signing covers the CI key, not each envelope.** CI signs an ephemeral Ed25519 public key with Sigstore (Fulcio + Rekor) and the gate verifies that bundle with `cosign`; envelopes themselves are Ed25519. The kind admission demo is a gate step before `kubectl apply`, not an in-cluster validating webhook.
+- **Warden integration is contract-tested only.** `WardenApiClient` follows the real Warden `POST /api/v1/scans` schema, but no end-to-end run against a live Warden is in CI; offline results use `HeuristicWarden`.
+- **Typosquat recall is low in absolute terms** (see the [Evaluation](evaluation.md)). Treat it as one signal, not a malware detector.
 - **SAST comes in as SARIF 2.1.0** (`tracegate ingest --sarif`, tested on Bandit-style fixtures). SAST findings are attached to files, not to dependencies, so reachability does not apply to them.
 - Image deployments in the image benchmark are synthetic (one service per image).
 
 ## Roadmap
 
 - eBPF / `sys.modules` runtime collector (needs a Linux runtime; not feasible on the Windows dev machine).
-- Lock-file lineage for Go modules, Cargo and yarn/pnpm.
-- Sigstore keyless signing + Rekor inclusion proofs.
+- Multi-version lock-file pins and an in-cluster validating admission webhook.
+- Sigstore DSSE signing of each envelope (sigstore-python) instead of a Sigstore-bound key.
 - Neo4j live adapter (currently Cypher export) and a React lineage explorer.
 - EPSS-based prioritisation and a GitHub App for PR comments.
 
@@ -28,6 +28,6 @@
 | Sigstore / SLSA / in-toto | attestation formats and verification | emits DSSE + in-toto SLSA statements; its contribution is the queryable graph on top |
 | GUAC (OpenSSF) | supply-chain metadata graph | GUAC is a large multi-service aggregator; TRACEGATE is a stdlib-only CI gate with deterministic verdicts and commit-level backtracking |
 | Snyk / GitHub Advanced Security | commercial suites | open source, and gives one graph you can query across stages |
-| typosquat scanners (e.g. Levenshtein-based) | name similarity | benchmarked here against a Levenshtein-1 baseline on real `MAL-*` data |
+| typomania / TypoGard (Taylor et al., NSS 2020), pypi-scan | name similarity | re-implemented and benchmarked on the same splits (see Evaluation) |
 
 SBOMs, scanning and attestation formats are not novel. The contribution is the integration: canonical cross-tool identity, finding -> commit backtracking evaluated against git blame, and reachability-aware, fail-closed gating.

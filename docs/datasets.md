@@ -1,6 +1,6 @@
 # Datasets
 
-Nothing large is committed. `scripts/download_data.py` fetches everything into `$TRACEGATE_DATA` (default: a sibling `../../datasets/tracegate` if present, else `./data/`, which is git-ignored) and records a sha256 and a timestamp for each file in `MANIFEST.json`. Tool binaries are verified against the release checksums. The total is about 2.8 GB, of which about 1.4 GB is the Trivy vulnerability DB.
+Nothing large is committed. `scripts/download_data.py` fetches everything into `$TRACEGATE_DATA` (default: a sibling `../../datasets/tracegate` if present, else `./data/`, which is git-ignored) and records a sha256 and a timestamp for each file in `MANIFEST.json`. Tool binaries are verified against the release checksums. The OSV dumps, popularity lists and blobless clones take about 1 GB; Syft, Trivy and the Trivy vulnerability DB (only for the image benchmark) add about 1.7 GB. The sha256 values of the committed run are in `results/data_manifest.json`.
 
 | Data | Source | Size | Licence |
 | --- | --- | --- | --- |

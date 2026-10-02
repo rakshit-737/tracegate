@@ -6,7 +6,28 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 ![Core deps](https://img.shields.io/badge/core%20deps-stdlib%20only-lightgrey)
 
-**Docs:** https://rakshit-737.github.io/tracegate/ (includes a [static demo](https://rakshit-737.github.io/tracegate/demo/) of the lineage explorer).
+**TRACEGATE attributes every scanner finding to the commit and PR that introduced the vulnerable version by version-aware diffing of lock-file history, inside a fail-closed, signature-verified CI gate: 88.8% agreement with `git blame` across 11 repos and 4 ecosystems, and 95.0% vs 54.7% for an exact-pin `git log -S` on Cargo lock files, where line-based attribution breaks.** ([Evaluation](https://rakshit-737.github.io/tracegate/evaluation/))
+
+[![Lineage explorer: cve-origin scenario after backtracking CVE-2020-14343](docs/img/demo.png)](https://rakshit-737.github.io/tracegate/demo/)
+
+**Docs:** https://rakshit-737.github.io/tracegate/ · [live demo](https://rakshit-737.github.io/tracegate/demo/) · [how it works](https://rakshit-737.github.io/tracegate/how-it-works/)
+
+## Try it in 60 seconds
+
+1. **Zero install:** open the [live demo](https://rakshit-737.github.io/tracegate/demo/). The `cve-origin` scenario loads with a BLOCK verdict; type `CVE-2020-14343` and press Enter to see the origin story (PR #42) and the blast radius.
+2. **Release wheel** (do not `pip install tracegate`: that PyPI name belongs to an unrelated project):
+
+   ```bash
+   python -m venv .venv && . .venv/bin/activate
+   pip install https://github.com/rakshit-737/tracegate/releases/download/v1.0.0/tracegate-1.0.0-py3-none-any.whl
+   tracegate demo                                      # six scenarios, about 2 seconds
+   tracegate synth cve-origin ev.json
+   tracegate --demo backtrack ev.json CVE-2020-14343   # "introduced_by": {"pr": 42, ...}
+   tracegate --demo gate ev.json --comment             # "## TRACEGATE: BLOCK", exit 1
+   ```
+
+   `--demo` trusts the public demo key (the next release; v1.0.0 trusts it implicitly). Without a configured key the gate refuses to run (exit 2).
+3. **Container:** `docker run --rm -p 127.0.0.1:8080:8080 ghcr.io/rakshit-737/tracegate:1.0.0`, then open http://127.0.0.1:8080 and run a scenario.
 
 **TRACEGATE is a provenance-aware CI/CD security gate.** It merges real Syft SBOMs, Trivy scans, git history and OSV data into one signed, content-addressed provenance graph. It can then answer the question most scanners leave open: *which commit, and which PR, put this CVE in production, and what else inherits it?*
 
@@ -14,34 +35,29 @@
 - **Backtrack.** Takes a CVE or package and returns the commit, PR, author and build that introduced it.
 - **Blast radius.** Lists every image, service and container that inherits a vulnerable dependency or base layer.
 - **Reachability triage.** A critical CVE in a package the app never imports or loads is downgraded from block to warn, with the evidence attached.
-- **Fail closed.** The gate blocks on an unsigned, forged or tampered attestation, and on a missing required stage.
+- **Fail closed.** The gate blocks on an unsigned, forged or tampered attestation and on a missing required stage, and refuses to run with no trust root configured. In CI the signing key can be bound to the workflow identity with Sigstore keyless signing.
 
 ---
 
 ## Headline results (real public data)
 
-All numbers below come from the committed runs in [`results/`](results/). You can reproduce them with the commands in [Reproducibility](#reproducibility).
+All numbers come from the committed runs in [`results/`](results/), produced by the [`benchmarks` workflow](https://github.com/rakshit-737/tracegate/actions/runs/36995342662) on a GitHub runner. Methodology, every table and confidence interval: [Evaluation](https://rakshit-737.github.io/tracegate/evaluation/). Commands: [Reproduce](https://rakshit-737.github.io/tracegate/reproduce/).
 
-| Question | Data | TRACEGATE | Best baseline |
+| Question | Data | TRACEGATE | Baselines |
 | --- | --- | --- | --- |
-| Finding -> introducing commit (backtrack accuracy) | 365 pinned packages over 36 historical snapshots of 3 real repos (healthchecks, netbox, pypi/warehouse) | **97.5%** (356/365) | 17.3% "last manifest commit"; 9.3% "first pickaxe mention"; 0% scanner-only |
-| Cross-tool identity (Trivy finding -> Syft SBOM node) | 507 Trivy findings on 7 real official images | **100%** matched | 100% with naive `name@version`; 11.6% with raw purl string equality |
-| Reachability: how many high/critical findings stay actionable | 829 high+ OSV findings across the same 36 snapshots | **704 actionable (-15.1%)** with HEAD sources; **615 (-25.8%)** with each snapshot's own sources (`--materialize`) | 829 (raw scanner output) |
-| Typosquat detection, PyPI (test half) | 5,952 OSV `MAL-*` names vs 4,969 legitimate packages ranked 5k-15k | P **0.84** / FPR **1.7%** (th 0.54); F1 **0.159** [95% CI 0.147-0.170] at matched FPR | Levenshtein <= 1: P 0.75 / FPR 3.3%, F1 0.153 [0.142-0.165] |
-| Base-image blast radius | 7 official Alpine-3.14 images | 1 shared base layer -> 7 images / 7 services; 43 findings in that layer; each OpenSSL CVE reaches 7 services | n/a (per-image scanners report the same CVE 7 times) |
-| Gate latency | real graphs | median 37 ms (healthchecks), 70 ms (netbox), 448 ms (warehouse, 184 pins), 72 ms (7-image graph, 538 nodes) | — |
+| Finding -> introducing commit (agreement with `git blame --first-parent`) | 3,205 vulnerable pin-snapshot pairs, 132 snapshots of 11 repos, 4 ecosystems | **88.8%** [95% CI 87.7-89.8] | exact-pin `git log -S`: 74.5%; last manifest commit: 14.3%; first pickaxe mention: 14.9% |
+| ... per ecosystem | pip 364 / Go 328 / Cargo 483 / npm 2,030 pairs | 97.8% / 99.7% / **95.0%** / **83.9%** | exact-pin `git log -S`: 100% / 100% / 54.7% / 70.6% |
+| Reachability: high/critical findings left actionable | 895 high+ OSV findings, 36 snapshots of 3 Python repos | 804 (**-10.2%**) with HEAD sources; 844 (**-5.7%**) with each snapshot's own sources | 895 (raw scanner output) |
+| Typosquat, PyPI (hash split, test half) | 5,964 OSV `MAL-*` names vs 4,973 packages ranked 5k-15k | F1 0.153 at FPR 3.2% (paired F1 vs Damerau-1: +0.007 [+0.002, +0.011]) | Damerau-1 0.147; typomania/TypoGard 0.125; pypi-scan 0.112 |
+| Keyless signing | wheel + sdist of this repo | signed with GitHub OIDC, verified, Rekor entries checked ([evidence](results/sigstore_evidence.json)) | - |
+| Admission | kind cluster, 2 images | signed image Running, unsigned denied ([decisions](results/kind_admission.json)) | - |
+| Gate latency (median per repo) | real lineage graphs | 6-62 ms (pip), 36-110 ms (Cargo), 99-440 ms (npm), 290 ms (Go); max 893 ms | - |
 
 What the numbers mean, stated plainly:
 
-- **Backtracking is the strongest result.** The ground truth is `git blame --first-parent` on the pin line, which is computed independently of TRACEGATE's diff-based lineage walk. The 9 disagreements are listed in `results/lineage_real_repos.json`, and they fall into two groups:
-
-- 3 are merge commits (`Merge pull request #1044 ...`). Blame credits the merge, while TRACEGATE credits the commit on the branch that changed the pin. Both answers can be defended.
-- 6 are cases where blame credits a later commit that *rewrote the line without changing the version* (for example, `Bump boto3 ... (#4934)` re-emitted the hashes for `celery`, `jinja2` and `mako`). TRACEGATE tracks version changes, not text changes, so its answer is arguably the right one.
-- **Cross-tool identity is table stakes on these images, not a win over every baseline.** A naive `name@version` join also matches all 507 findings on these images. The canonical purl only beats raw purl string equality (Syft and Trivy emit different qualifiers). Its value is that the same key merges manifest, Syft and Trivy nodes and keeps ecosystems apart, which a bare `name@version` join cannot guarantee.
-- **Reachability cuts about 15% of high/critical alerts, but there is no exploitability ground truth.** On the netbox snapshots, the downgraded findings include `pycrypto`, `paramiko` and `ecdsa` pins that the app never imports. In the default run older snapshots are analysed against HEAD sources. With `--materialize`, each snapshot's own `.py` sources and config/CI entrypoint files are checked out (`results/lineage_real_repos_materialized.json`): the reduction grows from 15.1% to 25.8%. It moves in both directions: netbox drops to 183 actionable (290 with HEAD sources) because older netbox code imported fewer of its pinned packages, while warehouse rises to 311 (294) and healthchecks to 121 (120) because HEAD code had stopped using packages that older snapshots did use. HEAD sources were therefore wrong both ways. Backtrack accuracy is identical (97.5%). A larger reduction is not automatically better: without exploitability ground truth it is also a larger potential false-negative set. At netbox HEAD, 6 of 45 pins are "unreached". Four of them (mkdocs*, django-rich) are correctly docs/dev-only. `tablib` is probably a miss: netbox's own code never imports it, so it is most likely loaded by django-tables2's export feature, and the `# via` data needed to see that edge is not in netbox's plain `requirements.txt`.
-- **Typosquat recall is low for every detector.** This is expected: most `MAL-*` records are random names, dependency-confusion names or spam, not look-alikes of popular packages. On the subset whose advisory text says "typosquat", recall is 10.5% at the default threshold and 14.1% at matched FPR. TRACEGATE's advantage over plain Levenshtein is **half the false-positive rate for about the same F1**. It is not a big recall gain. A seeded, stratified bootstrap (1,000 resamples of the test half, `results/typosquat_*.json` -> `bootstrap`) puts the paired F1 gain at matched FPR at +0.006 [95% CI +0.001, +0.010] on PyPI and +0.0005 [0.000, +0.001] on npm: real but small. At the default threshold (th 0.54) F1 is *lower* than Levenshtein's (paired diff -0.019 [-0.024, -0.014]); that is the price of the lower FPR. On npm, all detectors are near zero recall (F1 0.005), because the npm `MAL-*` set (~109k names) is mostly spam.
-
-![Typosquat precision/recall on real OSV malicious-package names](results/typosquat_pr.png)
+- **On pip and Go manifests, backtracking is not better than a one-line `git log -S` on the exact pin line** (both near 100%; blame and pickaxe are nearly the same algorithm). TRACEGATE's version-aware diff only wins on **lock files whose lines get rewritten without a version change**: Cargo.lock (95.0% vs 54.7%) and npm/yarn/pnpm locks (83.9% vs 70.6%). It is weakest on vue-core (62%) and mastodon (78%), where one package name carries several versions and the parsers keep only one (a known limitation). The ground truth is line blame, so on rewritten lines it is itself debatable.
+- **The reachability reduction shrank after an audit.** Earlier runs reported -15.1% / -25.8%; most of those "unreached" packages were in fact loaded (pycrypto via `Crypto`, paramiko's and ncclient's dependencies, Pillow via Django `ImageField`). With those rules fixed and newer OSV data the reduction is -10.2% (HEAD sources) and -5.7% (per-snapshot sources). There is still no exploitability ground truth.
+- **Typosquat recall is low for every detector** (most `MAL-*` names are spam or dependency confusion). The test sets are mostly malicious (PyPI 55%, npm 96%), so precision there is not deployment precision: at a 1% base rate TRACEGATE's precision would be about 3-4%. On a time split (tune before 2025, test after) every PyPI detector roughly halves (TRACEGATE F1 0.083 vs Damerau-1 0.066). On RubyGems, crates.io and NuGet no name-similarity detector is useful.
 
 ### Real images: what the gate sees
 
@@ -72,25 +88,36 @@ Warden (dependency-risk) scoring of the 401 language packages flags 3. One is `n
 
 ## Architecture
 
+**1. Ingest, sign, verify**
+
 ```mermaid
-flowchart LR
+flowchart TB
   subgraph SRC["Real pipeline inputs"]
-    GIT["git history: requirements, package-lock, poetry.lock, uv.lock"] --> LIN["gitlineage: commit events"]
-    SY["Syft JSON / CycloneDX"] --> ING["ingest adapters"]
-    TV["Trivy JSON"] --> ING
-    SA["SARIF: Semgrep / Bandit / CodeQL"] --> ING
-    OSV[("OSV bulk dumps: PyPI, npm, Alpine")] --> IDX["OsvIndex"]
-    DEP["deploy / runtime facts"] --> ENV
+    GIT["git history of lock files: pip, poetry, uv, npm, yarn, pnpm, Go, Cargo"]
+    SY["Syft JSON / CycloneDX"]
+    TV["Trivy JSON"]
+    SA["SARIF: Semgrep / Bandit / CodeQL"]
+    DEP["deploy / runtime facts"]
   end
-  LIN --> ENV["DSSE envelopes, Ed25519 or HMAC"]
+  GIT --> LIN["gitlineage: commit events"]
+  SY --> ING["ingest adapters"]
+  TV --> ING
+  SA --> ING
+  LIN --> ENV["DSSE envelopes: Ed25519, HMAC, or keyless (Sigstore-bound key)"]
   ING --> ENV
+  DEP --> ENV
   ENV --> COL["collector: verify, fail closed"]
   COL --> G[("provenance DAG, purl + digest ids")]
-  IDX --> W["HeuristicWarden: MAL records + typosquat"]
-  W --> EN["enrich"]
+```
+
+**2. Enrich, decide, query**
+
+```mermaid
+flowchart TB
+  G[("provenance DAG")] --> EN["enrich"]
+  OSV[("OSV bulk dumps")] --> IDX["OsvIndex"] --> W["HeuristicWarden: MAL records + typosquat"] --> EN
   RE["static / runtime reachability"] --> EN
-  G --> EN --> POL["policy: Python DSL = Rego port"]
-  POL --> OUT["PR comment + exit code"]
+  EN --> POL["policy: Python DSL = Rego port"] --> OUT["PR comment + exit code"]
   G --> BT["backtrack + blast radius"]
   G --> EXP["exports: Cypher/Neo4j, in-toto SLSA, OPA input"]
   G --> API["FastAPI + lineage explorer UI"]
@@ -106,7 +133,7 @@ Graph shape: `commit -introduced-> dependency -installed_in-> layer -layer_of-> 
 | Real-tool ingest | `ingest.py` | Syft JSON, CycloneDX, Trivy JSON (unchanged tool output) |
 | Git lineage | `gitlineage.py` | first-parent manifest walk, follows renames, PR numbers from subjects |
 | OSV index | `osv.py` | offline, streams official zip dumps; ECOSYSTEM/SEMVER ranges; CVSS v3 |
-| Typosquat / Warden | `typosquat.py`, `warden.py` | deletion-index edit distance, transposition, separator, homoglyph, suffix, combosquat; `MultiWarden` per ecosystem; `HttpWardenClient` seam |
+| Typosquat / Warden | `typosquat.py`, `warden.py` | deletion-index edit distance, transposition, separator, homoglyph, suffix, combosquat; `MultiWarden` per ecosystem; `WardenApiClient` for the real Warden service |
 | Reachability | `reach.py`, `enrich.py` | runtime facts first, static fallback ([ADR 0004](docs/adr/0004-reachability-runtime-first-static-fallback.md)) |
 | Policy | `policy.py`, `policies/tracegate.rego` | deterministic; Rego parity checked in CI ([ADR 0003](docs/adr/0003-deterministic-policy-python-dsl-and-rego.md)) |
 | Backtrack | `backtrack.py` | origin story + blast radius |
@@ -117,24 +144,24 @@ Reachability tiers: `imported` (AST imports and dotted strings), `entrypoint` (n
 
 ---
 
-## Quickstart
+## Development
 
 ```bash
 git clone https://github.com/rakshit-737/tracegate && cd tracegate
 pip install -e ".[dev]"            # the core gate is stdlib-only; extras add crypto/osv/api
-python -m pytest -q                # 56 tests; 4 real-data tests skip without datasets
+python -m pytest -q                # about 70 tests; real-data tests skip without datasets
 python -m tracegate.cli demo       # the six spec scenarios
 ```
 
 Gate a real image scan with Ed25519-signed provenance:
 
 ```bash
-tracegate keygen ci
-export TRACEGATE_KEYID=ci TRACEGATE_SIGNING_KEY=ci.key TRACEGATE_PUBKEY=ci.pub
+tracegate keygen ~/.tracegate/ci          # keep keys outside the repo; the .key is written 0600
+export TRACEGATE_KEYID=ci TRACEGATE_SIGNING_KEY=~/.tracegate/ci.key TRACEGATE_PUBKEY=~/.tracegate/ci.pub
 syft  <image> -o syft-json=sbom.json
 trivy image --format json -o trivy.json <image>
 tracegate ingest --syft sbom.json --trivy trivy.json --commit $(git rev-parse HEAD) -o img.json
-tracegate lineage . requirements.txt -o commits.json       # commit -> dependency lineage
+tracegate lineage . requirements.txt -o commits.json       # run inside an app repo with a pinned manifest
 tracegate merge commits.json img.json -o events.json
 tracegate gate events.json --comment                        # exit 1 on block
 tracegate backtrack events.json CVE-2023-0465
@@ -159,7 +186,7 @@ Demo scenarios (these follow the spec):
 
 ## Datasets
 
-Nothing large is committed. `scripts/download_data.py` fetches everything into `$TRACEGATE_DATA` (default: a sibling `../../datasets/tracegate` if present, else `./data/`, which is git-ignored) and records a sha256 and a timestamp for each file in `MANIFEST.json`. Tool binaries are verified against the release checksums. The total is about 2.8 GB, of which about 1.4 GB is the Trivy vulnerability DB.
+Nothing large is committed. `scripts/download_data.py` fetches everything into `$TRACEGATE_DATA` (default: a sibling `../../datasets/tracegate` if present, else `./data/`, which is git-ignored) and records a sha256 and a timestamp for each file in `MANIFEST.json`. Tool binaries are verified against the release checksums. The OSV dumps, popularity lists and blobless clones take about 1 GB; Syft, Trivy and the Trivy vulnerability DB (only for the image benchmark) add about 1.7 GB.
 
 | Data | Source | Size | Licence |
 | --- | --- | --- | --- |
@@ -174,20 +201,21 @@ Small fixtures derived from real tool output (`tests/fixtures/alpine.syft.json`,
 
 ## Reproducibility
 
-`make` is optional. Each target is a single command:
+The full-data runs execute in the `benchmarks` workflow; the [Reproduce](https://rakshit-737.github.io/tracegate/reproduce/) page lists expected outputs and runtimes. Locally, each step is a single command:
 
 ```bash
 python scripts/download_data.py all      # make data   (OSV, popularity lists, tools, repos)
 trivy image --download-db-only --cache-dir <data>/trivy-cache   # Trivy vuln DB (not fetched by the script)
 python scripts/scan_real.py all          # make scans  (real Syft + Trivy over images and repos)
-python benchmarks/typosquat_eval.py      # -> results/typosquat_{pypi,npm}.json, typosquat_pr.png
+python benchmarks/typosquat_eval.py --eco PyPI npm RubyGems crates.io NuGet   # add --split time for the time split
 python benchmarks/lineage_eval.py --snapshots 12   # -> results/lineage_real_repos.json
+python benchmarks/lineage_eval.py --snapshots 12 --materialize --repos healthchecks netbox warehouse
 python benchmarks/images_eval.py         # -> results/images_real.json
 python benchmarks/scale_eval.py          # -> results/scale_synthetic.json
 python -m pytest -q -m realdata          # real-data tests (need the datasets)
 ```
 
-OSV dumps, popularity lists and the Trivy DB are live feeds, so a re-run on a later date can shift finding counts and typosquat numbers; the sha256 of what was used is in `MANIFEST.json`. Re-running `images_eval.py` on the same data reproduced every count in `results/images_real.json` exactly (only latency changed).
+OSV dumps, popularity lists and the Trivy DB are live feeds, so a re-run on a later date can shift finding counts and typosquat numbers; the sha256 of what was used is in `results/data_manifest.json`. Re-running `images_eval.py` on the same data reproduced every count in `results/images_real.json` exactly (only latency changed).
 
 Evaluation design, including the splits, ground truth and why download counts are *not* used as a typosquat feature, is in [ADR 0005](docs/adr/0005-real-data-evaluation-design.md).
 
@@ -202,17 +230,17 @@ Evaluation design, including the splits, ground truth and why download counts ar
 | Sigstore / SLSA / in-toto | attestation formats and verification | emits DSSE + in-toto SLSA statements; its contribution is the queryable graph on top |
 | GUAC (OpenSSF) | supply-chain metadata graph | GUAC is a large multi-service aggregator; TRACEGATE is a stdlib-only CI gate with deterministic verdicts and commit-level backtracking |
 | Snyk / GitHub Advanced Security | commercial suites | open source, and gives one graph you can query across stages |
-| typosquat scanners (e.g. Levenshtein-based) | name similarity | benchmarked here against a Levenshtein-1 baseline on real `MAL-*` data |
+| typomania / TypoGard (Taylor et al., NSS 2020), pypi-scan | name similarity | re-implemented and benchmarked on the same splits (see Evaluation) |
 
-SBOMs, scanning and attestation formats are not novel. The contribution is the integration: canonical cross-tool identity, finding -> commit backtracking evaluated against git blame, and reachability-aware, fail-closed gating.
+SBOMs, scanning and attestation formats are not novel. The contribution is retroactive, version-aware attribution of findings to introducing commits on lock-file history (it beats line-based attribution on Cargo and npm locks and ties it on pip and Go), delivered inside a fail-closed, signed gate. Cross-tool identity, reachability and typosquat scoring are supporting components.
 
 ## Limitations
 
 - **Reachability is static and at module level.** Runtime facts are supported as events, but no eBPF or `/proc/*/maps` collector ships. Per-snapshot source materialisation is available in the lineage benchmark (`--materialize`); dynamic imports, plugins loaded by name from settings, and C-extension loading are still invisible.
-- **The 15% reduction has no false-negative audit.** There is no public ground truth for "exploitable in this app".
-- **Lineage covers `requirements*.txt`, `package-lock.json`, `poetry.lock` and `uv.lock`.** Go modules, Cargo and yarn/pnpm locks are not parsed yet. The real-repo lineage benchmark numbers are for pip manifests only.
-- **Signing uses Ed25519 or HMAC keys, not Sigstore keyless.** There is no Rekor transparency log.
-- **Warden is a stand-in.** The HTTP contract to the real Warden service (`GET /score`) is assumed.
+- **Reachability reductions have only a manual false-negative audit.** There is no public ground truth for "exploitable in this app"; an audit of the earlier run found packages the apps do load marked `unreached` (fixed rules are listed in the CHANGELOG). Static downgrades must not be trusted on untrusted PRs.
+- **Lock-file parsers keep one version per package name.** yarn, pnpm, npm and Cargo locks that hold several versions of one package (7-14% of entries on the real lock files we checked) contribute only one of them, so the others are never matched against OSV or attributed. go.sum is used as published; go.mod is authoritative for Go.
+- **Keyless signing covers the CI key, not each envelope.** CI signs an ephemeral Ed25519 public key with Sigstore (Fulcio + Rekor) and the gate verifies that bundle with `cosign`; envelopes themselves are Ed25519. The kind admission demo is a gate step before `kubectl apply`, not an in-cluster validating webhook.
+- **Warden integration is contract-tested only.** `WardenApiClient` follows the real Warden `POST /api/v1/scans` schema, but no end-to-end run against a live Warden is in CI; offline results use `HeuristicWarden`.
 - **Typosquat recall is low in absolute terms** (see above). Treat it as one signal, not a malware detector.
 - **SAST comes in as SARIF 2.1.0** (`tracegate ingest --sarif`, tested on Bandit-style fixtures). SAST findings are attached to files, not to dependencies, so reachability does not apply to them.
 - Image deployments in the image benchmark are synthetic (one service per image).
@@ -220,8 +248,8 @@ SBOMs, scanning and attestation formats are not novel. The contribution is the i
 ## Roadmap
 
 - eBPF / `sys.modules` runtime collector (needs a Linux runtime; not feasible on the Windows dev machine).
-- Lock-file lineage for Go modules, Cargo and yarn/pnpm.
-- Sigstore keyless signing + Rekor inclusion proofs.
+- Multi-version lock-file pins and an in-cluster validating admission webhook.
+- Sigstore DSSE signing of each envelope (sigstore-python) instead of a Sigstore-bound key.
 - Neo4j live adapter (currently Cypher export) and a React lineage explorer.
 - EPSS-based prioritisation and a GitHub App for PR comments.
 

@@ -3,15 +3,15 @@
 ```bash
 git clone https://github.com/rakshit-737/tracegate && cd tracegate
 pip install -e ".[dev]"            # the core gate is stdlib-only; extras add crypto/osv/api
-python -m pytest -q                # 56 tests; 4 real-data tests skip without datasets
+python -m pytest -q                # about 70 tests; real-data tests skip without datasets
 python -m tracegate.cli demo       # the six spec scenarios
 ```
 
 Gate a real image scan with Ed25519-signed provenance:
 
 ```bash
-tracegate keygen ci
-export TRACEGATE_KEYID=ci TRACEGATE_SIGNING_KEY=ci.key TRACEGATE_PUBKEY=ci.pub
+tracegate keygen ~/.tracegate/ci
+export TRACEGATE_KEYID=ci TRACEGATE_SIGNING_KEY=~/.tracegate/ci.key TRACEGATE_PUBKEY=~/.tracegate/ci.pub
 syft  <image> -o syft-json=sbom.json
 trivy image --format json -o trivy.json <image>
 tracegate ingest --syft sbom.json --trivy trivy.json --commit $(git rev-parse HEAD) -o img.json
@@ -36,7 +36,7 @@ Demo scenarios (these follow the spec):
 | `tampered` | forged scan attestation -> block (fail closed) |
 | `unsigned-missing` | missing stage -> block |
 
-### SAST (SARIF)
+## SAST (SARIF)
 
 Any SARIF 2.1.0 producer works (Semgrep, Bandit `-f sarif`, CodeQL):
 
@@ -47,7 +47,7 @@ tracegate ingest --sarif bandit.sarif --commit $(git rev-parse HEAD) -o sast.jso
 
 Severity comes from `security-severity` when present (CVSS bands), otherwise from the SARIF level (error=high, warning=medium, note=low).
 
-### Lock files
+## Lock files
 
 `tracegate lineage` understands `requirements*.txt`, `poetry.lock`, `uv.lock`, `package-lock.json` (v1-v3), `yarn.lock` (v1 and Berry), `pnpm-lock.yaml` (v5-v9), `go.mod` / `go.sum` and `Cargo.lock`, chosen by file name. It exits 2 if the manifest has no pinned history:
 
@@ -70,6 +70,6 @@ python benchmarks/scale_eval.py          # -> results/scale_synthetic.json
 python -m pytest -q -m realdata          # real-data tests (need the datasets)
 ```
 
-OSV dumps, popularity lists and the Trivy DB are live feeds, so a re-run on a later date can shift finding counts and typosquat numbers; the sha256 of what was used is in `MANIFEST.json`. Re-running `images_eval.py` on the same data reproduced every count in `results/images_real.json` exactly (only latency changed).
+OSV dumps, popularity lists and the Trivy DB are live feeds, so a re-run on a later date can shift finding counts and typosquat numbers; the sha256 of what was used is in `results/data_manifest.json`. Re-running `images_eval.py` on the same data reproduced every count in `results/images_real.json` exactly (only latency changed).
 
 Evaluation design, including the splits, ground truth and why download counts are *not* used as a typosquat feature, is in [ADR 0005](adr/0005-real-data-evaluation-design.md).

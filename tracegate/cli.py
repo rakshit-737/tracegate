@@ -111,6 +111,15 @@ def _main(argv: list[str] | None = None) -> int:
     ap.add_argument("--demo", action="store_true",
                     help="trust/sign with the PUBLIC demo key (never for real gates); also TRACEGATE_DEMO=1")
     sub = ap.add_subparsers(dest="cmd", required=True, metavar="COMMAND")
+    _add = sub.add_parser
+
+    def _sub(name: str, **kw):  # every subcommand also accepts --demo after its name
+        p = _add(name, **kw)
+        p.add_argument("--demo", action="store_true", default=argparse.SUPPRESS,
+                       help="same as the global --demo")
+        return p
+
+    sub.add_parser = _sub  # type: ignore[method-assign]
     s = sub.add_parser("synth", help="write signed synthetic demo events for a scenario")
     s.add_argument("scenario", choices=sorted(synth.SCENARIOS), help="scenario name")
     s.add_argument("out", help="output events JSON")

@@ -171,6 +171,7 @@ def test_gate_fails_closed_without_keys(tmp_path, monkeypatch, capsys):
     assert main(["gate", str(p)]) == 2
     assert "no trusted keys configured" in capsys.readouterr().err
     assert main(["--demo", "gate", str(p)]) == 0
+    assert main(["gate", str(p), "--demo"]) == 0  # --demo is also accepted after the subcommand
     assert main(["gate", str(tmp_path / "missing.json")]) == 2
 
 

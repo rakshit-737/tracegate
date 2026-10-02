@@ -324,3 +324,36 @@ def test_api_smoke():
     assert bt[0]["introduced_by"]["pr"] == 42
     assert c.post("/v1/gate", json=[{"bogus": 1}]).status_code == 422
     assert "TRACEGATE" in c.get("/").text
+
+
+def test_api_trust_roots(tmp_path, monkeypatch):
+    pytest.importorskip("fastapi")
+    pytest.importorskip("httpx")
+    pytest.importorskip("cryptography")
+    from fastapi.testclient import TestClient
+
+    from tracegate import synth
+    from tracegate.api import app
+    from tracegate.signing import Ed25519Signer, HmacSigner
+    for k in ("TRACEGATE_KEY", "TRACEGATE_PUBKEY", "TRACEGATE_DEMO", "TRACEGATE_API_TOKEN"):
+        monkeypatch.delenv(k, raising=False)
+    c = TestClient(app)
+    from dataclasses import asdict
+    events = synth.events(synth.SCENARIOS["clean"])
+    sg = Ed25519Signer.generate("ci")
+    good = [asdict(sg.sign(e)) for e in events]
+    forged = [asdict(HmacSigner("ci", synth.DEMO_KEY).sign(e)) for e in events]
+    assert c.post("/v1/gate", json=good).status_code == 503  # no trust root: fail closed
+    (tmp_path / "ci.pub").write_bytes(sg.public_pem())
+    monkeypatch.setenv("TRACEGATE_KEYID", "ci")
+    monkeypatch.setenv("TRACEGATE_PUBKEY", str(tmp_path / "ci.pub"))
+    r = c.post("/v1/gate", json=good).json()
+    assert r["rejected"] == [] and r["verdict"] == "pass"
+    r = c.post("/v1/gate", json=forged).json()
+    assert r["verdict"] == "block" and len(r["rejected"]) == len(events)
+    monkeypatch.setenv("TRACEGATE_API_TOKEN", "t0k")
+    assert c.post("/v1/gate", json=good).status_code == 401
+    assert c.post("/v1/gate", json=good, headers={"Authorization": "Bearer t0k"}).status_code == 200
+    big = b"[" + b" " * (11 * 1024 * 1024) + b"]"
+    assert c.post("/v1/gate", content=big, headers={"content-type": "application/json",
+                                                    "Authorization": "Bearer t0k"}).status_code == 413

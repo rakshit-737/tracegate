@@ -154,13 +154,24 @@ def test_pr_comment_renders():
 def test_cli_roundtrip(tmp_path, capsys):
     p = tmp_path / "ev.json"
     assert main(["synth", "cve-origin", str(p)]) == 0
-    assert main(["gate", str(p)]) == 1
+    assert main(["--demo", "gate", str(p)]) == 1
     capsys.readouterr()
-    assert main(["backtrack", str(p), "CVE-2020-14343"]) == 0
+    assert main(["--demo", "backtrack", str(p), "CVE-2020-14343"]) == 0
     out = json.loads(capsys.readouterr().out)
     assert out[0]["introduced_by"]["pr"] == 42
     assert main(["synth", "clean", str(p)]) == 0
-    assert main(["gate", str(p), "--comment"]) == 0
+    assert main(["--demo", "gate", str(p), "--comment"]) == 0
+
+
+def test_gate_fails_closed_without_keys(tmp_path, monkeypatch, capsys):
+    for k in ("TRACEGATE_KEY", "TRACEGATE_PUBKEY", "TRACEGATE_DEMO", "TRACEGATE_SIGNING_KEY"):
+        monkeypatch.delenv(k, raising=False)
+    p = tmp_path / "ev.json"
+    assert main(["synth", "clean", str(p)]) == 0
+    assert main(["gate", str(p)]) == 2
+    assert "no trusted keys configured" in capsys.readouterr().err
+    assert main(["--demo", "gate", str(p)]) == 0
+    assert main(["gate", str(tmp_path / "missing.json")]) == 2
 
 
 def test_malformed_envelope_file_fails(tmp_path):

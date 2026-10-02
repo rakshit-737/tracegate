@@ -66,6 +66,11 @@ class HmacSigner:
         return Envelope(PAYLOAD_TYPE, payload, self.keyid, sig)
 
 
+def _need_crypto() -> None:
+    if not HAVE_CRYPTO:
+        raise RuntimeError("Ed25519 needs: pip install 'tracegate[crypto]'")
+
+
 class Ed25519Signer:
     def __init__(self, keyid: str, private_key: Ed25519PrivateKey):
         if not HAVE_CRYPTO:
@@ -74,10 +79,12 @@ class Ed25519Signer:
 
     @classmethod
     def generate(cls, keyid: str) -> Ed25519Signer:
+        _need_crypto()
         return cls(keyid, Ed25519PrivateKey.generate())
 
     @classmethod
     def from_pem(cls, keyid: str, pem: bytes) -> Ed25519Signer:
+        _need_crypto()
         sk = serialization.load_pem_private_key(pem, password=None)
         if not isinstance(sk, Ed25519PrivateKey):
             raise ValueError("not an Ed25519 private key")
@@ -103,7 +110,7 @@ class Ed25519Signer:
 
 def load_public_pem(pem: bytes) -> Ed25519PublicKey:
     if not HAVE_CRYPTO:
-        raise RuntimeError("pip install cryptography to verify Ed25519 signatures")
+        raise RuntimeError("Ed25519 needs: pip install 'tracegate[crypto]'")
     pk = serialization.load_pem_public_key(pem)
     if not isinstance(pk, Ed25519PublicKey):
         raise ValueError("not an Ed25519 public key")

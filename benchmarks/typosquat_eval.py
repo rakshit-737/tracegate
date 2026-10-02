@@ -115,7 +115,8 @@ POP_SOURCE = {"pypi": "hugovk/top-pypi-packages", "npm": "wooorm/npm-high-impact
               "crates": "crates.io API (sort=downloads)", "nuget": "NuGet search API (totalDownloads)"}
 
 
-def run(eco: str, ref_n: int, neg_hi: int, out: Path, split: str = "hash", cutoff: str = "2025-01-01") -> dict:
+def run(eco: str, ref_n: int, neg_hi: int, out: Path, split: str = "hash", cutoff: str = "2025-01-01",
+        dump: Path | None = None) -> dict:
     root = data_root()
     pop, d_ref, d_neg = ECOS[eco]
     ref_n, neg_hi = ref_n or d_ref, neg_hi or d_neg
@@ -208,7 +209,15 @@ def run(eco: str, ref_n: int, neg_hi: int, out: Path, split: str = "hash", cutof
     split_desc = ("50/50 by sha256(name); numbers are TEST half" if split == "hash" else
                   f"time split: positives published < {cutoff} tune, >= {cutoff} test (OSV `published`, "
                   "dominated by bulk backfill days); negatives 50/50 by sha256(name)")
-    report = {"ecosystem": eco, "reference_size": len(ref), "split": split_desc,
+    if dump is not None:  # inputs + port flags for benchmarks/originals_eval.py (runner only, not committed)
+        dump.mkdir(parents=True, exist_ok=True)
+        (dump / f"{eco}_{split}.json").write_text(json.dumps({
+            "ecosystem": eco, "split": split, "ref": ref, "pos": sorted(pos), "neg": sorted(neg),
+            "typo": sorted(typo_subset),
+            "port_flags": {k: sorted(n for n, f in flags_by[k].items() if f and n in pos | neg)
+                           for k in ("typomania/TypoGard (top-5k)", "lev1 (top-5k)")}}))
+    from bump_oracle import run_meta
+    report = {**run_meta(), "ecosystem": eco, "reference_size": len(ref), "split": split_desc,
               "chosen_threshold": default_th, "fpr_matching": "dev split: lowest threshold with dev FPR <= lev1 dev FPR", "dev_positives": len(dev_pos), "dev_negatives": len(dev_neg),
               "positives": len(pos), "negatives": len(neg),
               "typo_labelled_positives": len(typo_subset), "results": results, "curve": curve,
@@ -274,6 +283,7 @@ def main() -> None:
     ap.add_argument("--split", choices=["hash", "time"], default="hash")
     ap.add_argument("--cutoff", default="2025-01-01")
     ap.add_argument("--no-plot", action="store_true")
+    ap.add_argument("--dump", default=None, help="write test inputs + port flags here for originals_eval.py")
     a = ap.parse_args()
     out = Path(a.out)
     reps = []
@@ -284,7 +294,7 @@ def main() -> None:
         if not (data_root() / need).exists() or not (data_root() / "popular" / pop_file).exists():
             print(f"skip {eco}: {need} or popular/{pop_file} missing (run scripts/download_data.py)")
             continue
-        reps.append(run(eco, a.ref, a.neg_hi, out, a.split, a.cutoff))
+        reps.append(run(eco, a.ref, a.neg_hi, out, a.split, a.cutoff, Path(a.dump) if a.dump else None))
     if reps and a.split == "hash" and not a.no_plot and {r["ecosystem"] for r in reps} >= {"PyPI", "npm"}:
         plot(reps, out)
 

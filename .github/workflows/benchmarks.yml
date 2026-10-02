@@ -31,15 +31,30 @@ jobs:
           python scripts/download_data.py osv
           python scripts/download_data.py popular || echo "some popularity lists failed; those ecosystems are skipped"
       - name: Typosquat, hash split
-        run: python benchmarks/typosquat_eval.py --eco PyPI npm RubyGems crates.io NuGet 2>&1 | tee typosquat_hash.log
+        run: python benchmarks/typosquat_eval.py --eco PyPI npm RubyGems crates.io NuGet --dump ../dump 2>&1 | tee typosquat_hash.log
       - name: Typosquat, time split
-        run: python benchmarks/typosquat_eval.py --split time --eco PyPI npm RubyGems crates.io NuGet 2>&1 | tee typosquat_time.log
+        run: python benchmarks/typosquat_eval.py --split time --eco PyPI npm RubyGems crates.io NuGet --dump ../dump 2>&1 | tee typosquat_time.log
+      - name: Fetch original TypoGard and build original typomania (pinned commits)
+        env:
+          TYPOGARD_SHA: 9c106362605c920126736993100a213c9448961e
+          TYPOMANIA_SHA: 10e27e87cabdd494e23ed07034484b93782db8de
+        run: |
+          curl -fsSL -o ../typogard_npm.py "https://raw.githubusercontent.com/mt3443/typogard/$TYPOGARD_SHA/typogard_npm.py"
+          git clone -q https://github.com/rustfoundation/typomania ../typomania
+          git -C ../typomania checkout -q "$TYPOMANIA_SHA"
+          cargo build --release --locked --example registry --manifest-path ../typomania/Cargo.toml
+      - name: Typosquat, original published tools on the same splits
+        env:
+          TYPOGARD_SHA: 9c106362605c920126736993100a213c9448961e
+          TYPOMANIA_SHA: 10e27e87cabdd494e23ed07034484b93782db8de
+        run: |
+          python benchmarks/originals_eval.py --dump ../dump --typogard ../typogard_npm.py             --typomania ../typomania/target/release/examples/registry             --typogard-commit "$TYPOGARD_SHA" --typomania-commit "$TYPOMANIA_SHA" 2>&1 | tee originals.log
       - name: Clone benchmark repositories
         if: inputs.lineage == 'true'
         run: git config --global transfer.fsckObjects true && python scripts/download_data.py repos
       - name: Lineage, HEAD sources
         if: inputs.lineage == 'true'
-        run: python benchmarks/lineage_eval.py --snapshots 12 2>&1 | tee lineage.log
+        run: python benchmarks/lineage_eval.py --snapshots 12 --oracle 2>&1 | tee lineage.log
       - name: Lineage, materialized per-snapshot sources (Python repos)
         if: inputs.lineage == 'true'
         run: python benchmarks/lineage_eval.py --snapshots 12 --materialize --repos healthchecks netbox warehouse 2>&1 | tee lineage_mat.log

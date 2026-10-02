@@ -37,6 +37,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+from bump_oracle import METHODS, cluster_bootstrap, oracle_repo, run_meta  # noqa: E402
+
 from tracegate.backtrack import origin_story  # noqa: E402
 from tracegate.collector import Collector  # noqa: E402
 from tracegate.data import data_root  # noqa: E402
@@ -260,6 +262,8 @@ def main() -> None:
     ap.add_argument("--repos", nargs="*", default=list(REPOS))
     ap.add_argument("--materialize", action="store_true",
                     help="analyse each historical snapshot against its own sources (slower)")
+    ap.add_argument("--oracle", action="store_true",
+                    help="also score against single-package bot-bump commits (independent oracle)")
     ap.add_argument("--out", default=str(Path(__file__).resolve().parents[1] / "results"))
     a = ap.parse_args()
     ecos = sorted({ecosystem_for(REPOS[n][0]) for n in a.repos})
@@ -285,7 +289,11 @@ def main() -> None:
             c, t = tot.get(k, (0, 0))
             tot[k] = (c + v["correct"], t + v["total"])
     summary = {k: {"correct": c, "total": t, "accuracy": round(c / t, 4) if t else None,
-                   "wilson95": wilson(c, t)} for k, (c, t) in tot.items()}
+                   "wilson95": wilson(c, t),
+                   "repo_cluster_bootstrap95": cluster_bootstrap(
+                       [(r["attribution"][k]["correct"], r["attribution"][k]["total"]) for r in results
+                        if r["attribution"].get(k, {}).get("correct") is not None])}
+               for k, (c, t) in tot.items()}
     by_eco: dict[str, dict] = {}
     for r in results:
         for k, v in r["attribution"].items():
@@ -298,7 +306,29 @@ def main() -> None:
                           for k, (c, t) in d.items()} for e, d in by_eco.items()}
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
-    (out / ("lineage_real_repos_materialized.json" if a.materialize else "lineage_real_repos.json")).write_text(json.dumps({"summary": summary, "summary_by_ecosystem": summary_by_eco,
+    if not a.materialize:
+        for r in results:
+            if r.get("reachability"):
+                r["reachability"]["headline"] = False
+                r["reachability"]["caveat"] = ("HEAD-sources mode: older snapshots are checked against today's "
+                                               "imports; superseded by lineage_real_repos_materialized.json")
+    if a.oracle:
+        orc = [o for o in (oracle_repo(data_root() / "repos" / n, REPOS[n][0]) for n in a.repos) if o]
+        pooled: dict[str, dict] = {}
+        for m in METHODS:
+            for lab in ("at_bump", "later_snapshot"):
+                pr = [(o["scores"][m][lab]["correct"], o["scores"][m][lab]["total"]) for o in orc]
+                c, t = sum(x for x, _ in pr), sum(y for _, y in pr)
+                pooled.setdefault(m, {})[lab] = {"correct": c, "total": t, "accuracy": round(c / t, 4) if t else None,
+                                                 "wilson95": wilson(c, t), "repo_cluster_bootstrap95": cluster_bootstrap(pr)}
+        (out / "lineage_bot_bump_oracle.json").write_text(json.dumps({
+            **run_meta(),
+            "oracle": ("bot-authored single-package bump commits; label = the bump commit, read from the commit "
+                       "subject, independent of the pin parser and of git blame"),
+            "ablation": "tracegate = version-diff attribution; blame = line attribution of the same pin",
+            "pooled": pooled, "repos": orc}, indent=1))
+        print("ORACLE", json.dumps(pooled))
+    (out / ("lineage_real_repos_materialized.json" if a.materialize else "lineage_real_repos.json")).write_text(json.dumps({**run_meta(), "summary": summary, "summary_by_ecosystem": summary_by_eco,
                                 "mode": "materialized per-snapshot sources" if a.materialize else "HEAD sources",
                                 "materialize": a.materialize,
                                 "repos": results}, indent=1))

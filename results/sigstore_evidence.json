@@ -1,24 +1,25 @@
 {
  "workflow": "sigstore.yml",
- "run_id": 36995327046,
- "run_url": "https://github.com/rakshit-737/tracegate/actions/runs/36995327046",
+ "run_id": 37003568357,
+ "run_url": "https://github.com/rakshit-737/tracegate/actions/runs/37003568357",
  "issuer": "https://token.actions.githubusercontent.com",
  "entries": [
   {
-   "artifact": "tracegate-1.0.0-py3-none-any.whl",
-   "sha256": "5ddfba5dba6c38f0cce7c4f5609d992c4f500b3375d031de28cabbbd060a1226",
-   "rekor_log_index": 3053211447,
+   "artifact": "tracegate-1.0.0.post0.dev11+gcfd215e-py3-none-any.whl",
+   "sha256": "848dcc9bc5183836594e603bec32c10014d31689dceb13ce49b21d48c2f32a2e",
+   "rekor_log_index": 3054603761,
    "rekor_kind": "hashedrekord",
-   "integrated_time": 1790936701,
-   "rekor_url": "https://search.sigstore.dev/?logIndex=3053211447"
+   "integrated_time": 1790942061,
+   "rekor_url": "https://search.sigstore.dev/?logIndex=3054603761"
   },
   {
-   "artifact": "tracegate-1.0.0.tar.gz",
-   "sha256": "42faec879d6220d9e9c74a51703434779a05755092f59681f937fa29b509242c",
-   "rekor_log_index": 3053212375,
+   "artifact": "tracegate-1.0.0.post0.dev11+gcfd215e.tar.gz",
+   "sha256": "20fa178c892eeaf646979b077c49ccadaba16e1850139f47ea9795515343255b",
+   "rekor_log_index": 3054604494,
    "rekor_kind": "hashedrekord",
-   "integrated_time": 1790936704,
-   "rekor_url": "https://search.sigstore.dev/?logIndex=3053212375"
+   "integrated_time": 1790942064,
+   "rekor_url": "https://search.sigstore.dev/?logIndex=3054604494"
   }
- ]
+ ],
+ "note": "main-branch builds are versioned <release>.post0.dev<run>+g<sha> so they never share a filename with a release asset"
 }

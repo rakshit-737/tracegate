@@ -212,7 +212,7 @@ Edit distance 1 (`typo1`) carries almost all of the signal; the other techniques
 ## Signing and admission
 
 - [`results/sigstore_evidence.json`](https://github.com/rakshit-737/tracegate/blob/main/results/sigstore_evidence.json): wheel and sdist signed keylessly with the `sigstore` workflow's GitHub OIDC identity; each Rekor entry fetched by logIndex and checked to record the artefact's sha256.
-- [`results/kind_admission.json`](https://github.com/rakshit-737/tracegate/blob/main/results/kind_admission.json): in a kind cluster the signed image is admitted and Running; the unsigned one is denied (`no signatures found`).
+- [`results/kind_admission.json`](https://github.com/rakshit-737/tracegate/blob/main/results/kind_admission.json): in a kind cluster the signed image is admitted and Running; the unsigned one is denied by cosign (`no signatures found`); a third image with a valid keyless signature but signed provenance missing the build and scan stages passes cosign and is denied by `tracegate gate` (`missing signed provenance for stages ['build', 'scan']`).
 
 ## Real images: what the gate sees
 

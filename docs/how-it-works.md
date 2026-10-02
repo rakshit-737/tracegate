@@ -91,5 +91,6 @@ merge still gets its origin story. The [Evaluation](evaluation.md) measures this
 The `kind-admission` CI workflow shows the last step: two images are built and pushed to a
 localhost registry, only one is signed keylessly, and each is applied to a kind cluster only if
 `cosign verify` accepts it against the workflow identity **and** `tracegate gate` passes on its
-signed events. The signed image runs; the unsigned one is denied with the reason recorded in
-`decisions.json`.
+signed events. The signed image runs; the unsigned one is denied by cosign; a third image that is
+validly signed but whose signed provenance lacks the build and scan stages is denied by the
+TRACEGATE gate. Each reason is recorded in `decisions.json`.

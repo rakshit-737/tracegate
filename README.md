@@ -50,7 +50,7 @@ All numbers come from the committed runs in [`results/`](results/), produced by 
 | Reachability: high/critical findings left actionable | 895 high+ OSV findings, 36 snapshots of 3 Python repos, each analysed against its own sources | 844 (**-5.7%**); the 51 downgrades are not audited, so the false-unreached rate is unmeasured | 895 (raw scanner output) |
 | Typosquat, PyPI (hash split, test half) | 5,964 OSV `MAL-*` names vs 4,973 packages ranked 5k-15k | F1 0.133 at the dev-tuned default (FPR 1.7%); 0.153 at FPR 3.2% with the threshold matched to Damerau-1's FPR on the dev half (paired F1 vs Damerau-1: +0.007 [+0.002, +0.011]) | Damerau-1 0.147; our port of typomania/TypoGard 0.125; our port of pypi-scan 0.112 |
 | Keyless signing | wheel + sdist of this repo | signed with GitHub OIDC, verified, Rekor entries checked ([evidence](results/sigstore_evidence.json)) | - |
-| Admission | kind cluster, 2 images | signed image Running, unsigned denied ([decisions](results/kind_admission.json)) | - |
+| Admission | kind cluster, 3 images | signed image Running; unsigned image denied by cosign; a cosign-valid image whose signed provenance lacks build/scan stages denied by the TRACEGATE gate ([decisions](results/kind_admission.json)) | cosign alone would admit the third image |
 | Gate latency (median per repo) | real lineage graphs | 6-62 ms (pip), 36-110 ms (Cargo), 99-440 ms (npm), 290 ms (Go); max 893 ms | - |
 
 What the numbers mean, stated plainly:

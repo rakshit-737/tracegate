@@ -1,21 +1,32 @@
 {
  "workflow": "kind-admission.yml",
- "run_id": 36995327008,
- "run_url": "https://github.com/rakshit-737/tracegate/actions/runs/36995327008",
+ "run_id": 37003568257,
+ "run_url": "https://github.com/rakshit-737/tracegate/actions/runs/37003568257",
  "decisions": [
   {
    "deployment": "signed",
-   "image": "localhost:5000/tg-app@sha256:66a385968680ef87b821292b8760c9d221eacfdb05b03e53623b37dbaa717975",
+   "image": "localhost:5000/tg-app@sha256:8a1baf2198a0a2ca678648ed74c70bd9422d6e8690524a93e80160b2d6ebb83e",
    "allowed": true,
    "reason": "signed by trusted workflow; gate passed"
   },
   {
    "deployment": "unsigned",
-   "image": "localhost:5000/tg-app@sha256:5f200ef4b0c544f8716e51aef105140a6363188f8ca659ed068edfff67d2805b",
+   "image": "localhost:5000/tg-app@sha256:ce2fb8f7676f63aff837630d2fc733e3623295d842d4e8db7e4805785c363e3b",
    "allowed": false,
    "reason": "no Sigstore signature from ^https://github.com/rakshit-737/tracegate/\\.github/workflows/kind-admission\\.yml@: error during command execution: no signatures found"
+  },
+  {
+   "deployment": "signed-noscan",
+   "image": "localhost:5000/tg-app@sha256:08a2b46eb98229c8c0a2c7d8630631e437b234062e874e580d103280b9d7ee77",
+   "allowed": false,
+   "reason": "tracegate gate blocked: - **[block] provenance_integrity**: missing signed provenance for stages ['build', 'scan']"
   }
  ],
  "signed_pod_phase": "Running",
- "unsigned_deployment_created": false
+ "unsigned_deployment_created": false,
+ "signed_noscan_deployment_created": false,
+ "deciders": {
+  "unsigned": "cosign (no signature)",
+  "signed-noscan": "tracegate gate (cosign signature valid; provenance missing build/scan stages)"
+ }
 }

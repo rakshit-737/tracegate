@@ -48,7 +48,9 @@ from tracegate.gitlineage import (  # noqa: E402
     materialize,
     pickaxe_first_mention,
 )
+from tracegate.ids import normalize_name, purl  # noqa: E402
 from tracegate.ingest import syft_json_to_build, trivy_json_to_scan  # noqa: E402
+from tracegate.lockfiles import ecosystem_for  # noqa: E402
 from tracegate.models import Severity, StageEvent  # noqa: E402
 from tracegate.osv import OsvIndex  # noqa: E402
 from tracegate.policy import evaluate  # noqa: E402
@@ -60,7 +62,17 @@ REPOS = {  # name -> (manifest, source dirs)
     "healthchecks": ("requirements.txt", ["hc"]),
     "netbox": ("requirements.txt", ["netbox"]),
     "warehouse": ("requirements/main.txt", ["warehouse"]),
+    # v1.1: Go / Cargo / yarn / pnpm lock files (attribution only; reachability is Python-only)
+    "caddy": ("go.sum", []),
+    "hugo": ("go.mod", []),
+    "ripgrep": ("Cargo.lock", []),
+    "bat": ("Cargo.lock", []),
+    "alacritty": ("Cargo.lock", []),
+    "excalidraw": ("yarn.lock", []),
+    "mastodon": ("yarn.lock", []),
+    "vue-core": ("pnpm-lock.yaml", []),
 }
+OSV_ZIP = {"pypi": "PyPI", "npm": "npm", "golang": "Go", "cargo": "crates.io"}
 KEY = b"bench-key"
 
 
@@ -68,12 +80,13 @@ def build_events(repo: Path, manifest: str, hist, upto: int, pins: dict[str, str
                  syft: Path | None, trivy: Path | None) -> list[StageEvent]:
     evs = commit_events(hist[: upto + 1], manifest)
     sha = hist[upto].sha
+    eco = ecosystem_for(manifest)
     if syft is not None:
         build = syft_json_to_build(syft, f"build-{sha[:8]}", commit=sha)
         build["sbom"]["artifacts"] = [a for a in build["sbom"]["artifacts"] if a["purl"].startswith("pkg:pypi/")]
     else:
         build = {"build_id": f"build-{sha[:8]}", "commit": sha, "tool": "manifest",
-                 "sbom": {"artifacts": [{"name": n, "version": v} for n, v in pins.items()]}}
+                 "sbom": {"artifacts": [{"name": n, "version": v, "purl": purl(n, v, eco)} for n, v in pins.items()]}}
     evs.append(StageEvent("build", f"ci-{sha[:8]}", build))
     evs.append(StageEvent("scan", f"ci-{sha[:8]}", osv.scan_payload(pins.items())))
     if trivy is not None:
@@ -81,11 +94,17 @@ def build_events(repo: Path, manifest: str, hist, upto: int, pins: dict[str, str
     return evs
 
 
-def eval_repo(name: str, osv: OsvIndex, n_snap: int, warden: HeuristicWarden,
+def eval_repo(name: str, osvs: dict[str, OsvIndex], n_snap: int, warden,
               per_snapshot_sources: bool = False) -> dict | None:
     root = data_root()
     repo = root / "repos" / name
     manifest, srcs = REPOS[name]
+    eco = ecosystem_for(manifest)
+    osv = osvs[eco]
+    reach_on = eco == "pypi" and bool(srcs)
+
+    def key(n: str) -> str:
+        return normalize_name(n, eco).lower()
     if not (repo / ".git").exists():
         print(f"skip {name}: not cloned")
         return None
@@ -100,8 +119,9 @@ def eval_repo(name: str, osv: OsvIndex, n_snap: int, warden: HeuristicWarden,
     disagreements, gate_ms, per_snapshot, reach_rows = [], [], [], []
     pick_cache: dict[str, str | None] = {}
     strings: set[str] = set()
-    mods = app_imports([repo / s for s in srcs], strings)  # HEAD sources, parsed once per repo
-    ep = entrypoint_text(repo)
+    if reach_on:
+        mods = app_imports([repo / s for s in srcs], strings)  # HEAD sources, parsed once per repo
+        ep = entrypoint_text(repo)
     head_stats = {}
     for k in idx:
         mc = hist[k]
@@ -118,8 +138,8 @@ def eval_repo(name: str, osv: OsvIndex, n_snap: int, warden: HeuristicWarden,
         enrich_warden(res, warden)
         dec = evaluate(res)
         gate_ms.append(1000 * (time.perf_counter() - t0))
-        truth = blame_introducers(repo, mc.path or manifest, mc.sha)
-        vuln_pkgs = sorted({res.graph.nodes[f.node_id].attrs["name"].lower().replace("_", "-")
+        truth = {key(n): s for n, s in blame_introducers(repo, mc.path or manifest, mc.sha).items()}
+        vuln_pkgs = sorted({key(res.graph.nodes[f.node_id].attrs["name"])
                             for f in res.graph.findings if f.source in ("osv", "trivy")})
         n_ok = 0
         for pkg in vuln_pkgs:
@@ -149,6 +169,9 @@ def eval_repo(name: str, osv: OsvIndex, n_snap: int, warden: HeuristicWarden,
                              "findings": sum(f.source in ("osv", "trivy") for f in res.graph.findings),
                              "backtrack_correct": n_ok, "verdict": dec.verdict.value,
                              "graph": res.graph.stats()})
+        if not reach_on:
+            per_snapshot[-1]["warden_flags"] = [f.title for f in res.graph.findings if f.source == "warden"]
+            continue
         # Static reachability. Only HEAD sources are checked out (blobless clone), so older
         # snapshots are analysed against HEAD's import set: an approximation, flagged in output.
         req_text = _git(repo, "show", f"{mc.sha}:{mc.path or manifest}")
@@ -189,18 +212,20 @@ def eval_repo(name: str, osv: OsvIndex, n_snap: int, warden: HeuristicWarden,
     acc = {k: {"correct": v[0], "total": v[1], "accuracy": round(v[0] / v[1], 4) if v[1] else None}
            for k, v in rows.items()}
     acc["scanner-only"] = {"correct": 0, "total": rows["tracegate"][1], "accuracy": 0.0}
-    out = {"repo": name, "manifest": manifest, "manifest_commits": len(hist), "snapshots": len(idx),
+    out = {"repo": name, "manifest": manifest, "ecosystem": eco, "manifest_commits": len(hist), "snapshots": len(idx),
            "history_walk_s": round(t_hist, 2), "gate_ms_median": round(statistics.median(gate_ms), 1),
            "gate_ms_max": round(max(gate_ms), 1), "attribution": acc, "disagreements": disagreements,
            "per_snapshot": per_snapshot, "head": head_stats,
            "reachability": {"high_plus_total": sum(r[0] for r in reach_rows),
                             "actionable_total": sum(r[1] for r in reach_rows),
                             "downgraded_examples": sorted({x for r in reach_rows for x in r[2]})[:20],
-                            "note": "historical snapshots analysed against HEAD sources"}}
+                            "note": "historical snapshots analysed against HEAD sources"}
+           if reach_on else None}
     print(f"[{name}] commits={len(hist)} snapshots={len(idx)} " +
           " ".join(f"{k}={v['accuracy']}" for k, v in acc.items()) +
-          f" gate_ms~{out['gate_ms_median']} high+={out['reachability']['high_plus_total']}"
-          f"->actionable={out['reachability']['actionable_total']}")
+          f" gate_ms~{out['gate_ms_median']}" + (f" high+={out['reachability']['high_plus_total']}"
+                                                  f"->actionable={out['reachability']['actionable_total']}"
+                                                  if reach_on else ""))
     return out
 
 
@@ -212,25 +237,39 @@ def main() -> None:
                     help="analyse each historical snapshot against its own sources (slower)")
     ap.add_argument("--out", default=str(Path(__file__).resolve().parents[1] / "results"))
     a = ap.parse_args()
-    zp = data_root() / "osv/PyPI-all.zip"
-    if not zp.exists():
-        sys.exit("need osv/PyPI-all.zip (python scripts/download_data.py osv)")
-    t0 = time.perf_counter()
-    osv = OsvIndex.from_zip(zp)
-    print(f"OSV PyPI index: {osv.n_records} records, {len(osv.by_name)} packages, "
-          f"{len(osv.mal)} malicious names ({time.perf_counter() - t0:.1f}s)")
-    from tracegate.data import top_pypi
-    warden = HeuristicWarden(popular=top_pypi(5000), osv=osv)
-    results = [r for r in (eval_repo(n, osv, a.snapshots, warden, a.materialize) for n in a.repos) if r]
+    ecos = sorted({ecosystem_for(REPOS[n][0]) for n in a.repos})
+    osvs: dict[str, OsvIndex] = {}
+    for eco in ecos:
+        zp = data_root() / f"osv/{OSV_ZIP[eco]}-all.zip"
+        if not zp.exists():
+            sys.exit(f"need {zp.name} (python scripts/download_data.py osv)")
+        t0 = time.perf_counter()
+        osvs[eco] = OsvIndex.from_zip(zp, eco)
+        print(f"OSV {eco} index: {osvs[eco].n_records} records, {len(osvs[eco].by_name)} packages, "
+              f"{len(osvs[eco].mal)} malicious names ({time.perf_counter() - t0:.1f}s)")
+    from tracegate.data import top_npm, top_pypi
+    from tracegate.warden import MultiWarden
+    pop = {"pypi": top_pypi(5000) if "pypi" in osvs else None, "npm": top_npm(5000) if "npm" in osvs else None}
+    warden = MultiWarden({e: HeuristicWarden(popular=pop.get(e) or [], osv=o) for e, o in osvs.items()})
+    results = [r for r in (eval_repo(n, osvs, a.snapshots, warden, a.materialize) for n in a.repos) if r]
     tot = {}
     for r in results:
         for k, v in r["attribution"].items():
             c, t = tot.get(k, (0, 0))
             tot[k] = (c + v["correct"], t + v["total"])
     summary = {k: {"correct": c, "total": t, "accuracy": round(c / t, 4) if t else None} for k, (c, t) in tot.items()}
+    by_eco: dict[str, dict] = {}
+    for r in results:
+        for k, v in r["attribution"].items():
+            e = by_eco.setdefault(r["ecosystem"], {}).setdefault(k, [0, 0])
+            e[0] += v["correct"]
+            e[1] += v["total"]
+    summary_by_eco = {e: {k: {"correct": c, "total": t, "accuracy": round(c / t, 4) if t else None}
+                          for k, (c, t) in d.items()} for e, d in by_eco.items()}
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
-    (out / ("lineage_real_repos_materialized.json" if a.materialize else "lineage_real_repos.json")).write_text(json.dumps({"summary": summary, "repos": results}, indent=1))
+    (out / ("lineage_real_repos_materialized.json" if a.materialize else "lineage_real_repos.json")).write_text(json.dumps({"summary": summary, "summary_by_ecosystem": summary_by_eco,
+                                "repos": results}, indent=1))
     print("TOTAL", json.dumps(summary))
 
 

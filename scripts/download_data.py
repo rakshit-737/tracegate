@@ -52,6 +52,11 @@ OSV = {
     "osv/PyPI-all.zip": "https://osv-vulnerabilities.storage.googleapis.com/PyPI/all.zip",
     "osv/npm-all.zip": "https://osv-vulnerabilities.storage.googleapis.com/npm/all.zip",
     "osv/Alpine-all.zip": "https://osv-vulnerabilities.storage.googleapis.com/Alpine/all.zip",
+    # v1.1: lineage over Go / Cargo lock files and typosquat evaluation on more ecosystems
+    "osv/Go-all.zip": "https://osv-vulnerabilities.storage.googleapis.com/Go/all.zip",
+    "osv/crates.io-all.zip": "https://osv-vulnerabilities.storage.googleapis.com/crates.io/all.zip",
+    "osv/RubyGems-all.zip": "https://osv-vulnerabilities.storage.googleapis.com/RubyGems/all.zip",
+    "osv/NuGet-all.zip": "https://osv-vulnerabilities.storage.googleapis.com/NuGet/all.zip",
 }
 POPULAR = {
     # Hugo van Kemenade, top-pypi-packages (CC0 / public domain data from BigQuery PyPI downloads)
@@ -69,6 +74,15 @@ REPOS = [
     ("healthchecks", "https://github.com/healthchecks/healthchecks.git", "requirements.txt", ["hc"]),
     ("netbox", "https://github.com/netbox-community/netbox.git", "requirements.txt", ["netbox"]),
     ("warehouse", "https://github.com/pypi/warehouse.git", "requirements/main.txt", ["warehouse"]),
+    # v1.1: other lock-file formats (lineage/attribution only; reachability is Python-specific)
+    ("caddy", "https://github.com/caddyserver/caddy.git", "go.sum", []),
+    ("hugo", "https://github.com/gohugoio/hugo.git", "go.mod", []),
+    ("ripgrep", "https://github.com/BurntSushi/ripgrep.git", "Cargo.lock", []),
+    ("bat", "https://github.com/sharkdp/bat.git", "Cargo.lock", []),
+    ("alacritty", "https://github.com/alacritty/alacritty.git", "Cargo.lock", []),
+    ("excalidraw", "https://github.com/excalidraw/excalidraw.git", "yarn.lock", []),
+    ("mastodon", "https://github.com/mastodon/mastodon.git", "yarn.lock", []),
+    ("vue-core", "https://github.com/vuejs/core.git", "pnpm-lock.yaml", []),
 ]
 
 
@@ -128,9 +142,70 @@ def cmd_osv(force: bool) -> None:
         fetch(url, rel, force)
 
 
+# Ranked-by-downloads name lists paged from registry APIs (v1.1, typosquat on more ecosystems).
+# (rel path, url template, page count, JSON -> [(name, downloads)])
+PAGED = {
+    "popular/crates-top.json": (
+        "https://crates.io/api/v1/crates?sort=downloads&per_page=100&page={page}", 100,
+        lambda d: [(c["name"], c.get("downloads", 0)) for c in d["crates"]]),
+    "popular/rubygems-top.json": (
+        "https://packages.ecosyste.ms/api/v1/registries/rubygems.org/packages"
+        "?sort=downloads&order=desc&per_page=100&page={page}", 100,
+        lambda d: [(p["name"], p.get("downloads") or 0) for p in d]),
+    "popular/nuget-top.json": (  # the NuGet search service caps skip at 3000
+        "https://azuresearch-usnc.nuget.org/query?q=&take=1000&skip={skip}&semVerLevel=2.0.0", 4,
+        lambda d: [(p["id"], p.get("totalDownloads", 0)) for p in d["data"]]),
+}
+
+
+def fetch_paged(rel: str, force: bool) -> None:
+    dst = ROOT / rel
+    if dst.exists() and not force:
+        print(f"  cached  {rel}")
+        return
+    tmpl, pages, extract = PAGED[rel]
+    rows: list[tuple[str, int]] = []
+    for i in range(pages):
+        url = tmpl.format(page=i + 1, skip=i * 1000)
+        for attempt in range(1, 8):
+            try:
+                req = urllib.request.Request(url, headers={"User-Agent": "tracegate-data/1.1 (github.com/rakshit-737/tracegate)",
+                                                           "Accept-Encoding": "gzip"})
+                with urllib.request.urlopen(req, timeout=180) as r:
+                    body = r.read()
+                    if r.headers.get("Content-Encoding") == "gzip":
+                        import gzip
+                        body = gzip.decompress(body)
+                got = extract(json.loads(body))
+                break
+            except (OSError, ValueError, KeyError) as e:
+                print(f"    retry {attempt} page {i + 1}: {type(e).__name__}")
+                time.sleep(3 * attempt)
+        else:
+            sys.exit(f"giving up on {url}")
+        if not got:
+            break
+        rows += got
+        time.sleep(1.0)  # crates.io crawler policy: at most 1 request / second
+    seen, ranked = set(), []
+    for n, dl in sorted(rows, key=lambda r: -r[1]):
+        if n not in seen:
+            seen.add(n)
+            ranked.append({"name": n, "downloads": dl})
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    dst.write_text(json.dumps(ranked))
+    m = _load_manifest()
+    m[rel] = {"url": tmpl, "sha256": _sha256(dst), "bytes": dst.stat().st_size, "rows": len(ranked),
+              "fetched": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
+    _save_manifest(m)
+    print(f"  wrote   {rel} ({len(ranked)} names)")
+
+
 def cmd_popular(force: bool) -> None:
     for rel, url in POPULAR.items():
         fetch(url, rel, force)
+    for rel in PAGED:
+        fetch_paged(rel, force)
 
 
 def _platform() -> tuple[str, str, str, str, str]:

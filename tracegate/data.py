@@ -31,3 +31,14 @@ def top_npm(n: int | None = None) -> list[str]:
     text = (data_root() / "popular/npm-high-impact-top.js").read_text(encoding="utf-8")
     names = re.findall(r"^\s*'([^']+)',?\s*$", text, re.M)
     return names[:n] if n else names
+
+
+def top_popular(which: str, n: int | None = None) -> list[str]:
+    """Download-ranked names: 'pypi', 'npm', or a paged list ('crates', 'rubygems', 'nuget')."""
+    if which == "pypi":
+        return top_pypi(n)
+    if which == "npm":
+        return top_npm(n)
+    rows = json.loads((data_root() / f"popular/{which}-top.json").read_text())
+    names = [r["name"] for r in rows]
+    return names[:n] if n else names

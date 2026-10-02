@@ -4,6 +4,24 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Security
+- The gate fails closed when no trust root is configured (CLI exit 2, API 503); the public demo key needs `--demo` / `TRACEGATE_DEMO=1`.
+- The API verifies Ed25519 envelopes (`TRACEGATE_PUBKEY`), caps request bodies and envelope counts, and supports an optional bearer token.
+- Keyless trust: an Ed25519 key is trusted only through a verified Sigstore bundle bound to a workflow identity.
+- ReDoS-free pin regexes; `materialize()` refuses path-traversal tree entries; MAL range matching fails closed and uses SemVer outside PyPI.
+
+### Added
+- Lock-file lineage for yarn.lock, pnpm-lock.yaml, go.mod/go.sum and Cargo.lock.
+- CI: Sigstore keyless signing with Rekor checks, a kind cluster admission job, signed-pipeline e2e, wheel/sdist/Docker jobs, Python 3.10-3.14 plus Windows.
+- Typosquat comparison with re-implementations of typomania/TypoGard and pypi-scan, a time split, more ecosystems and precision at realistic prevalence.
+- Exact-pin pickaxe baseline and Wilson intervals in the lineage benchmark.
+
+### Fixed
+- Release notes extraction, duplicate `latest` tag, sdist missing test fixtures.
+- Audited false-`unreached` reachability cases (pycrypto, paramiko/ncclient/readme_renderer/alembic dependencies, Django ImageField -> Pillow).
+
 ## [1.0.0] - 2026-09-26
 
 ### Added

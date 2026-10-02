@@ -49,10 +49,10 @@ Severity comes from `security-severity` when present (CVSS bands), otherwise fro
 
 ### Lock files
 
-`tracegate lineage` understands `requirements*.txt`, `package-lock.json` (v1-v3), `poetry.lock` and `uv.lock`, chosen by file name:
+`tracegate lineage` understands `requirements*.txt`, `poetry.lock`, `uv.lock`, `package-lock.json` (v1-v3), `yarn.lock` (v1 and Berry), `pnpm-lock.yaml` (v5-v9), `go.mod` / `go.sum` and `Cargo.lock`, chosen by file name. It exits 2 if the manifest has no pinned history:
 
 ```bash
-tracegate lineage . web/package-lock.json -o npm-commits.json
+tracegate lineage path/to/app-repo package-lock.json -o npm-commits.json
 ```
 
 ## Reproducibility

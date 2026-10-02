@@ -12,7 +12,7 @@ python -m ruff check .
 ```
 
 Real-data tests are marked `@pytest.mark.realdata` and skip automatically when the datasets are
-absent. To run them, fetch the data first (see the README "Reproducing the results" section):
+absent. To run them, fetch the data first (see the [Reproduce](https://rakshit-737.github.io/tracegate/reproduce/) page or the README "Reproducibility" section):
 
 ```bash
 python scripts/download_data.py all
@@ -37,3 +37,11 @@ python -m pytest -q -m realdata
 - Use conventional commits (`feat:`, `fix:`, `test:`, `docs:`, `data:`, `perf:`, `refactor:`, `ci:`).
 - Keep each PR focused, add tests for new behaviour, and update `CHANGELOG.md` under *Unreleased*.
 - For a design change, add an ADR in `docs/adr/` (copy the format of an existing one).
+
+## Docs
+
+```bash
+pip install -r docs/requirements.txt -e .
+python scripts/build_static_demo.py   # writes docs/demo/data/*.json (git-ignored)
+mkdocs serve
+```

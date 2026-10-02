@@ -15,8 +15,10 @@ Small fixtures derived from real tool output (`tests/fixtures/alpine.syft.json`,
 
 ## Citations
 
-- OSV: *Open Source Vulnerabilities* schema and database, Google / OpenSSF, https://osv.dev (data CC-BY-4.0 per source).
-- OpenSSF malicious-packages, https://github.com/ossf/malicious-packages (Apache-2.0).
-- H. van Kemenade, *top-pypi-packages*, https://github.com/hugovk/top-pypi-packages.
-- T. Wormer, *npm-high-impact*, https://github.com/wooorm/npm-high-impact (MIT).
-- Anchore Syft, https://github.com/anchore/syft; Aqua Security Trivy, https://github.com/aquasecurity/trivy (Apache-2.0).
+- OSV: *Open Source Vulnerabilities* schema and database, Google / OpenSSF, <https://osv.dev> (data CC-BY-4.0 per source).
+- OpenSSF malicious-packages, <https://github.com/ossf/malicious-packages> (Apache-2.0).
+- H. van Kemenade, *top-pypi-packages*, <https://github.com/hugovk/top-pypi-packages>.
+- T. Wormer, *npm-high-impact*, <https://github.com/wooorm/npm-high-impact> (MIT).
+- Anchore Syft, <https://github.com/anchore/syft>; Aqua Security Trivy, <https://github.com/aquasecurity/trivy> (Apache-2.0).
+- Popularity lists for RubyGems (packages.ecosyste.ms), crates.io (crates.io API, by downloads) and NuGet (NuGet search API, by total downloads) are fetched by `scripts/download_data.py popular` inside the `benchmarks` workflow; they are names and download counts only.
+- M. Taylor, R. Vaidya, D. Davidson, L. De Carli, V. Rastogi, *Defending Against Package Typosquatting*, NSS 2020 (arXiv [2003.03471](https://arxiv.org/abs/2003.03471)); <https://github.com/mt3443/typogard>; Rust Foundation <https://github.com/rustfoundation/typomania>; IQT Labs <https://github.com/IQTLabs/pypi-scan>.

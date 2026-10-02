@@ -1,24 +1,35 @@
 # Architecture
 
+**1. Ingest, sign, verify**
+
 ```mermaid
-flowchart LR
+flowchart TB
   subgraph SRC["Real pipeline inputs"]
-    GIT["git history: requirements, package-lock, poetry.lock, uv.lock"] --> LIN["gitlineage: commit events"]
-    SY["Syft JSON / CycloneDX"] --> ING["ingest adapters"]
-    TV["Trivy JSON"] --> ING
-    SA["SARIF: Semgrep / Bandit / CodeQL"] --> ING
-    OSV[("OSV bulk dumps: PyPI, npm, Alpine")] --> IDX["OsvIndex"]
-    DEP["deploy / runtime facts"] --> ENV
+    GIT["git history of lock files: pip, poetry, uv, npm, yarn, pnpm, Go, Cargo"]
+    SY["Syft JSON / CycloneDX"]
+    TV["Trivy JSON"]
+    SA["SARIF: Semgrep / Bandit / CodeQL"]
+    DEP["deploy / runtime facts"]
   end
-  LIN --> ENV["DSSE envelopes, Ed25519 or HMAC"]
+  GIT --> LIN["gitlineage: commit events"]
+  SY --> ING["ingest adapters"]
+  TV --> ING
+  SA --> ING
+  LIN --> ENV["DSSE envelopes: Ed25519, HMAC, or keyless (Sigstore-bound key)"]
   ING --> ENV
+  DEP --> ENV
   ENV --> COL["collector: verify, fail closed"]
   COL --> G[("provenance DAG, purl + digest ids")]
-  IDX --> W["HeuristicWarden: MAL records + typosquat"]
-  W --> EN["enrich"]
+```
+
+**2. Enrich, decide, query**
+
+```mermaid
+flowchart TB
+  G[("provenance DAG")] --> EN["enrich"]
+  OSV[("OSV bulk dumps")] --> IDX["OsvIndex"] --> W["HeuristicWarden: MAL records + typosquat"] --> EN
   RE["static / runtime reachability"] --> EN
-  G --> EN --> POL["policy: Python DSL = Rego port"]
-  POL --> OUT["PR comment + exit code"]
+  EN --> POL["policy: Python DSL = Rego port"] --> OUT["PR comment + exit code"]
   G --> BT["backtrack + blast radius"]
   G --> EXP["exports: Cypher/Neo4j, in-toto SLSA, OPA input"]
   G --> API["FastAPI + lineage explorer UI"]

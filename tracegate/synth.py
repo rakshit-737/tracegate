@@ -24,6 +24,7 @@ def _h(*parts: object) -> str:
 
 @dataclass
 class Dep:
+    """A dependency in a synthetic scenario."""
     name: str
     version: str
     cve: str | None = None
@@ -32,6 +33,7 @@ class Dep:
 
 @dataclass
 class Scenario:
+    """A synthetic pipeline run: commit, PR, dependencies, image and service."""
     sha: str = "a1b2c3d4e5f60718293a4b5c6d7e8f9012345678"
     pr: int = 42
     author: str = "dev@example.com"
@@ -45,6 +47,7 @@ class Scenario:
 
 
 def events(sc: Scenario) -> list[StageEvent]:
+    """Unsigned stage events for a scenario."""
     run = f"run-{sc.pr}"
     evs = [StageEvent("commit", run, {
         "sha": sc.sha, "author": sc.author, "pr": sc.pr, "message": f"PR #{sc.pr}",
@@ -76,6 +79,7 @@ def events(sc: Scenario) -> list[StageEvent]:
 
 
 def signed(sc: Scenario, keyid: str = DEMO_KEYID, key: bytes = DEMO_KEY) -> list[Envelope]:
+    """Stage events for a scenario signed with the public demo key (or another HMAC key)."""
     s = HmacSigner(keyid, key)
     envs = [s.sign(e) for e in events(sc)]
     if sc.tamper_stage:
@@ -100,6 +104,16 @@ SCENARIOS: dict[str, Scenario] = {
 
 
 def random_scenario(n_services: int, n_deps: int, seed: int = 0) -> Scenario:
+    """Random large scenario for the scale benchmark.
+
+    Args:
+        n_services: Number of services.
+        n_deps: Dependencies per service.
+        seed: Random seed.
+
+    Returns:
+        A deterministic scenario.
+    """
     rnd = random.Random(seed)
     deps = [Dep(f"pkg{i}", f"1.{rnd.randint(0, 9)}.0",
                 f"CVE-2099-{i:05d}" if rnd.random() < 0.1 else None,

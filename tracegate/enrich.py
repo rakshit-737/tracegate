@@ -13,6 +13,13 @@ def _warden_for(warden, eco: str):
 
 
 def enrich_warden(res: CollectResult, warden: WardenClient, threshold: float = 0.5) -> None:
+    """Add malicious-package findings from a Warden scorer to the graph.
+
+    Args:
+        res: Collection result; its graph is modified in place.
+        warden: Scorer used for each dependency.
+        threshold: Minimum score that becomes a finding.
+    """
     g = res.graph
     for dep in g.of_kind(NodeKind.DEPENDENCY):
         w = _warden_for(warden, dep.attrs.get("ecosystem", "pypi"))
@@ -53,11 +60,21 @@ def enrich_reachability(res: CollectResult) -> None:
 
 
 def enrich(res: CollectResult, warden: WardenClient) -> None:
+    """Run every enrichment step on a collection result in place."""
     enrich_warden(res, warden)
     enrich_reachability(res)
 
 
 def actionable(findings: list[Finding], min_sev: Severity = Severity.HIGH) -> list[Finding]:
+    """Findings at or above a severity that are not known to be unreachable.
+
+    Args:
+        findings: Findings to filter.
+        min_sev: Lowest severity kept.
+
+    Returns:
+        The findings a human still has to look at.
+    """
     return [f for f in findings if f.severity.rank >= min_sev.rank and f.reachable is not False]
 
 

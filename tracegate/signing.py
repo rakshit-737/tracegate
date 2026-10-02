@@ -45,7 +45,7 @@ TrustedKey = Union[bytes, "Ed25519PublicKey"]
 
 
 class SignatureError(Exception):
-    pass
+    """Raised when an envelope is malformed or fails verification."""
 
 
 def _pae(payload_type: str, payload: str) -> bytes:
@@ -57,10 +57,12 @@ def _payload(event: StageEvent) -> str:
 
 
 class HmacSigner:
+    """Signs stage events with a shared HMAC-SHA256 key (demo and legacy use)."""
     def __init__(self, keyid: str, key: bytes):
         self.keyid, self._key = keyid, key
 
     def sign(self, event: StageEvent) -> Envelope:
+        """Sign one event and return its envelope."""
         payload = _payload(event)
         sig = hmac.new(self._key, _pae(PAYLOAD_TYPE, payload), hashlib.sha256).hexdigest()
         return Envelope(PAYLOAD_TYPE, payload, self.keyid, sig)
@@ -72,6 +74,7 @@ def _need_crypto() -> None:
 
 
 class Ed25519Signer:
+    """Signs stage events with an Ed25519 private key."""
     def __init__(self, keyid: str, private_key: Ed25519PrivateKey):
         if not HAVE_CRYPTO:
             raise RuntimeError("pip install cryptography to use Ed25519 signing")
@@ -79,11 +82,13 @@ class Ed25519Signer:
 
     @classmethod
     def generate(cls, keyid: str) -> Ed25519Signer:
+        """Create a signer with a fresh random key."""
         _need_crypto()
         return cls(keyid, Ed25519PrivateKey.generate())
 
     @classmethod
     def from_pem(cls, keyid: str, pem: bytes) -> Ed25519Signer:
+        """Load a signer from a PEM private key."""
         _need_crypto()
         sk = serialization.load_pem_private_key(pem, password=None)
         if not isinstance(sk, Ed25519PrivateKey):
@@ -92,23 +97,28 @@ class Ed25519Signer:
 
     @property
     def public_key(self) -> Ed25519PublicKey:
+        """The matching public key."""
         return self._sk.public_key()
 
     def public_pem(self) -> bytes:
+        """The public key as PEM."""
         return self.public_key.public_bytes(serialization.Encoding.PEM,
                                             serialization.PublicFormat.SubjectPublicKeyInfo)
 
     def private_pem(self) -> bytes:
+        """The private key as unencrypted PEM."""
         return self._sk.private_bytes(serialization.Encoding.PEM, serialization.PrivateFormat.PKCS8,
                                       serialization.NoEncryption())
 
     def sign(self, event: StageEvent) -> Envelope:
+        """Sign one event and return its envelope."""
         payload = _payload(event)
         sig = self._sk.sign(_pae(PAYLOAD_TYPE, payload)).hex()
         return Envelope(PAYLOAD_TYPE, payload, self.keyid, sig)
 
 
 def load_public_pem(pem: bytes) -> Ed25519PublicKey:
+    """Parse an Ed25519 public key from PEM."""
     if not HAVE_CRYPTO:
         raise RuntimeError("Ed25519 needs: pip install 'tracegate[crypto]'")
     pk = serialization.load_pem_public_key(pem)
@@ -118,6 +128,7 @@ def load_public_pem(pem: bytes) -> Ed25519PublicKey:
 
 
 class Verifier:
+    """Verifies envelopes against a set of trusted keys (HMAC or Ed25519)."""
     def __init__(self, trusted: dict[str, TrustedKey]):
         self._trusted = trusted
 
@@ -149,6 +160,7 @@ class Verifier:
 
 
 def envelope_from_dict(d: dict) -> Envelope:
+    """Parse an envelope from TRACEGATE or standard DSSE JSON."""
     if "payloadType" in d:  # standard DSSE JSON
         return from_dsse_json(d)
     try:
@@ -158,12 +170,18 @@ def envelope_from_dict(d: dict) -> Envelope:
 
 
 def to_dsse_json(env: Envelope) -> dict[str, Any]:
+    """Serialise an envelope in the standard DSSE JSON layout."""
     return {"payloadType": env.payload_type,
             "payload": base64.b64encode(env.payload.encode()).decode(),
             "signatures": [{"keyid": env.keyid, "sig": base64.b64encode(bytes.fromhex(env.sig)).decode()}]}
 
 
 def from_dsse_json(d: dict) -> Envelope:
+    """Parse a standard DSSE JSON envelope.
+
+    Raises:
+        SignatureError: The document is not a valid DSSE envelope.
+    """
     try:
         sig = d["signatures"][0]
         return Envelope(d["payloadType"], base64.b64decode(d["payload"]).decode(), sig.get("keyid", ""),

@@ -34,6 +34,7 @@ def _sev(s: str) -> Severity:
 
 @dataclass
 class CollectResult:
+    """Output of collection: the graph plus which stages were verified or rejected."""
     graph: ProvenanceGraph
     rejected: list[str] = field(default_factory=list)
     stages_seen: set[str] = field(default_factory=set)
@@ -42,18 +43,31 @@ class CollectResult:
 
     @property
     def missing_stages(self) -> set[str]:
+        """Required pipeline stages that produced no verified event."""
         return set(REQUIRED_STAGES) - self.stages_seen
 
     @property
     def coverage(self) -> float:
+        """Fraction of required stages that produced a verified event."""
         return len(self.stages_seen & REQUIRED_STAGES) / len(REQUIRED_STAGES)
 
 
 class Collector:
+    """Verifies signed stage events and merges them into one provenance graph."""
     def __init__(self, verifier: Verifier):
         self.verifier = verifier
 
     def collect(self, envelopes: Iterable[Envelope]) -> CollectResult:
+        """Verify envelopes and build the provenance graph.
+
+        Envelopes that fail verification are recorded in ``rejected`` and add nothing to the graph.
+
+        Args:
+            envelopes: Signed stage events.
+
+        Returns:
+            The graph, the stages seen and the rejected envelopes.
+        """
         res = CollectResult(ProvenanceGraph())
         events: list[StageEvent] = []
         for i, env in enumerate(envelopes):

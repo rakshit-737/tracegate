@@ -17,6 +17,7 @@ SCANNERS = frozenset({"trivy", "grype", "osv"})
 
 
 def rule(fn: Rule) -> Rule:
+    """Decorator that registers a policy rule."""
     RULES.append(fn)
     return fn
 
@@ -29,6 +30,7 @@ def _path(res: CollectResult, f: Finding) -> list[str]:
 
 @rule
 def provenance_integrity(res: CollectResult):
+    """Block on rejected attestations and missing required stages."""
     for r in res.rejected:
         yield Verdict.BLOCK, {"rule": "provenance_integrity", "msg": r}
     if res.missing_stages:
@@ -38,6 +40,7 @@ def provenance_integrity(res: CollectResult):
 
 @rule
 def malicious_dependency(res: CollectResult):
+    """Block on dependencies flagged as malicious."""
     for f in res.graph.findings:
         if f.source == "warden":
             v = Verdict.BLOCK if f.severity == Severity.CRITICAL else Verdict.WARN
@@ -46,6 +49,7 @@ def malicious_dependency(res: CollectResult):
 
 @rule
 def vulnerable_dependency(res: CollectResult):
+    """Block on reachable high or critical CVEs; warn on the rest."""
     for f in res.graph.findings:
         if f.source not in SCANNERS:
             continue
@@ -61,6 +65,7 @@ def vulnerable_dependency(res: CollectResult):
 
 @rule
 def sast(res: CollectResult):
+    """Turn SAST findings into reasons by severity."""
     for f in res.graph.findings:
         if f.source == "sast" and f.severity.rank >= Severity.MEDIUM.rank:
             v = Verdict.BLOCK if f.severity.rank >= Severity.HIGH.rank else Verdict.WARN
@@ -68,6 +73,15 @@ def sast(res: CollectResult):
 
 
 def evaluate(res: CollectResult, rules: list[Rule] | None = None) -> Decision:
+    """Apply policy rules and combine them into one verdict.
+
+    Args:
+        res: Collection result.
+        rules: Rules to apply; the registered rules when None.
+
+    Returns:
+        The strictest verdict and every reason.
+    """
     verdict, reasons = Verdict.PASS, []
     for r in rules or RULES:
         for v, reason in r(res):
@@ -79,6 +93,7 @@ def evaluate(res: CollectResult, rules: list[Rule] | None = None) -> Decision:
 
 
 def pr_comment(d: Decision) -> str:
+    """Render a decision as a Markdown pull-request comment."""
     icon = {"pass": "PASS", "warn": "WARN", "block": "BLOCK"}[d.verdict.value]
     lines = [f"## TRACEGATE: {icon}", ""]
     for r in d.reasons:

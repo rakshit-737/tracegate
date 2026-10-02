@@ -29,6 +29,16 @@ def _eco_from_purl(p: str | None) -> str | None:
 
 
 def syft_json_to_build(src: str | Path | dict, build_id: str, commit: str | None = None) -> dict[str, Any]:
+    """Convert Syft JSON output into a build stage payload.
+
+    Args:
+        src: Path to, or parsed, ``syft -o syft-json`` output.
+        build_id: Build identifier.
+        commit: Commit SHA the build was made from.
+
+    Returns:
+        A build payload with image, layers and packages.
+    """
     doc = _load(src)
     source = doc.get("source", {}) or {}
     meta = source.get("metadata", {}) or {}
@@ -63,6 +73,16 @@ def syft_json_to_build(src: str | Path | dict, build_id: str, commit: str | None
 
 
 def cyclonedx_to_build(src: str | Path | dict, build_id: str, commit: str | None = None) -> dict[str, Any]:
+    """Convert a CycloneDX JSON SBOM into a build stage payload.
+
+    Args:
+        src: Path to, or parsed, CycloneDX JSON.
+        build_id: Build identifier.
+        commit: Commit SHA the build was made from.
+
+    Returns:
+        A build payload with the components as packages.
+    """
     doc = _load(src)
     comps = []
     stack = list(doc.get("components", []))
@@ -84,6 +104,14 @@ def cyclonedx_to_build(src: str | Path | dict, build_id: str, commit: str | None
 
 
 def trivy_json_to_scan(src: str | Path | dict) -> dict[str, Any]:
+    """Convert ``trivy --format json`` output into a scan stage payload.
+
+    Args:
+        src: Path to, or parsed, Trivy JSON.
+
+    Returns:
+        A scan payload with one finding per vulnerability and package.
+    """
     doc = _load(src)
     md = doc.get("Metadata", {}) or {}
     results = []

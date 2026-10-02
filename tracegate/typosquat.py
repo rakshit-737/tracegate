@@ -54,6 +54,7 @@ def normalize(name: str) -> str:
 
 
 def squash(name: str) -> str:
+    """Normalised name with separators removed."""
     return _SEP.sub("", normalize(name))
 
 
@@ -99,6 +100,7 @@ def _deglyph(s: str) -> str:
 
 @dataclass
 class Match:
+    """Best typosquat match of a name: target, score and technique."""
     name: str
     score: float  # 0..1
     target: str | None = None
@@ -181,6 +183,14 @@ class TyposquatDetector:
         return best
 
     def score(self, name: str) -> Match:
+        """Score how much ``name`` looks like a squat of a popular name.
+
+        Args:
+            name: Package name to check.
+
+        Returns:
+            The best match.
+        """
         n = normalize(name)
         if n in self.rank:
             return Match(name, 0.0, reasons=["is a known popular package"])

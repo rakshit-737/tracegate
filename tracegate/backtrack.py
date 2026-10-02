@@ -8,6 +8,15 @@ from .models import NodeKind
 
 
 def blast_radius(g: ProvenanceGraph, node_id: str) -> dict[str, list[str]]:
+    """List everything downstream of a node.
+
+    Args:
+        g: Verified provenance graph.
+        node_id: Node to start from, usually a dependency or layer.
+
+    Returns:
+        Downstream node ids grouped by kind (images, services, containers, ...).
+    """
     down = g.descendants(node_id)
     return {
         "images": sorted(g.nodes[n].label for n in down if g.nodes[n].kind == NodeKind.IMAGE),
@@ -42,6 +51,15 @@ def origin_story(g: ProvenanceGraph, query: str) -> list[dict[str, Any]]:
 
 
 def layer_blast_radius(g: ProvenanceGraph, layer_digest_prefix: str) -> dict[str, list[str]]:
+    """Blast radius of the image layer whose digest starts with a prefix.
+
+    Args:
+        g: Verified provenance graph.
+        layer_digest_prefix: Leading characters of the layer digest.
+
+    Returns:
+        Downstream node ids grouped by kind.
+    """
     for n in g.of_kind(NodeKind.LAYER):
         if n.attrs["digest"].startswith(layer_digest_prefix):
             return blast_radius(g, n.id)

@@ -53,6 +53,10 @@ def _bitflips(name: str) -> Iterable[str]:
 
 
 class Typomania:
+    """Port of the typomania / TypoGard name checks (Taylor et al., NSS 2020).
+
+    Not validated against the original code; used only as a benchmark baseline.
+    """
     CHECKS = ("repeated", "swapped_chars", "version", "bitflips", "omitted", "swapped_words", "typos")
 
     def __init__(self, corpus: Iterable[str], alphabet: str = ALPHABET, delimiters: str = "-_.",
@@ -123,6 +127,7 @@ class Typomania:
         return out
 
     def flag(self, name: str) -> bool:
+        """Return True when any typomania check matches a popular name."""
         return bool(self.check(name))
 
 
@@ -139,6 +144,16 @@ def _split(name: str, delims: str) -> list[str]:
 
 
 def levenshtein(a: str, b: str, cap: int = 2) -> int:
+    """Bounded Levenshtein distance.
+
+    Args:
+        a: First string.
+        b: Second string.
+        cap: Distances above this are reported as ``cap + 1``.
+
+    Returns:
+        The edit distance, at most ``cap + 1``.
+    """
     if abs(len(a) - len(b)) > cap:
         return cap + 1
     prev = list(range(len(b) + 1))
@@ -169,12 +184,14 @@ class PypiScan:
                     self.index.setdefault(d, set()).add(t)
 
     def check(self, name: str) -> list[str]:
+        """Return the popular names within the pypi-scan edit distance of ``name``."""
         cands: set[str] = set()
         for d in _dels(name):
             cands |= self.index.get(d, set())
         return sorted(t for t in cands if t != name and levenshtein(name, t, 1) <= 1)
 
     def flag(self, name: str) -> bool:
+        """Return True when ``name`` is close to a popular name but not one itself."""
         return bool(self.check(name))
 
 

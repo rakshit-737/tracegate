@@ -47,6 +47,7 @@ def _roundup(x: float) -> float:
 
 
 def cvss3_base(vector: str) -> float | None:
+    """CVSS v3 base score of a vector string, or None if it cannot be parsed."""
     try:
         m = dict(kv.split(":", 1) for kv in vector.split("/")[1:])
         scope_changed = m["S"] == "C"
@@ -63,11 +64,13 @@ def cvss3_base(vector: str) -> float | None:
 
 
 def score_to_severity(s: float) -> str:
+    """Map a CVSS score to LOW, MEDIUM, HIGH or CRITICAL."""
     return "CRITICAL" if s >= 9 else "HIGH" if s >= 7 else "MEDIUM" if s >= 4 else "LOW"
 
 
 @dataclass
 class OsvVuln:
+    """One OSV advisory reduced to what the gate needs."""
     id: str
     aliases: list[str]
     summary: str
@@ -76,6 +79,7 @@ class OsvVuln:
 
     @property
     def cve(self) -> str:
+        """First CVE alias, or the OSV id when there is none."""
         return next((a for a in self.aliases if a.startswith("CVE-")), self.id)
 
 
@@ -87,6 +91,7 @@ class _Affected:
 
 
 class OsvIndex:
+    """Offline index of OSV advisories for one ecosystem, queried by name and version."""
     def __init__(self, ecosystem: str = "pypi"):
         self.ecosystem = ecosystem.lower()
         self.by_name: dict[str, list[_Affected]] = {}
@@ -96,6 +101,7 @@ class OsvIndex:
     # ---- loading --------------------------------------------------------------
     @classmethod
     def from_zip(cls, path: str | Path, ecosystem: str = "pypi") -> OsvIndex:
+        """Build an index from an OSV ``<Ecosystem>-all.zip`` dump."""
         idx = cls(ecosystem)
         # two streaming passes (severity-by-alias, then index) so the full dump is never in memory
         idx.add_records(lambda: iter_zip_records(path))
@@ -103,6 +109,7 @@ class OsvIndex:
 
     @classmethod
     def from_records(cls, records: Iterable[dict], ecosystem: str = "pypi") -> OsvIndex:
+        """Build an index from parsed OSV JSON records."""
         idx = cls(ecosystem)
         idx.add_records(records)
         return idx
@@ -176,6 +183,15 @@ class OsvIndex:
 
     # ---- queries ---------------------------------------------------------------
     def vulns(self, name: str, version: str) -> list[OsvVuln]:
+        """Advisories affecting one package version.
+
+        Args:
+            name: Package name.
+            version: Exact version.
+
+        Returns:
+            Matching advisories, without duplicates.
+        """
         out, seen = [], set()
         semver = self.ecosystem != "pypi"
         if self.ecosystem == "golang":  # go.mod says v1.2.3, OSV Go records say 1.2.3
@@ -275,6 +291,7 @@ class OsvIndex:
 
 
 def iter_zip_records(path: str | Path) -> Iterator[dict]:
+    """Yield every JSON record of an OSV zip dump."""
     with zipfile.ZipFile(path) as z:
         for n in z.namelist():
             if n.endswith(".json"):
@@ -285,6 +302,7 @@ _MAL_TYPOSQUAT = re.compile(r"typo-?squat|typosquat|impersonat|masquerad|combosq
 
 
 def mal_mentions_typosquat(rec: dict) -> bool:
+    """Return True when a ``MAL-*`` record's text describes a typosquat."""
     return bool(_MAL_TYPOSQUAT.search(f"{rec.get('summary', '')} {rec.get('details', '')}"))
 
 
@@ -297,6 +315,14 @@ class OsvApiClient:
         self.timeout = timeout
 
     def query(self, deps: list[tuple[str, str, str]]) -> list[list[str]]:
+        """Query the OSV batch API.
+
+        Args:
+            deps: ``(name, version, ecosystem)`` triples.
+
+        Returns:
+            The advisory ids for each triple, in input order.
+        """
         body = {"queries": [{"package": {"name": n, "ecosystem": _ECO.get(e.lower(), e)}, "version": v}
                             for n, v, e in deps]}
         req = urllib.request.Request(self.URL, data=json.dumps(body).encode(),

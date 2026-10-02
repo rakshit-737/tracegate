@@ -65,6 +65,7 @@ def _git(repo: Path, *args: str) -> str:
 
 @dataclass
 class ManifestCommit:
+    """One first-parent commit that changed a manifest, with the pins after it."""
     sha: str
     author: str
     timestamp: int
@@ -76,6 +77,7 @@ class ManifestCommit:
 
     @property
     def pr(self) -> int | None:
+        """Pull-request number parsed from the commit subject, if any."""
         m = _PR.search(self.subject)
         return int(m.group(1) or m.group(2)) if m else None
 
@@ -128,6 +130,16 @@ def manifest_history(repo: str | Path, manifest: str, rev: str = "HEAD",
 
 
 def commit_events(history: list[ManifestCommit], manifest: str, run_prefix: str = "git") -> list[StageEvent]:
+    """Turn a manifest history into commit stage events.
+
+    Args:
+        history: Commits that changed the manifest, oldest first.
+        manifest: Manifest path, used to pick the ecosystem.
+        run_prefix: Prefix for the synthetic run ids.
+
+    Returns:
+        Unsigned stage events, one per commit.
+    """
     eco = ecosystem_for(manifest)
     evs = []
     for i, mc in enumerate(history):

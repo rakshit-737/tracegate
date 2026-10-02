@@ -45,6 +45,15 @@ def _file(result: dict) -> str:
 
 
 def sarif_to_sast(src: str | Path | dict, commit: str) -> dict[str, Any]:
+    """Convert a SARIF 2.1.0 log into a SAST stage payload.
+
+    Args:
+        src: Path to, or parsed, SARIF JSON.
+        commit: Commit SHA the analysis ran on.
+
+    Returns:
+        A SAST payload with one finding per result.
+    """
     doc = src if isinstance(src, dict) else json.loads(Path(src).read_text(encoding="utf-8"))
     findings = []
     tools = []

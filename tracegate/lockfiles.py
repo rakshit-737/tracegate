@@ -35,11 +35,13 @@ def _base(manifest: str) -> str:
 
 
 def ecosystem_for(manifest: str) -> str:
+    """Ecosystem of a manifest from its file name (``pypi`` when unknown)."""
     return ECOSYSTEM.get(_base(manifest), "pypi")
 
 
 # ---- PyPI ---------------------------------------------------------------------
 def requirements_lines(text: str) -> Pins:
+    """Exact ``name==version`` pins of a requirements file with their line numbers."""
     out: Pins = {}
     for i, raw in enumerate(text.splitlines()):
         line = raw.split(" #", 1)[0].strip()
@@ -103,6 +105,11 @@ def package_lock_lines(text: str) -> Pins | None:
 
 
 def parse_package_lock(text: str) -> dict[str, str]:
+    """Pins of an npm ``package-lock.json`` (lockfile v1, v2 or v3).
+
+    Returns:
+        Package name to version; one version per name.
+    """
     if not text.strip():
         return {}
     doc = json.loads(text)
@@ -180,6 +187,7 @@ def _pnpm_key(key: str) -> tuple[str, str] | None:
 
 
 def pnpm_lock_lines(text: str) -> Pins:
+    """Pins of a ``pnpm-lock.yaml`` with their line numbers."""
     out: Pins = {}
     in_pkgs = False
     for i, line in enumerate(text.splitlines()):
@@ -201,6 +209,7 @@ _GOREQ = re.compile(r"^\s*(?:require\s+)?([^\s()]+)\s+(v[0-9]\S*)")
 
 
 def go_mod_lines(text: str) -> Pins:
+    """``require`` entries of a ``go.mod`` with their line numbers."""
     out: Pins = {}
     block = None
     for i, raw in enumerate(text.splitlines()):
@@ -234,6 +243,7 @@ def semver_key(v: str) -> tuple:
 
 
 def go_sum_lines(text: str) -> Pins:
+    """Module versions of a ``go.sum`` (one per module) with their line numbers."""
     best: dict[str, tuple[str, int]] = {}
     for i, raw in enumerate(text.splitlines()):
         parts = raw.split()
@@ -267,10 +277,20 @@ def pin_lines(manifest: str, text: str) -> Pins | None:
 
 
 def parse_toml_packages(text: str) -> dict[str, str]:
+    """Pins of a TOML lock file with ``[[package]]`` tables (such as Cargo.lock)."""
     return {n: v for n, (v, _) in toml_package_lines(text).items()}
 
 
 def parse_manifest(manifest: str, text: str) -> dict[str, str]:
+    """Pins of any supported manifest or lock file.
+
+    Args:
+        manifest: File path; its name selects the parser.
+        text: File contents.
+
+    Returns:
+        Package name to pinned version.
+    """
     lines = pin_lines(manifest, text)
     if lines is None:  # package-lock without the standard pretty-printed v2/v3 layout
         return parse_package_lock(text)

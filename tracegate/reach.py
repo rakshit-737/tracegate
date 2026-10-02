@@ -102,6 +102,7 @@ _DOTTED = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)+$")
 
 
 def import_names(dist: str) -> list[str]:
+    """Top-level import names a distribution provides."""
     n = normalize_name(dist)
     if n in KNOWN_IMPORTS:
         return KNOWN_IMPORTS[n]
@@ -164,6 +165,7 @@ def app_imports(src_dirs: list[Path], strings: set[str] | None = None) -> set[st
 
 
 def entrypoint_text(repo: Path) -> str:
+    """Text of the files that can name plugins or entry points (settings, setup.cfg, ...)."""
     chunks = []
     for pat in ENTRYPOINT_FILES:
         for p in repo.rglob(pat):
@@ -198,10 +200,12 @@ def via_graph(req_text: str) -> dict[str, set[str]]:
 
 @dataclass
 class ReachReport:
+    """Per-distribution reachability status of one repository snapshot."""
     status: dict[str, str] = field(default_factory=dict)  # dist -> imported|entrypoint|transitive|unreached
     evidence: dict[str, str] = field(default_factory=dict)
 
     def reachable(self, dist: str) -> bool | None:
+        """True if imported or loaded, False if unreached, None if unknown."""
         s = self.status.get(normalize_name(dist))
         return None if s is None else s != "unreached"
 
@@ -261,4 +265,5 @@ def static_reachability(pins: dict[str, str], src_dirs: list[Path], repo: Path,
 
 
 def reachability_facts(rep: ReachReport) -> dict[str, bool]:
+    """Map each distribution to whether it is considered reachable."""
     return {d: s != "unreached" for d, s in rep.status.items()}

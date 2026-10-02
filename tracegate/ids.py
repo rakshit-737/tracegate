@@ -21,15 +21,26 @@ _PEP503 = re.compile(r"[-_.]+")
 
 
 def canonical(obj: Any) -> str:
+    """Canonical JSON (sorted keys, no spaces) used for hashing."""
     return json.dumps(obj, sort_keys=True, separators=(",", ":"))
 
 
 def digest(kind: NodeKind, identity: Any) -> str:
+    """Content-addressed node id: the kind plus the sha256 of the canonical identity."""
     h = hashlib.sha256(canonical(identity).encode()).hexdigest()
     return f"{kind.value}:sha256:{h[:32]}"
 
 
 def normalize_name(name: str, ecosystem: str = "pypi") -> str:
+    """Normalise a package name the way its ecosystem compares names.
+
+    Args:
+        name: Package name as written.
+        ecosystem: Ecosystem name such as ``pypi``, ``npm``, ``cargo`` or ``golang``.
+
+    Returns:
+        The normalised name.
+    """
     eco = ecosystem.lower()
     n = name.strip()
     if eco == "pypi":
@@ -41,6 +52,17 @@ def normalize_name(name: str, ecosystem: str = "pypi") -> str:
 
 @lru_cache(maxsize=65536)
 def purl(name: str, version: str, ecosystem: str = "pypi", namespace: str | None = None) -> str:
+    """Build a package URL.
+
+    Args:
+        name: Package name.
+        version: Exact version.
+        ecosystem: Ecosystem name.
+        namespace: Optional purl namespace, such as an npm scope.
+
+    Returns:
+        A purl string such as ``pkg:pypi/pyyaml@5.3.1``.
+    """
     eco = ecosystem.lower()
     n = normalize_name(name, eco)
     ns = f"{namespace.lower()}/" if namespace else ""
@@ -71,9 +93,14 @@ def canonical_purl(p: str) -> str:
 
 def dep_id(name: str, version: str, ecosystem: str = "pypi") -> str:
     # purl identity so manifest, Syft SBOM and Trivy findings converge on one node.
+    """Node id of a dependency.
+
+    The id is derived from the purl so that manifest pins, Syft SBOM entries and Trivy findings converge on one node.
+    """
     return dep_id_from_purl(purl(name, version, ecosystem))
 
 
 @lru_cache(maxsize=65536)
 def dep_id_from_purl(p: str) -> str:
+    """Node id of a dependency given its purl."""
     return digest(NodeKind.DEPENDENCY, canonical_purl(p))

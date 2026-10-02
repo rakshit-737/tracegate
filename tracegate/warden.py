@@ -28,6 +28,7 @@ POPULAR = ["requests", "numpy", "pandas", "django", "flask", "urllib3", "pyyaml"
 
 @dataclass
 class WardenScore:
+    """Malicious-package score for one package version, with reasons."""
     package: str
     version: str
     risk: float  # 0.0 benign .. 1.0 malicious
@@ -35,7 +36,9 @@ class WardenScore:
 
 
 class WardenClient(Protocol):
-    def score(self, name: str, version: str) -> WardenScore: ...
+    """Anything that can score a package version."""
+    def score(self, name: str, version: str) -> WardenScore:
+        """Score one package version."""
 
 
 class HeuristicWarden:
@@ -52,6 +55,7 @@ class HeuristicWarden:
         self.osv = osv
 
     def score(self, name: str, version: str) -> WardenScore:
+        """Score with offline name heuristics."""
         n = normalize(name)
         if n in self.denylist:
             return WardenScore(name, version, 1.0, ["on denylist"])
@@ -71,9 +75,11 @@ class MultiWarden:
         self.by_ecosystem = by_ecosystem
 
     def for_ecosystem(self, eco: str) -> WardenClient | None:
+        """The scorer registered for an ecosystem, or None."""
         return self.by_ecosystem.get(eco)
 
     def score(self, name: str, version: str) -> WardenScore:  # default: PyPI
+        """Score with the PyPI scorer (the default ecosystem)."""
         w = self.by_ecosystem.get("pypi")
         return w.score(name, version) if w else WardenScore(name, version, 0.0, [])
 
@@ -86,6 +92,7 @@ class DifflibWarden:
         self.denylist = {d.lower() for d in (denylist or set())}
 
     def score(self, name: str, version: str) -> WardenScore:
+        """Score with the original 14-name difflib heuristic."""
         n = name.lower()
         if n in self.denylist:
             return WardenScore(name, version, 1.0, ["on denylist"])
@@ -119,6 +126,7 @@ class WardenApiClient:
         self.timeout = timeout
 
     def request(self, name: str, version: str) -> urllib.request.Request:
+        """Build the HTTP request for Warden's ``POST /api/v1/scans``."""
         body = json.dumps({"ecosystem": "pypi", "name": name, "version": version or None}).encode()
         headers = {"Content-Type": "application/json", "Accept": "application/json"}
         if self.token:
@@ -135,5 +143,6 @@ class WardenApiClient:
         return WardenScore(name, d.get("version") or version, risk, reasons)
 
     def score(self, name: str, version: str) -> WardenScore:
+        """Call the Warden API and convert its answer into a score."""
         with urllib.request.urlopen(self.request(name, version), timeout=self.timeout) as r:
             return self.parse(name, version, json.load(r))

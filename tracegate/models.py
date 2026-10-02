@@ -7,6 +7,7 @@ from typing import Any
 
 
 class NodeKind(str, Enum):
+    """Kinds of node in the provenance graph."""
     COMMIT = "commit"
     FILE = "file"
     DEPENDENCY = "dependency"
@@ -18,6 +19,7 @@ class NodeKind(str, Enum):
 
 
 class Severity(str, Enum):
+    """Finding severity, ordered low < medium < high < critical."""
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
@@ -25,21 +27,25 @@ class Severity(str, Enum):
 
     @property
     def rank(self) -> int:
+        """Position in the severity order (0 = low)."""
         return ["low", "medium", "high", "critical"].index(self.value)
 
 
 class Verdict(str, Enum):
+    """Gate verdict, ordered pass < warn < block."""
     PASS = "pass"
     WARN = "warn"
     BLOCK = "block"
 
     @property
     def rank(self) -> int:
+        """Position in the verdict order (0 = pass)."""
         return ["pass", "warn", "block"].index(self.value)
 
 
 @dataclass
 class Node:
+    """A content-addressed artefact in the graph."""
     id: str  # content-addressed, e.g. "dependency:sha256:..."
     kind: NodeKind
     label: str
@@ -48,6 +54,7 @@ class Node:
 
 @dataclass(frozen=True)
 class Edge:
+    """A directed relation from an input to what it produced."""
     src: str  # upstream input
     dst: str  # downstream output
     rel: str
@@ -55,6 +62,7 @@ class Edge:
 
 @dataclass
 class Finding:
+    """A scanner, Warden or policy finding attached to a node."""
     id: str
     node_id: str
     source: str  # sast | trivy | warden | runtime
@@ -65,6 +73,7 @@ class Finding:
     evidence: list[str] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
+        """JSON-ready dict with enum values as strings."""
         d = asdict(self)
         d["severity"] = self.severity.value
         return d
@@ -89,8 +98,10 @@ class Envelope:
 
 @dataclass
 class Decision:
+    """Gate verdict with the reasons that produced it."""
     verdict: Verdict
     reasons: list[dict[str, Any]]
 
     def to_dict(self) -> dict[str, Any]:
+        """JSON-ready dict of the verdict and reasons."""
         return {"verdict": self.verdict.value, "reasons": self.reasons}

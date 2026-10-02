@@ -18,6 +18,7 @@ _LABEL = {k: k.value.capitalize() for k in NodeKind}
 
 
 def to_json(g: ProvenanceGraph) -> dict[str, Any]:
+    """Serialise a graph to plain JSON (nodes, edges, findings)."""
     return {
         "nodes": [{"id": n.id, "kind": n.kind.value, "label": n.label,
                    "attrs": {k: v for k, v in n.attrs.items() if isinstance(v, (str, int, float, bool, list, type(None)))},
@@ -32,6 +33,7 @@ def _lit(v: Any) -> str:
 
 
 def cypher_statements(g: ProvenanceGraph) -> Iterator[str]:
+    """Yield Cypher statements that rebuild the graph in Neo4j."""
     yield "CREATE CONSTRAINT tg_node IF NOT EXISTS FOR (n:Artifact) REQUIRE n.id IS UNIQUE;"
     for n in g.nodes.values():
         props = {"label": n.label, "kind": n.kind.value,
@@ -51,10 +53,12 @@ def cypher_statements(g: ProvenanceGraph) -> Iterator[str]:
 
 
 def to_cypher(g: ProvenanceGraph) -> str:
+    """Return the whole graph as one Cypher script."""
     return "\n".join(cypher_statements(g)) + "\n"
 
 
 class Neo4jSink:  # pragma: no cover - needs a running Neo4j
+    """Writes a provenance graph to a live Neo4j database."""
     def __init__(self, uri: str = "bolt://localhost:7687", user: str = "neo4j", password: str | None = None):
         import os
 
@@ -63,6 +67,11 @@ class Neo4jSink:  # pragma: no cover - needs a running Neo4j
         self._driver = GraphDatabase.driver(uri, auth=(user, password))
 
     def write(self, g: ProvenanceGraph) -> int:
+        """Write every node and edge of ``g``.
+
+        Returns:
+            Number of statements executed.
+        """
         n = 0
         with self._driver.session() as s:
             for stmt in cypher_statements(g):
@@ -71,6 +80,7 @@ class Neo4jSink:  # pragma: no cover - needs a running Neo4j
         return n
 
     def close(self) -> None:
+        """Close the database driver."""
         self._driver.close()
 
 

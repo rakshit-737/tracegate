@@ -116,6 +116,7 @@ def _summary(rid: str, res: CollectResult, d: Decision) -> dict[str, Any]:
 
 @app.get("/", response_class=HTMLResponse)
 def index() -> str:
+    """Serve the single-page lineage explorer."""
     return UI.read_text(encoding="utf-8")
 
 
@@ -142,6 +143,14 @@ def gate(envelopes: list[dict] = Body(...), authorization: str | None = Header(N
 
 @app.post("/v1/demo/{scenario}")
 def demo(scenario: str) -> dict[str, Any]:
+    """Run a built-in synthetic scenario through the gate.
+
+    Args:
+        scenario: Name of a scenario in ``synth.SCENARIOS``.
+
+    Returns:
+        The run id, verdict, reasons and graph summary of the new run.
+    """
     if scenario not in synth.SCENARIOS:
         raise HTTPException(404, f"scenarios: {sorted(synth.SCENARIOS)}")
     res, d = run(synth.signed(synth.SCENARIOS[scenario]), {synth.DEMO_KEYID: synth.DEMO_KEY})
@@ -158,17 +167,43 @@ def runs(authorization: str | None = Header(None)) -> list[dict[str, Any]]:
 
 @app.get("/v1/runs/{rid}/graph")
 def graph(rid: str) -> dict[str, Any]:
+    """Return the verified provenance graph of a stored run as JSON.
+
+    Args:
+        rid: Run id returned by a gate or demo call.
+
+    Returns:
+        Nodes, edges and findings of the run.
+    """
     res, d = _get(rid)
     return {**to_json(res.graph), "decision": d.to_dict()}
 
 
 @app.get("/v1/runs/{rid}/backtrack")
 def backtrack(rid: str, q: str) -> list[dict[str, Any]]:
+    """Trace a CVE, OSV id or package of a stored run to its introducing commit.
+
+    Args:
+        rid: Run id.
+        q: CVE id, OSV id or package name.
+
+    Returns:
+        One origin story per matching finding.
+    """
     return origin_story(_get(rid)[0].graph, q)
 
 
 @app.get("/v1/runs/{rid}/blast")
 def blast(rid: str, layer: str) -> dict[str, list[str]]:
+    """List what inherits an image layer in a stored run.
+
+    Args:
+        rid: Run id.
+        layer: Layer digest prefix.
+
+    Returns:
+        Downstream node ids grouped by kind.
+    """
     try:
         return layer_blast_radius(_get(rid)[0].graph, layer)
     except KeyError as e:
@@ -177,4 +212,12 @@ def blast(rid: str, layer: str) -> dict[str, list[str]]:
 
 @app.get("/v1/runs/{rid}/cypher", response_class=PlainTextResponse)
 def cypher(rid: str) -> str:
+    """Export a stored run's graph as Neo4j Cypher statements.
+
+    Args:
+        rid: Run id.
+
+    Returns:
+        A Cypher script.
+    """
     return to_cypher(_get(rid)[0].graph)

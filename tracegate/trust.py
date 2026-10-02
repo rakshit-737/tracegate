@@ -3,6 +3,11 @@
 The gate fails closed: with no TRACEGATE_PUBKEY / TRACEGATE_KEY configured it refuses to
 verify anything. The public demo HMAC key (synth.DEMO_KEY) is trusted only when the caller
 opts in explicitly (`--demo` or TRACEGATE_DEMO=1), and a warning is printed when it is.
+
+Keyless mode: set TRACEGATE_PUBKEY_BUNDLE (a cosign `sign-blob --bundle` over the public key
+file) and TRACEGATE_SIGSTORE_IDENTITY (certificate identity regexp, e.g. the workflow ref).
+The gate then trusts the public key only after `cosign verify-blob` checks the Fulcio
+certificate, the GitHub OIDC identity and the Rekor transparency-log entry.
 """
 from __future__ import annotations
 
@@ -33,12 +38,40 @@ def _warn_demo() -> None:
           file=sys.stderr)
 
 
+GITHUB_ISSUER = "https://token.actions.githubusercontent.com"
+
+
+def verify_sigstore_bundle(artifact: str, bundle: str, identity_regexp: str,
+                           issuer: str = GITHUB_ISSUER) -> None:
+    """Verify a Sigstore keyless bundle for `artifact` with `cosign verify-blob` (Fulcio cert
+    chain, workflow identity, Rekor inclusion). Raises NoTrustRoot on any failure."""
+    import shutil
+    import subprocess
+    cosign = shutil.which("cosign")
+    if not cosign:
+        raise NoTrustRoot("TRACEGATE_PUBKEY_BUNDLE is set but cosign is not on PATH")
+    r = subprocess.run([cosign, "verify-blob", "--bundle", bundle,
+                        "--certificate-identity-regexp", identity_regexp,
+                        "--certificate-oidc-issuer", issuer, artifact],
+                       capture_output=True, text=True, timeout=120)
+    if r.returncode != 0:
+        raise NoTrustRoot(f"Sigstore verification of {artifact} failed: {(r.stderr or r.stdout).strip()[:300]}")
+
+
 def load_trust(allow_demo: bool = False) -> dict[str, Any]:
     """Return {keyid: key} from TRACEGATE_PUBKEY (Ed25519 PEM path) and/or TRACEGATE_KEY (HMAC).
 
     Raises NoTrustRoot when neither is set, unless the demo key is explicitly allowed."""
     from .signing import load_public_pem
     trusted: dict[str, Any] = {}
+    if os.environ.get("TRACEGATE_PUBKEY") and os.environ.get("TRACEGATE_PUBKEY_BUNDLE"):
+        # keyless: the (ephemeral) public key is trusted only if a Sigstore bundle proves a
+        # workflow matching TRACEGATE_SIGSTORE_IDENTITY published it (Fulcio cert + Rekor entry)
+        ident = os.environ.get("TRACEGATE_SIGSTORE_IDENTITY")
+        if not ident:
+            raise NoTrustRoot("TRACEGATE_PUBKEY_BUNDLE needs TRACEGATE_SIGSTORE_IDENTITY (regexp)")
+        verify_sigstore_bundle(os.environ["TRACEGATE_PUBKEY"], os.environ["TRACEGATE_PUBKEY_BUNDLE"], ident,
+                               os.environ.get("TRACEGATE_SIGSTORE_ISSUER", GITHUB_ISSUER))
     if os.environ.get("TRACEGATE_PUBKEY"):
         trusted[keyid()] = load_public_pem(Path(os.environ["TRACEGATE_PUBKEY"]).read_bytes())
     elif os.environ.get("TRACEGATE_KEY"):

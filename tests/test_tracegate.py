@@ -186,3 +186,20 @@ def test_bench_scale():
     res, d = run(synth.signed(sc), TRUST)
     assert res.graph.stats()["nodes"] > 100
     assert not res.rejected
+
+
+def test_pubkey_bundle_needs_identity_and_cosign(tmp_path, monkeypatch, capsys):
+    pytest.importorskip("cryptography")
+    from tracegate.signing import Ed25519Signer
+    sg = Ed25519Signer.generate("ci")
+    (tmp_path / "ci.pub").write_bytes(sg.public_pem())
+    p = tmp_path / "ev.json"
+    assert main(["synth", "clean", str(p)]) == 0
+    monkeypatch.setenv("TRACEGATE_PUBKEY", str(tmp_path / "ci.pub"))
+    monkeypatch.setenv("TRACEGATE_PUBKEY_BUNDLE", str(tmp_path / "missing.sigstore.json"))
+    monkeypatch.delenv("TRACEGATE_SIGSTORE_IDENTITY", raising=False)
+    assert main(["gate", str(p)]) == 2
+    monkeypatch.setenv("TRACEGATE_SIGSTORE_IDENTITY", "^https://github.com/rakshit-737/tracegate/")
+    monkeypatch.setenv("PATH", str(tmp_path))  # no cosign -> fail closed
+    assert main(["gate", str(p)]) == 2
+    assert "cosign" in capsys.readouterr().err

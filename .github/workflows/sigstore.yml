@@ -1,0 +1,52 @@
+name: sigstore
+# Keyless signing of TRACEGATE's own build artefacts with the job's GitHub OIDC identity
+# (Fulcio certificate + Rekor transparency-log entry), verification against that identity,
+# and a gate run that trusts its event-signing key only through a verified Sigstore bundle.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  keyless:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
+      - name: Build wheel and sdist
+        run: pip install build && python -m build
+      - name: Sign every artefact keylessly and verify it against this workflow's identity
+        run: |
+          mkdir -p evidence
+          for f in dist/*; do
+            cosign sign-blob --yes --bundle "$f.sigstore.json" "$f" > /dev/null
+            cosign verify-blob --bundle "$f.sigstore.json" \
+              --certificate-identity "https://github.com/${GITHUB_REPOSITORY}/.github/workflows/sigstore.yml@${GITHUB_REF}" \
+              --certificate-oidc-issuer https://token.actions.githubusercontent.com "$f"
+          done
+          (cd dist && sha256sum *.whl *.tar.gz > SHA256SUMS)
+      - name: Check each Rekor entry independently and record the evidence
+        run: python scripts/rekor_evidence.py dist evidence/sigstore-evidence.json
+      - name: Gate trusts its signing key only through a verified Sigstore bundle
+        env:
+          KEYLESS: "1"
+          OUT_DIR: evidence
+        run: |
+          pip install -e ".[dev]"
+          bash scripts/ci_signed_pipeline.sh
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: sigstore-signed-dist
+          path: |
+            dist/
+            evidence/

@@ -1,17 +1,28 @@
 name: ci
-on: [push, pull_request]
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
     strategy:
       fail-fast: false
       matrix:
-        python: ["3.10", "3.12", "3.13"]
+        os: [ubuntu-latest]
+        python: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+        include:
+          - os: windows-latest
+            python: "3.12"
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: ${{ matrix.python }}
       - run: pip install -e ".[dev]"
@@ -21,30 +32,86 @@ jobs:
         run: python -m pytest -q
       - name: Demo scenarios
         run: python -m tracegate.cli demo
-      - name: Gate self-check (clean must pass, typosquat must block)
+      - name: Gate self-check (demo key; clean must pass, typosquat must block, no key must fail closed)
+        shell: bash
         run: |
           python -m tracegate.cli synth clean events.json
-          python -m tracegate.cli gate events.json --comment
+          python -m tracegate.cli --demo gate events.json --comment
           python -m tracegate.cli synth malicious-dep bad.json
-          if python -m tracegate.cli gate bad.json; then echo "expected block"; exit 1; fi
-      - name: Ed25519 end-to-end (keygen -> sign real Syft/Trivy fixtures -> verify)
+          if python -m tracegate.cli --demo gate bad.json; then echo "expected block"; exit 1; fi
+          set +e; python -m tracegate.cli gate events.json; rc=$?; set -e
+          test "$rc" -eq 2 || { echo "gate without keys must exit 2, got $rc"; exit 1; }
+
+  e2e-ed25519:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - run: pip install -e ".[dev]"
+      - name: Signed commit + build + scan stages, verified with the right key and rejected with the wrong one
+        run: bash scripts/ci_signed_pipeline.sh
+
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - name: Build wheel and sdist
+        run: pip install build && python -m build
+      - name: Install the wheel in a fresh venv and run every subcommand's --help
         run: |
-          python -m tracegate.cli keygen ci
-          export TRACEGATE_KEYID=ci TRACEGATE_SIGNING_KEY=ci.key TRACEGATE_PUBKEY=ci.pub
-          python -m tracegate.cli ingest --syft tests/fixtures/alpine.syft.json --trivy tests/fixtures/alpine.trivy.json --commit 0000000000000000000000000000000000000000 -o img.json
-          python -m tracegate.cli export img.json --format intoto > /dev/null
-          python -m tracegate.cli gate img.json --comment || test $? -eq 1
+          python -m venv /tmp/v && /tmp/v/bin/pip install dist/*.whl
+          /tmp/v/bin/tracegate --version
+          for c in synth gate backtrack blast demo bench keygen ingest lineage merge export serve; do
+            /tmp/v/bin/tracegate "$c" --help > /dev/null
+          done
+          /tmp/v/bin/tracegate demo > /dev/null
+          set +e; /tmp/v/bin/tracegate keygen /tmp/k 2>err.txt; rc=$?; set -e
+          test "$rc" -eq 2 && grep -q "tracegate\[crypto\]" err.txt
+      - name: Test suite runs from the unpacked sdist
+        run: |
+          mkdir /tmp/sd && tar -xzf dist/*.tar.gz -C /tmp/sd
+          cd /tmp/sd/tracegate-* && python -m venv .v && .v/bin/pip install -q ".[dev]" && .v/bin/python -m pytest -q
+
+  docker:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Build and smoke-test the image
+        run: |
+          docker build -t tracegate:ci .
+          docker run -d --name tg -p 127.0.0.1:8080:8080 tracegate:ci
+          curl -sf --retry 15 --retry-connrefused --retry-delay 1 http://127.0.0.1:8080/healthz
+          code=$(curl -s -o /dev/null -w '%{http_code}' -X POST -H 'content-type: application/json' -d '[]' http://127.0.0.1:8080/v1/gate)
+          test "$code" = 503 || { echo "expected fail-closed 503 without a trust root, got $code"; exit 1; }
+          curl -sf -X POST http://127.0.0.1:8080/v1/demo/cve-origin | grep -q '"verdict":"block"'
 
   opa-parity:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.12"
       - run: pip install -e .
-      - uses: open-policy-agent/setup-opa@v2
+      - uses: open-policy-agent/setup-opa@b2b258e089860efaadaaf71bf6e3aecb4a3eeff1 # v2.4.0
         with:
-          version: latest
+          version: 1.21.1
       - name: Rego policy agrees with the Python DSL
         run: python scripts/opa_parity.py

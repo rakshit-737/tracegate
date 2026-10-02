@@ -1,7 +1,7 @@
 """Warden connector seam.
 
 TRACEGATE does not re-implement dependency-risk scoring; it consumes Warden.
-`WardenClient` is the contract. `HttpWardenClient` targets a running Warden API;
+`WardenClient` is the contract. `WardenApiClient` targets the real Warden API (POST /api/v1/scans);
 `HeuristicWarden` is the offline stand-in: known-malicious lookup (OSV MAL-*
 records from ossf/malicious-packages) + the multi-technique typosquat detector
 against a popularity-ranked reference list (top-PyPI when the dataset is present).
@@ -99,14 +99,41 @@ class DifflibWarden:
         return WardenScore(name, version, 0.1, [])
 
 
-class HttpWardenClient:
-    """Calls GET {base}/score?package=..&version=.. -> {risk, reasons}. Untested stub."""
+class WardenApiClient:
+    """Client for the real Warden service (rakshit-737/warden-supply-chain-security).
 
-    def __init__(self, base_url: str, timeout: float = 5.0):
-        self.base_url, self.timeout = base_url.rstrip("/"), timeout
+    Calls ``POST {base}/api/v1/scans`` with ``{"ecosystem": "pypi", "name", "version"}`` and a
+    bearer token (needs the ``scan:create`` permission) and maps the ``ScanOut`` response
+    (``risk_score`` 0-100, ``decision``, ``matched_policy_rules``) to a WardenScore. Warden
+    downloads and statically analyses the distribution, so never send names taken from OSV
+    ``MAL-*`` records to it; use HeuristicWarden (offline, metadata only) for those.
+    Configure with WARDEN_API (base URL) and WARDEN_TOKEN.
+    """
+
+    DECISION_FLOOR = {"block": 0.9, "review": 0.5, "warn": 0.5}
+
+    def __init__(self, base_url: str | None = None, token: str | None = None, timeout: float = 60.0):
+        import os
+        self.base_url = (base_url or os.environ["WARDEN_API"]).rstrip("/")
+        self.token = token if token is not None else os.environ.get("WARDEN_TOKEN", "")
+        self.timeout = timeout
+
+    def request(self, name: str, version: str) -> urllib.request.Request:
+        body = json.dumps({"ecosystem": "pypi", "name": name, "version": version or None}).encode()
+        headers = {"Content-Type": "application/json", "Accept": "application/json"}
+        if self.token:
+            headers["Authorization"] = f"Bearer {self.token}"
+        return urllib.request.Request(f"{self.base_url}/api/v1/scans", data=body, headers=headers, method="POST")
+
+    @classmethod
+    def parse(cls, name: str, version: str, d: dict) -> WardenScore:
+        """Map a Warden ``ScanOut`` JSON object to a WardenScore."""
+        decision = str(d.get("decision", "")).lower()
+        risk = max(min(float(d.get("risk_score", 0)) / 100.0, 1.0), cls.DECISION_FLOOR.get(decision, 0.0))
+        reasons = [f"warden decision: {decision or 'unknown'} (risk {d.get('risk_score')})"]
+        reasons += [f"warden rule: {r}" for r in d.get("matched_policy_rules") or []]
+        return WardenScore(name, d.get("version") or version, risk, reasons)
 
     def score(self, name: str, version: str) -> WardenScore:
-        q = urllib.parse.urlencode({"package": name, "version": version})
-        with urllib.request.urlopen(f"{self.base_url}/score?{q}", timeout=self.timeout) as r:
-            d = json.load(r)
-        return WardenScore(name, version, float(d["risk"]), list(d.get("reasons", [])))
+        with urllib.request.urlopen(self.request(name, version), timeout=self.timeout) as r:
+            return self.parse(name, version, json.load(r))

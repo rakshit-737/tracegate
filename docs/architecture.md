@@ -45,7 +45,7 @@ Graph shape: `commit -introduced-> dependency -installed_in-> layer -layer_of-> 
 | Real-tool ingest | `ingest.py` | Syft JSON, CycloneDX, Trivy JSON (unchanged tool output) |
 | Git lineage | `gitlineage.py` | first-parent manifest walk, follows renames, PR numbers from subjects |
 | OSV index | `osv.py` | offline, streams official zip dumps; ECOSYSTEM/SEMVER ranges; CVSS v3 |
-| Typosquat / Warden | `typosquat.py`, `warden.py` | deletion-index edit distance, transposition, separator, homoglyph, suffix, combosquat; `MultiWarden` per ecosystem; `HttpWardenClient` seam |
+| Typosquat / Warden | `typosquat.py`, `warden.py` | deletion-index edit distance, transposition, separator, homoglyph, suffix, combosquat; `MultiWarden` per ecosystem; `WardenApiClient` for the real Warden service |
 | Reachability | `reach.py`, `enrich.py` | runtime facts first, static fallback ([ADR 0004](adr/0004-reachability-runtime-first-static-fallback.md)) |
 | Policy | `policy.py`, `policies/tracegate.rego` | deterministic; Rego parity checked in CI ([ADR 0003](adr/0003-deterministic-policy-python-dsl-and-rego.md)) |
 | Backtrack | `backtrack.py` | origin story + blast radius |

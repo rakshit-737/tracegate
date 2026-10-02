@@ -357,3 +357,17 @@ def test_api_trust_roots(tmp_path, monkeypatch):
     big = b"[" + b" " * (11 * 1024 * 1024) + b"]"
     assert c.post("/v1/gate", content=big, headers={"content-type": "application/json",
                                                     "Authorization": "Bearer t0k"}).status_code == 413
+
+
+def test_warden_api_client_contract():
+    """Fixture follows Warden's ScanOut schema (backend/app/schemas/scan.py); not a recorded response."""
+    from tracegate.warden import WardenApiClient
+    d = json.loads((FIX / "warden_scanout.json").read_text())
+    s = WardenApiClient.parse("requests", "2.31.0", d)
+    assert s.risk == 0.12 and "allow" in s.reasons[0]
+    s = WardenApiClient.parse("x", "1", {**d, "decision": "block", "risk_score": 40, "matched_policy_rules": ["typo"]})
+    assert s.risk == 0.9 and "warden rule: typo" in s.reasons
+    c = WardenApiClient("http://warden.local/", token="t")
+    r = c.request("requests", "2.31.0")
+    assert r.full_url == "http://warden.local/api/v1/scans" and r.get_header("Authorization") == "Bearer t"
+    assert json.loads(r.data) == {"ecosystem": "pypi", "name": "requests", "version": "2.31.0"}

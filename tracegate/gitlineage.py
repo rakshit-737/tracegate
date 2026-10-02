@@ -1,7 +1,8 @@
 """Commit-stage collector for real git repositories.
 
 Walks the first-parent history of a pinned dependency manifest
-(requirements.txt / pip-compile output, package-lock.json, poetry.lock, uv.lock) and emits one `commit` stage event
+(requirements.txt / pip-compile output, package-lock.json, yarn.lock, pnpm-lock.yaml, go.mod,
+go.sum, Cargo.lock, poetry.lock, uv.lock) and emits one `commit` stage event
 per commit that changed a pin: which dependency versions it introduced and
 which it removed. This is the "commit -> dependency" half of the lineage,
 derived from the repository itself rather than from CI metadata.
@@ -19,7 +20,7 @@ from fnmatch import fnmatch
 from pathlib import Path
 
 from .ids import normalize_name
-from .lockfiles import ecosystem_for, parse_manifest
+from .lockfiles import ecosystem_for, parse_manifest, pin_lines
 from .models import StageEvent
 
 _PIN = re.compile(r"^\s*([A-Za-z0-9][A-Za-z0-9._-]*)\s*(?:\[[^\]]*\])?\s*===?\s*([^\s;#\\,]+)")
@@ -34,7 +35,7 @@ def parse_requirements(text: str) -> dict[str, str]:
         line = raw.split(" #", 1)[0].strip()
         if not line or line.startswith(("#", "-", "--")):
             continue
-        m = _PIN.match(line)
+        m = _PIN.match(line) if len(line) < 4096 else None
         if m:
             out[normalize_name(m.group(1))] = m.group(2)
     return out
@@ -47,7 +48,7 @@ def direct_deps_from_pip_compile(text: str) -> set[str] | None:
     direct: set[str] = set()
     cur = None
     for raw in text.splitlines():
-        m = _PIN.match(raw)
+        m = _PIN.match(raw) if len(raw) < 4096 else None
         if m:
             cur = normalize_name(m.group(1))
             continue
@@ -140,24 +141,42 @@ def commit_events(history: list[ManifestCommit], manifest: str, run_prefix: str 
 
 
 def blame_introducers(repo: str | Path, manifest: str, rev: str = "HEAD") -> dict[str, str]:
-    """{normalised package: sha of the first-parent commit that last wrote its pin line}."""
-    out: dict[str, str] = {}
+    """{normalised package: sha of the first-parent commit that last wrote its pin line}.
+
+    The pin line comes from `lockfiles.pin_lines`, so every supported format (requirements,
+    package-lock v2/v3, yarn, pnpm, go.mod, go.sum, Cargo/poetry/uv locks) gets the same
+    ground truth: the commit that last wrote the line holding the chosen version."""
+    shas: list[str] = []
+    lines: list[str] = []
     cur_sha = None
     for ln in _git(Path(repo), "blame", "--first-parent", "--line-porcelain", rev, "--", manifest).splitlines():
         if re.match(r"^[0-9a-f]{40} ", ln):
             cur_sha = ln.split()[0]
-        elif ln.startswith("\t"):
-            m = _PIN.match(ln[1:].split(" #", 1)[0])
-            if m and cur_sha:
-                out.setdefault(normalize_name(m.group(1)), cur_sha)
-    return out
+        elif ln.startswith(_TAB) and cur_sha:
+            shas.append(cur_sha)
+            lines.append(ln[1:])
+    pins = pin_lines(manifest, _NL.join(lines))
+    if pins is None:
+        return {}
+    return {n: shas[i] for n, (_, i) in pins.items() if i < len(shas)}
 
 
 def pickaxe_first_mention(repo: str | Path, manifest: str, name: str, rev: str = "HEAD") -> str | None:
     """Naive baseline: oldest first-parent commit whose manifest diff mentions the package name."""
+    if ecosystem_for(manifest) == "pypi" and not manifest.endswith(".lock"):
+        pat = "^" + re.escape(name) + r"[=<> \[]"
+    else:  # lock files: the name followed by a version/key delimiter
+        pat = f"{re.escape(name)}[@\"/ :]"
     out = _git(Path(repo), "log", "--first-parent", "--reverse", "--format=%H", "-i",
-               f"-G^{re.escape(name)}[=<> \\[]", rev, "--", manifest).split()
+               f"-G{pat}", rev, "--", manifest).split()
     return out[0] if out else None
+
+
+def safe_relpath(path: str) -> bool:
+    """True for a relative tree path with no '..', '.', '.git', backslash or drive component."""
+    if not path or path.startswith("/") or "\\" in path or ":" in path:
+        return False
+    return all(p not in ("", ".", "..") and p.lower() != ".git" for p in path.split("/"))
 
 
 def materialize(repo: str | Path, sha: str, prefixes: list[str], dest: str | Path,
@@ -180,6 +199,8 @@ def materialize(repo: str | Path, sha: str, prefixes: list[str], dest: str | Pat
             continue
         under = any(path.startswith(p.rstrip("/") + "/") for p in prefixes)
         base = path.rsplit("/", 1)[-1]
+        if not safe_relpath(path):
+            continue
         if (under and path.endswith(suffixes)) or path in names or any(fnmatch(base, g) for g in anywhere):
             want.append((parts[2], path))
     env_nolazy = {**os.environ, "GIT_NO_LAZY_FETCH": "1"}
@@ -192,11 +213,14 @@ def materialize(repo: str | Path, sha: str, prefixes: list[str], dest: str | Pat
                         "--no-tags", "--no-write-fetch-head", "--filter=blob:none", "origin", *missing[i:i + 200]],
                        check=False)
     n = 0
+    root = dest.resolve()
     for oid, path in want:
         out = subprocess.run(["git", "-C", str(repo), "cat-file", "blob", oid], capture_output=True)
         if out.returncode != 0:
             continue
-        target = dest / path
+        target = (dest / path).resolve()
+        if not target.is_relative_to(root):
+            continue
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes(out.stdout)
         n += 1

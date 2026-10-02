@@ -32,7 +32,8 @@ except ImportError:  # pragma: no cover
     Version = None  # type: ignore[assignment]
     InvalidVersion = Exception  # type: ignore[assignment,misc]
 
-_ECO = {"pypi": "PyPI", "npm": "npm"}
+_ECO = {"pypi": "PyPI", "npm": "npm", "golang": "Go", "cargo": "crates.io", "gem": "RubyGems",
+        "nuget": "NuGet"}
 _GHSA_SEV = {"LOW": "LOW", "MODERATE": "MEDIUM", "MEDIUM": "MEDIUM", "HIGH": "HIGH", "CRITICAL": "CRITICAL"}
 
 # --- CVSS v3.x base score ------------------------------------------------------
@@ -176,17 +177,38 @@ class OsvIndex:
     # ---- queries ---------------------------------------------------------------
     def vulns(self, name: str, version: str) -> list[OsvVuln]:
         out, seen = [], set()
+        semver = self.ecosystem != "pypi"
+        if self.ecosystem == "golang":  # go.mod says v1.2.3, OSV Go records say 1.2.3
+            version = version[1:] if version.startswith("v") else version
         for a in self.by_name.get(normalize_name(name, self.ecosystem), []):
             if a.vuln.id in seen:
                 continue
-            if version in a.versions or (not a.versions and self._in_ranges(version, a.ranges)):
+            if version in a.versions or (not a.versions and self._in_ranges(version, a.ranges, semver)):
                 seen.add(a.vuln.id)
                 out.append(a.vuln)
         return out
 
     @staticmethod
-    def _in_ranges(version: str, ranges: list[tuple[str | None, str | None, str | None]]) -> bool:
-        if Version is None or not ranges:
+    def _in_ranges(version: str, ranges: list[tuple[str | None, str | None, str | None]],
+                   semver: bool = False) -> bool:
+        if not ranges:
+            return False
+        if semver:  # npm / Go / Cargo: SemVer 2.0 ordering (PEP 440 rejects many of these)
+            from .lockfiles import semver_key
+            try:
+                v = semver_key(version)
+                for intro, fixed, last in ranges:
+                    if intro and intro != "0" and v < semver_key(intro):
+                        continue
+                    if fixed is not None and v >= semver_key(fixed):
+                        continue
+                    if last is not None and v > semver_key(last):
+                        continue
+                    return True
+            except (ValueError, TypeError):
+                return False
+            return False
+        if Version is None:
             return False
         try:
             v = Version(version)
@@ -216,8 +238,7 @@ class OsvIndex:
             return recs
         return [m for m in recs if self._mal_affects(m, version)]
 
-    @classmethod
-    def _mal_affects(cls, rec: dict, version: str) -> bool:
+    def _mal_affects(self, rec: dict, version: str) -> bool:
         versions, ranges = rec.get("versions") or [], rec.get("ranges") or []
         if not versions and not ranges:
             return True  # no affected-version data: treat the whole package as malicious
@@ -225,7 +246,21 @@ class OsvIndex:
             return True
         if any(intro in (None, "0") and fixed is None and last is None for intro, fixed, last in ranges):
             return True  # "every version" range; no version parsing needed
-        return cls._in_ranges(version, ranges)
+        semver = self.ecosystem != "pypi"
+        if self.ecosystem == "golang" and version.startswith("v"):
+            version = version[1:]
+        if self._in_ranges(version, ranges, semver):
+            return True
+        # fail closed: a version we cannot order inside a MAL range is treated as affected
+        try:
+            if semver:
+                from .lockfiles import semver_key
+                semver_key(version)
+            elif Version is not None:
+                Version(version)
+        except (ValueError, TypeError, InvalidVersion):
+            return True
+        return False
 
     def scan_payload(self, deps: Iterable[tuple[str, str]], tool: str = "osv") -> dict:
         """Trivy-shaped scan payload for (name, version) pairs."""

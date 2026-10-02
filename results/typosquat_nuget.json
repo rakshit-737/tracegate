@@ -1,4 +1,7 @@
 {
+ "run_id": 37003433022,
+ "run_url": "https://github.com/rakshit-737/tracegate/actions/runs/37003433022",
+ "commit": "8ae96e6481d61b99c1e367382faddc9c7f113582",
  "ecosystem": "NuGet",
  "reference_size": 1000,
  "split": "50/50 by sha256(name); numbers are TEST half",
@@ -22,7 +25,7 @@
    "precision_at_prev_0.01": 0.0051,
    "precision_at_prev_0.001": 0.0005,
    "recall_typo_labelled": 0.0,
-   "ms_per_name": 0.6502
+   "ms_per_name": 0.4903
   },
   "lev1 (top-5k)": {
    "tp": 0,
@@ -36,7 +39,7 @@
    "precision_at_prev_0.01": 0.0,
    "precision_at_prev_0.001": 0.0,
    "recall_typo_labelled": 0.0,
-   "ms_per_name": 0.0255
+   "ms_per_name": 0.0201
   },
   "typomania/TypoGard (top-5k)": {
    "tp": 0,
@@ -50,7 +53,7 @@
    "precision_at_prev_0.01": 0.0,
    "precision_at_prev_0.001": 0.0,
    "recall_typo_labelled": 0.0,
-   "ms_per_name": 0.9546
+   "ms_per_name": 0.729
   },
   "pypi-scan (top-50)": {
    "tp": 0,
@@ -64,7 +67,7 @@
    "precision_at_prev_0.01": 0.0,
    "precision_at_prev_0.001": 0.0,
    "recall_typo_labelled": 0.0,
-   "ms_per_name": 0.0126
+   "ms_per_name": 0.0104
   },
   "pypi-scan (top-5k)": {
    "tp": 0,
@@ -78,7 +81,7 @@
    "precision_at_prev_0.01": 0.0,
    "precision_at_prev_0.001": 0.0,
    "recall_typo_labelled": 0.0,
-   "ms_per_name": 0.0161
+   "ms_per_name": 0.013
   },
   "tracegate (th=0.56)": {
    "tp": 0,
@@ -92,7 +95,7 @@
    "precision_at_prev_0.01": 0.0,
    "precision_at_prev_0.001": 0.0,
    "recall_typo_labelled": 0.0,
-   "ms_per_name": 0.4703
+   "ms_per_name": 0.3534
   },
   "tracegate (th=0.54, FPR-matched to lev1)": {
    "tp": 0,
@@ -106,7 +109,7 @@
    "precision_at_prev_0.01": 0.0,
    "precision_at_prev_0.001": 0.0,
    "recall_typo_labelled": 0.0,
-   "ms_per_name": 0.4703
+   "ms_per_name": 0.3534
   }
  },
  "curve": [

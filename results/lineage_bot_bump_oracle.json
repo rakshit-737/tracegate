@@ -1,0 +1,957 @@
+{
+ "run_id": 37003433022,
+ "run_url": "https://github.com/rakshit-737/tracegate/actions/runs/37003433022",
+ "commit": "8ae96e6481d61b99c1e367382faddc9c7f113582",
+ "oracle": "bot-authored single-package bump commits; label = the bump commit, read from the commit subject, independent of the pin parser and of git blame",
+ "ablation": "tracegate = version-diff attribution; blame = line attribution of the same pin",
+ "pooled": {
+  "tracegate (version diff)": {
+   "at_bump": {
+    "correct": 243,
+    "total": 243,
+    "accuracy": 1.0,
+    "wilson95": [
+     0.9844,
+     1.0
+    ],
+    "repo_cluster_bootstrap95": [
+     1.0,
+     1.0
+    ]
+   },
+   "later_snapshot": {
+    "correct": 231,
+    "total": 231,
+    "accuracy": 1.0,
+    "wilson95": [
+     0.9836,
+     1.0
+    ],
+    "repo_cluster_bootstrap95": [
+     1.0,
+     1.0
+    ]
+   }
+  },
+  "blame (line attribution)": {
+   "at_bump": {
+    "correct": 241,
+    "total": 243,
+    "accuracy": 0.9918,
+    "wilson95": [
+     0.9705,
+     0.9977
+    ],
+    "repo_cluster_bootstrap95": [
+     0.9825,
+     1.0
+    ]
+   },
+   "later_snapshot": {
+    "correct": 219,
+    "total": 231,
+    "accuracy": 0.9481,
+    "wilson95": [
+     0.9114,
+     0.97
+    ],
+    "repo_cluster_bootstrap95": [
+     0.8942,
+     0.986
+    ]
+   }
+  },
+  "pickaxe-exact-pin": {
+   "at_bump": {
+    "correct": 241,
+    "total": 243,
+    "accuracy": 0.9918,
+    "wilson95": [
+     0.9705,
+     0.9977
+    ],
+    "repo_cluster_bootstrap95": [
+     0.9825,
+     1.0
+    ]
+   },
+   "later_snapshot": {
+    "correct": 197,
+    "total": 231,
+    "accuracy": 0.8528,
+    "wilson95": [
+     0.8014,
+     0.8927
+    ],
+    "repo_cluster_bootstrap95": [
+     0.7737,
+     0.9469
+    ]
+   }
+  }
+ },
+ "repos": [
+  {
+   "repo": "healthchecks",
+   "ecosystem": "pypi",
+   "bot_bumps_usable": 6,
+   "evaluated": 6,
+   "skipped": {
+    "package_not_in_pins": 0,
+    "parser_version_mismatch": 0
+   },
+   "misses": [],
+   "scores": {
+    "tracegate (version diff)": {
+     "at_bump": {
+      "correct": 6,
+      "total": 6
+     },
+     "later_snapshot": {
+      "correct": 5,
+      "total": 5
+     }
+    },
+    "blame (line attribution)": {
+     "at_bump": {
+      "correct": 6,
+      "total": 6
+     },
+     "later_snapshot": {
+      "correct": 5,
+      "total": 5
+     }
+    },
+    "pickaxe-exact-pin": {
+     "at_bump": {
+      "correct": 6,
+      "total": 6
+     },
+     "later_snapshot": {
+      "correct": 5,
+      "total": 5
+     }
+    }
+   }
+  },
+  {
+   "repo": "netbox",
+   "ecosystem": "pypi",
+   "bot_bumps_usable": 0,
+   "evaluated": 0,
+   "skipped": {
+    "package_not_in_pins": 0,
+    "parser_version_mismatch": 0
+   },
+   "misses": [],
+   "scores": {
+    "tracegate (version diff)": {
+     "at_bump": {
+      "correct": 0,
+      "total": 0
+     },
+     "later_snapshot": {
+      "correct": 0,
+      "total": 0
+     }
+    },
+    "blame (line attribution)": {
+     "at_bump": {
+      "correct": 0,
+      "total": 0
+     },
+     "later_snapshot": {
+      "correct": 0,
+      "total": 0
+     }
+    },
+    "pickaxe-exact-pin": {
+     "at_bump": {
+      "correct": 0,
+      "total": 0
+     },
+     "later_snapshot": {
+      "correct": 0,
+      "total": 0
+     }
+    }
+   }
+  },
+  {
+   "repo": "warehouse",
+   "ecosystem": "pypi",
+   "bot_bumps_usable": 923,
+   "evaluated": 40,
+   "skipped": {
+    "package_not_in_pins": 26,
+    "parser_version_mismatch": 4
+   },
+   "misses": [],
+   "scores": {
+    "tracegate (version diff)": {
+     "at_bump": {
+      "correct": 40,
+      "total": 40
+     },
+     "later_snapshot": {
+      "correct": 37,
+      "total": 37
+     }
+    },
+    "blame (line attribution)": {
+     "at_bump": {
+      "correct": 40,
+      "total": 40
+     },
+     "later_snapshot": {
+      "correct": 37,
+      "total": 37
+     }
+    },
+    "pickaxe-exact-pin": {
+     "at_bump": {
+      "correct": 40,
+      "total": 40
+     },
+     "later_snapshot": {
+      "correct": 37,
+      "total": 37
+     }
+    }
+   }
+  },
+  {
+   "repo": "caddy",
+   "ecosystem": "golang",
+   "bot_bumps_usable": 15,
+   "evaluated": 15,
+   "skipped": {
+    "package_not_in_pins": 0,
+    "parser_version_mismatch": 0
+   },
+   "misses": [],
+   "scores": {
+    "tracegate (version diff)": {
+     "at_bump": {
+      "correct": 15,
+      "total": 15
+     },
+     "later_snapshot": {
+      "correct": 10,
+      "total": 10
+     }
+    },
+    "blame (line attribution)": {
+     "at_bump": {
+      "correct": 15,
+      "total": 15
+     },
+     "later_snapshot": {
+      "correct": 10,
+      "total": 10
+     }
+    },
+    "pickaxe-exact-pin": {
+     "at_bump": {
+      "correct": 15,
+      "total": 15
+     },
+     "later_snapshot": {
+      "correct": 10,
+      "total": 10
+     }
+    }
+   }
+  },
+  {
+   "repo": "hugo",
+   "ecosystem": "golang",
+   "bot_bumps_usable": 614,
+   "evaluated": 40,
+   "skipped": {
+    "package_not_in_pins": 0,
+    "parser_version_mismatch": 0
+   },
+   "misses": [
+    {
+     "method": "blame (line attribution)",
+     "case": "later_snapshot",
+     "package": "github.com/aws/aws-sdk-go",
+     "version": "v1.50.7",
+     "bump": "4d98b0ed6a",
+     "got": "a1c64989df"
+    },
+    {
+     "method": "pickaxe-exact-pin",
+     "case": "later_snapshot",
+     "package": "github.com/aws/aws-sdk-go",
+     "version": "v1.50.7",
+     "bump": "4d98b0ed6a",
+     "got": "a1c64989df"
+    }
+   ],
+   "scores": {
+    "tracegate (version diff)": {
+     "at_bump": {
+      "correct": 40,
+      "total": 40
+     },
+     "later_snapshot": {
+      "correct": 40,
+      "total": 40
+     }
+    },
+    "blame (line attribution)": {
+     "at_bump": {
+      "correct": 40,
+      "total": 40
+     },
+     "later_snapshot": {
+      "correct": 39,
+      "total": 40
+     }
+    },
+    "pickaxe-exact-pin": {
+     "at_bump": {
+      "correct": 40,
+      "total": 40
+     },
+     "later_snapshot": {
+      "correct": 39,
+      "total": 40
+     }
+    }
+   }
+  },
+  {
+   "repo": "ripgrep",
+   "ecosystem": "cargo",
+   "bot_bumps_usable": 1,
+   "evaluated": 1,
+   "skipped": {
+    "package_not_in_pins": 0,
+    "parser_version_mismatch": 0
+   },
+   "misses": [],
+   "scores": {
+    "tracegate (version diff)": {
+     "at_bump": {
+      "correct": 1,
+      "total": 1
+     },
+     "later_snapshot": {
+      "correct": 1,
+      "total": 1
+     }
+    },
+    "blame (line attribution)": {
+     "at_bump": {
+      "correct": 1,
+      "total": 1
+     },
+     "later_snapshot": {
+      "correct": 1,
+      "total": 1
+     }
+    },
+    "pickaxe-exact-pin": {
+     "at_bump": {
+      "correct": 1,
+      "total": 1
+     },
+     "later_snapshot": {
+      "correct": 1,
+      "total": 1
+     }
+    }
+   }
+  },
+  {
+   "repo": "bat",
+   "ecosystem": "cargo",
+   "bot_bumps_usable": 288,
+   "evaluated": 40,
+   "skipped": {
+    "package_not_in_pins": 0,
+    "parser_version_mismatch": 2
+   },
+   "misses": [
+    {
+     "method": "pickaxe-exact-pin",
+     "case": "later_snapshot",
+     "package": "shell-words",
+     "version": "1.0.0",
+     "bump": "4c100cffdb",
+     "got": "52f84b063c"
+    },
+    {
+     "method": "pickaxe-exact-pin",
+     "case": "later_snapshot",
+     "package": "path_abs",
+     "version": "0.5.1",
+     "bump": "5a806c2149",
+     "got": "0523b70473"
+    },
+    {
+     "method": "pickaxe-exact-pin",
+     "case": "later_snapshot",
+     "package": "globset",
+     "version": "0.4.8",
+     "bump": "6abd61865f",
+     "got": "77f51f0ee3"
+    },
+    {
+     "method": "pickaxe-exact-pin",
+     "case": "later_snapshot",
+     "package": "assert_cmd",
+     "version": "2.0.4",
+     "bump": "5ae1957c0e",
+     "got": "3480b61eae"
+    },
+    {
+     "method": "pickaxe-exact-pin",
+     "case": "later_snapshot",
+     "package": "semver",
+     "version": "1.0.6",
+     "bump": "3ffff8d2d8",
+     "got": "97a98e037d"
+    },
+    {
+     "method": "pickaxe-exact-pin",
+     "case": "later_snapshot",
+     "package": "wild",
+     "version": "2.2.1",
+     "bump": "8d92dc2083",
+     "got": "8f70e0cf00"
+    },
+    {
+     "method": "pickaxe-exact-pin",
+     "case": "later_snapshot",
+     "package": "flate2",
+     "version": "1.1.2",
+     "bump": "1771f6da8d",
+     "got": "1a6073d2e8"
+    },
+    {
+     "method": "blame (line attribution)",
+     "case": "at_bump",
+     "package": "unicode-width",
+     "version": "0.2.0",
+     "bump": "91c95d8ba7",
+     "got": "7e804b27a0"
+    },
+    {
+     "method": "pickaxe-exact-pin",
+     "case": "at_bump",
+     "package": "unicode-width",
+     "version": "0.2.0",
+     "bump": "91c95d8ba7",
+     "got": "1321160203"
+    },
+    {
+     "method": "blame (line attribution)",
+     "case": "later_snapshot",
+     "package": "unicode-width",
+     "version": "0.2.0",
+     "bump": "91c95d8ba7",
+     "got": "7e804b27a0"
+    },
+    {
+     "method": "pickaxe-exact-pin",
+     "case": "later_snapshot",
+     "package": "unicode-width",
+     "version": "0.2.0",
+     "bump": "91c95d8ba7",
+     "got": "1321160203"
+    },
+    {
+     "method": "pickaxe-exact-pin",
+     "case": "later_snapshot",
+     "package": "unicode-width",
+     "version": "0.2.1",
+     "bump": "ff8cd39620",
+     "got": "6e87e02e96"
+    }
+   ],
+   "scores": {
+    "tracegate (version diff)": {
+     "at_bump": {
+      "correct": 40,
+      "total": 40
+     },
+     "later_snapshot": {
+      "correct": 39,
+      "total": 39
+     }
+    },
+    "blame (line attribution)": {
+     "at_bump": {
+      "correct": 39,
+      "total": 40
+     },
+     "later_snapshot": {
+      "correct": 38,
+      "total": 39
+     }
+    },
+    "pickaxe-exact-pin": {
+     "at_bump": {
+      "correct": 39,
+      "total": 40
+     },
+     "later_snapshot": {
+      "correct": 30,
+      "total": 39
+     }
+    }
+   }
+  },
+  {
+   "repo": "alacritty",
+   "ecosystem": "cargo",
+   "bot_bumps_usable": 1,
+   "evaluated": 1,
+   "skipped": {
+    "package_not_in_pins": 0,
+    "parser_version_mismatch": 0
+   },
+   "misses": [],
+   "scores": {
+    "tracegate (version diff)": {
+     "at_bump": {
+      "correct": 1,
+      "total": 1
+     },
+     "later_snapshot": {
+      "correct": 1,
+      "total": 1
+     }
+    },
+    "blame (line attribution)": {
+     "at_bump": {
+      "correct": 1,
+      "total": 1
+     },
+     "later_snapshot": {
+      "correct": 1,
+      "total": 1
+     }
+    },
+    "pickaxe-exact-pin": {
+     "at_bump": {
+      "correct": 1,
+      "total": 1
+     },
+     "later_snapshot": {
+      "correct": 1,
+      "total": 1
+     }
+    }
+   }
+  },
+  {
+   "repo": "excalidraw",
+   "ecosystem": "npm",
+   "bot_bumps_usable": 135,
+   "evaluated": 40,
+   "skipped": {
+    "package_not_in_pins": 6,
+    "parser_version_mismatch": 0
+   },
+   "misses": [
+    {
+     "method": "pickaxe-exact-pin",
+     "case": "later_snapshot",
+     "package": "@sentry/browser",
+     "version": "6.2.5",
+     "bump": "b88e0253cc",
+     "got": "016e69b9f2"
+    },
+    {
+     "method": "pickaxe-exact-pin",
+     "case": "later_snapshot",
+     "package": "path-parse",
+     "version": "1.0.7",
+     "bump": "78df5bc852",
+     "got": "31e8476c78"
+    },
+    {
+     "method": "pickaxe-exact-pin",
+     "case": "later_snapshot",
+     "package": "tmpl",
+     "version": "1.0.5",
+     "bump": "a97e172070",
+     "got": "5b7596582f"
+    },
+    {
+     "method": "pickaxe-exact-pin",
+     "case": "later_snapshot",
+     "package": "open-color",
+     "version": "1.9.1",
+     "bump": "9dfaf1752b",
+     "got": "a8064ba3ee"
+    },
+    {
+     "method": "pickaxe-exact-pin",
+     "case": "later_snapshot",
+     "package": "@types/chai",
+     "version": "4.3.0",
+     "bump": "6ca0afa6e5",
+     "got": "5b7596582f"
+    },
+    {
+     "method": "pickaxe-exact-pin",
+     "case": "later_snapshot",
+     "package": "eslint-config-prettier",
+     "version": "8.5.0",
+     "bump": "3a288eb09c",
+     "got": "d6cd8b78f1"
+    },
+    {
+     "method": "pickaxe-exact-pin",
+     "case": "later_snapshot",
+     "package": "@tldraw/vec",
+     "version": "1.7.1",
+     "bump": "f1fd29571a",
+     "got": "4d26993c8f"
+    },
+    {
+     "method": "pickaxe-exact-pin",
+     "case": "later_snapshot",
+     "package": "@types/lodash.throttle",
+     "version": "4.1.7",
+     "bump": "abcf1f1bae",
+     "got": "31e8476c78"
+    },
+    {
+     "method": "blame (line attribution)",
+     "case": "at_bump",
+     "package": "loader-utils",
+     "version": "2.0.4",
+     "bump": "72784f9d29",
+     "got": "52c96a6870"
+    },
+    {
+     "method": "pickaxe-exact-pin",
+     "case": "at_bump",
+     "package": "loader-utils",
+     "version": "2.0.4",
+     "bump": "72784f9d29",
+     "got": "52c96a6870"
+    },
+    {
+     "method": "blame (line attribution)",
+     "case": "later_snapshot",
+     "package": "loader-utils",
+     "version": "2.0.4",
+     "bump": "72784f9d29",
+     "got": "52c96a6870"
+    },
+    {
+     "method": "pickaxe-exact-pin",
+     "case": "later_snapshot",
+     "package": "loader-utils",
+     "version": "2.0.4",
+     "bump": "72784f9d29",
+     "got": "52c96a6870"
+    }
+   ],
+   "scores": {
+    "tracegate (version diff)": {
+     "at_bump": {
+      "correct": 40,
+      "total": 40
+     },
+     "later_snapshot": {
+      "correct": 39,
+      "total": 39
+     }
+    },
+    "blame (line attribution)": {
+     "at_bump": {
+      "correct": 39,
+      "total": 40
+     },
+     "later_snapshot": {
+      "correct": 38,
+      "total": 39
+     }
+    },
+    "pickaxe-exact-pin": {
+     "at_bump": {
+      "correct": 39,
+      "total": 40
+     },
+     "later_snapshot": {
+      "correct": 30,
+      "total": 39
+     }
+    }
+   }
+  },
+  {
+   "repo": "mastodon",
+   "ecosystem": "npm",
+   "bot_bumps_usable": 1778,
+   "evaluated": 40,
+   "skipped": {
+    "package_not_in_pins": 176,
+    "parser_version_mismatch": 112
+   },
+   "misses": [
+    {
+     "method": "blame (line attribution)",
+     "case": "later_snapshot",
+     "package": "fsevents",
+     "version": "1.2.13",
+     "bump": "ad1c66d2e7",
+     "got": "757d7c73c0"
+    },
+    {
+     "method": "pickaxe-exact-pin",
+     "case": "later_snapshot",
+     "package": "fsevents",
+     "version": "1.2.13",
+     "bump": "ad1c66d2e7",
+     "got": "757d7c73c0"
+    },
+    {
+     "method": "blame (line attribution)",
+     "case": "later_snapshot",
+     "package": "websocket-extensions",
+     "version": "0.1.4",
+     "bump": "a3f22bd4ca",
+     "got": "757d7c73c0"
+    },
+    {
+     "method": "pickaxe-exact-pin",
+     "case": "later_snapshot",
+     "package": "websocket-extensions",
+     "version": "0.1.4",
+     "bump": "a3f22bd4ca",
+     "got": "d57ee31413"
+    },
+    {
+     "method": "blame (line attribution)",
+     "case": "later_snapshot",
+     "package": "browserify-sign",
+     "version": "4.2.1",
+     "bump": "65c53f4475",
+     "got": "757d7c73c0"
+    },
+    {
+     "method": "pickaxe-exact-pin",
+     "case": "later_snapshot",
+     "package": "browserify-sign",
+     "version": "4.2.1",
+     "bump": "65c53f4475",
+     "got": "8c579c5b34"
+    },
+    {
+     "method": "blame (line attribution)",
+     "case": "later_snapshot",
+     "package": "querystringify",
+     "version": "2.2.0",
+     "bump": "4f8712272d",
+     "got": "757d7c73c0"
+    },
+    {
+     "method": "pickaxe-exact-pin",
+     "case": "later_snapshot",
+     "package": "querystringify",
+     "version": "2.2.0",
+     "bump": "4f8712272d",
+     "got": "d2ce9a6064"
+    },
+    {
+     "method": "pickaxe-exact-pin",
+     "case": "later_snapshot",
+     "package": "@babel/preset-react",
+     "version": "7.12.10",
+     "bump": "abd84a19e3",
+     "got": "8b8c6726ce"
+    },
+    {
+     "method": "pickaxe-exact-pin",
+     "case": "later_snapshot",
+     "package": "react-select",
+     "version": "5.1.0",
+     "bump": "ec6eee96d0",
+     "got": "57acd6210e"
+    },
+    {
+     "method": "pickaxe-exact-pin",
+     "case": "later_snapshot",
+     "package": "@babel/plugin-proposal-decorators",
+     "version": "7.17.8",
+     "bump": "5d90b90755",
+     "got": "ab54d91fe3"
+    },
+    {
+     "method": "pickaxe-exact-pin",
+     "case": "later_snapshot",
+     "package": "@babel/preset-env",
+     "version": "7.17.12",
+     "bump": "1a880533ac",
+     "got": "01db331657"
+    }
+   ],
+   "scores": {
+    "tracegate (version diff)": {
+     "at_bump": {
+      "correct": 40,
+      "total": 40
+     },
+     "later_snapshot": {
+      "correct": 39,
+      "total": 39
+     }
+    },
+    "blame (line attribution)": {
+     "at_bump": {
+      "correct": 40,
+      "total": 40
+     },
+     "later_snapshot": {
+      "correct": 35,
+      "total": 39
+     }
+    },
+    "pickaxe-exact-pin": {
+     "at_bump": {
+      "correct": 40,
+      "total": 40
+     },
+     "later_snapshot": {
+      "correct": 29,
+      "total": 39
+     }
+    }
+   }
+  },
+  {
+   "repo": "vue-core",
+   "ecosystem": "npm",
+   "bot_bumps_usable": 20,
+   "evaluated": 20,
+   "skipped": {
+    "package_not_in_pins": 1,
+    "parser_version_mismatch": 35
+   },
+   "misses": [
+    {
+     "method": "blame (line attribution)",
+     "case": "later_snapshot",
+     "package": "@rollup/plugin-node-resolve",
+     "version": "15.1.0",
+     "bump": "678c818e3a",
+     "got": "438027cf9e"
+    },
+    {
+     "method": "pickaxe-exact-pin",
+     "case": "later_snapshot",
+     "package": "@rollup/plugin-node-resolve",
+     "version": "15.1.0",
+     "bump": "678c818e3a",
+     "got": "438027cf9e"
+    },
+    {
+     "method": "blame (line attribution)",
+     "case": "later_snapshot",
+     "package": "@rollup/plugin-alias",
+     "version": "4.0.4",
+     "bump": "3ed2813e0c",
+     "got": "92cd5955d3"
+    },
+    {
+     "method": "pickaxe-exact-pin",
+     "case": "later_snapshot",
+     "package": "@rollup/plugin-alias",
+     "version": "4.0.4",
+     "bump": "3ed2813e0c",
+     "got": "92cd5955d3"
+    },
+    {
+     "method": "blame (line attribution)",
+     "case": "later_snapshot",
+     "package": "eslint-plugin-jest",
+     "version": "27.2.2",
+     "bump": "0ead9be2fd",
+     "got": "2a2810c716"
+    },
+    {
+     "method": "pickaxe-exact-pin",
+     "case": "later_snapshot",
+     "package": "eslint-plugin-jest",
+     "version": "27.2.2",
+     "bump": "0ead9be2fd",
+     "got": "2a2810c716"
+    },
+    {
+     "method": "blame (line attribution)",
+     "case": "later_snapshot",
+     "package": "@rollup/plugin-commonjs",
+     "version": "24.1.0",
+     "bump": "d85b75e50d",
+     "got": "92cd5955d3"
+    },
+    {
+     "method": "pickaxe-exact-pin",
+     "case": "later_snapshot",
+     "package": "@rollup/plugin-commonjs",
+     "version": "24.1.0",
+     "bump": "d85b75e50d",
+     "got": "92cd5955d3"
+    },
+    {
+     "method": "blame (line attribution)",
+     "case": "later_snapshot",
+     "package": "vite",
+     "version": "5.0.12",
+     "bump": "733f63a0a9",
+     "got": "dbc4677161"
+    },
+    {
+     "method": "pickaxe-exact-pin",
+     "case": "later_snapshot",
+     "package": "vite",
+     "version": "5.0.12",
+     "bump": "733f63a0a9",
+     "got": "dbc4677161"
+    }
+   ],
+   "scores": {
+    "tracegate (version diff)": {
+     "at_bump": {
+      "correct": 20,
+      "total": 20
+     },
+     "later_snapshot": {
+      "correct": 20,
+      "total": 20
+     }
+    },
+    "blame (line attribution)": {
+     "at_bump": {
+      "correct": 20,
+      "total": 20
+     },
+     "later_snapshot": {
+      "correct": 15,
+      "total": 20
+     }
+    },
+    "pickaxe-exact-pin": {
+     "at_bump": {
+      "correct": 20,
+      "total": 20
+     },
+     "later_snapshot": {
+      "correct": 15,
+      "total": 20
+     }
+    }
+   }
+  }
+ ]
+}

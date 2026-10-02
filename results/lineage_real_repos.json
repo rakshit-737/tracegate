@@ -1,62 +1,81 @@
 {
+ "run_id": 37003433022,
+ "run_url": "https://github.com/rakshit-737/tracegate/actions/runs/37003433022",
+ "commit": "8ae96e6481d61b99c1e367382faddc9c7f113582",
  "summary": {
   "tracegate": {
-   "correct": 2846,
-   "total": 3205,
-   "accuracy": 0.888,
+   "correct": 2844,
+   "total": 3203,
+   "accuracy": 0.8879,
    "wilson95": [
-    0.8766,
+    0.8765,
     0.8984
+   ],
+   "repo_cluster_bootstrap95": [
+    0.7899,
+    0.9753
    ]
   },
   "last-manifest-commit": {
-   "correct": 459,
-   "total": 3205,
-   "accuracy": 0.1432,
+   "correct": 458,
+   "total": 3203,
+   "accuracy": 0.143,
    "wilson95": [
-    0.1315,
-    0.1558
+    0.1313,
+    0.1555
+   ],
+   "repo_cluster_bootstrap95": [
+    0.0961,
+    0.1892
    ]
   },
   "pickaxe-first": {
-   "correct": 477,
-   "total": 3205,
-   "accuracy": 0.1488,
+   "correct": 476,
+   "total": 3203,
+   "accuracy": 0.1486,
    "wilson95": [
-    0.1369,
-    0.1616
+    0.1367,
+    0.1614
+   ],
+   "repo_cluster_bootstrap95": [
+    0.1169,
+    0.1884
    ]
   },
   "pickaxe-exact-pin": {
-   "correct": 2389,
-   "total": 3205,
-   "accuracy": 0.7454,
+   "correct": 2387,
+   "total": 3203,
+   "accuracy": 0.7452,
    "wilson95": [
-    0.73,
-    0.7602
+    0.7299,
+    0.76
+   ],
+   "repo_cluster_bootstrap95": [
+    0.6112,
+    0.9121
    ]
   }
  },
  "summary_by_ecosystem": {
   "pypi": {
    "tracegate": {
-    "correct": 356,
-    "total": 364,
-    "accuracy": 0.978
+    "correct": 354,
+    "total": 362,
+    "accuracy": 0.9779
    },
    "last-manifest-commit": {
-    "correct": 66,
-    "total": 364,
-    "accuracy": 0.1813
+    "correct": 65,
+    "total": 362,
+    "accuracy": 0.1796
    },
    "pickaxe-first": {
-    "correct": 32,
-    "total": 364,
-    "accuracy": 0.0879
+    "correct": 31,
+    "total": 362,
+    "accuracy": 0.0856
    },
    "pickaxe-exact-pin": {
-    "correct": 364,
-    "total": 364,
+    "correct": 362,
+    "total": 362,
     "accuracy": 1.0
    }
   },
@@ -134,35 +153,35 @@
    "repo": "healthchecks",
    "manifest": "requirements.txt",
    "ecosystem": "pypi",
-   "manifest_commits": 236,
+   "manifest_commits": 237,
    "snapshots": 12,
-   "history_walk_s": 0.47,
-   "gate_ms_median": 5.6,
-   "gate_ms_max": 9.8,
+   "history_walk_s": 0.32,
+   "gate_ms_median": 4.1,
+   "gate_ms_max": 7.3,
    "attribution": {
     "tracegate": {
-     "correct": 22,
-     "total": 22,
+     "correct": 20,
+     "total": 20,
      "accuracy": 1.0
     },
     "last-manifest-commit": {
-     "correct": 9,
-     "total": 22,
-     "accuracy": 0.4091
+     "correct": 8,
+     "total": 20,
+     "accuracy": 0.4
     },
     "pickaxe-first": {
-     "correct": 5,
-     "total": 22,
-     "accuracy": 0.2273
+     "correct": 4,
+     "total": 20,
+     "accuracy": 0.2
     },
     "pickaxe-exact-pin": {
-     "correct": 22,
-     "total": 22,
+     "correct": 20,
+     "total": 20,
      "accuracy": 1.0
     },
     "scanner-only": {
      "correct": null,
-     "total": 22,
+     "total": 20,
      "accuracy": null,
      "note": "n/a: scanner output carries no commit"
     }
@@ -246,8 +265,8 @@
      "warden_flags": []
     },
     {
-     "sha": "10a8c48fc0",
-     "date": "2021-12-07",
+     "sha": "543deb5a30",
+     "date": "2021-12-13",
      "pins": 12,
      "vulnerable_pkgs": 2,
      "findings": 36,
@@ -255,8 +274,8 @@
      "verdict": "block",
      "coverage": 1.0,
      "graph": {
-      "nodes": 275,
-      "edges": 201,
+      "nodes": 278,
+      "edges": 203,
       "findings": 36
      },
      "high_plus": 19,
@@ -284,18 +303,18 @@
      "warden_flags": []
     },
     {
-     "sha": "688191e6d5",
-     "date": "2023-09-05",
+     "sha": "e065871056",
+     "date": "2023-10-04",
      "pins": 12,
-     "vulnerable_pkgs": 3,
-     "findings": 51,
-     "backtrack_correct": 3,
+     "vulnerable_pkgs": 2,
+     "findings": 50,
+     "backtrack_correct": 2,
      "verdict": "block",
      "coverage": 1.0,
      "graph": {
-      "nodes": 423,
-      "edges": 307,
-      "findings": 51
+      "nodes": 427,
+      "edges": 310,
+      "findings": 50
      },
      "high_plus": 18,
      "high_plus_actionable": 18,
@@ -322,18 +341,18 @@
      "warden_flags": []
     },
     {
-     "sha": "6382bd737a",
-     "date": "2025-02-19",
+     "sha": "a88a6daf38",
+     "date": "2025-03-07",
      "pins": 15,
      "vulnerable_pkgs": 2,
-     "findings": 34,
+     "findings": 33,
      "backtrack_correct": 2,
      "verdict": "block",
      "coverage": 1.0,
      "graph": {
-      "nodes": 574,
-      "edges": 419,
-      "findings": 34
+      "nodes": 577,
+      "edges": 421,
+      "findings": 33
      },
      "high_plus": 11,
      "high_plus_actionable": 11,
@@ -341,8 +360,8 @@
      "warden_flags": []
     },
     {
-     "sha": "2eb824a94d",
-     "date": "2025-10-08",
+     "sha": "a9ba906ee7",
+     "date": "2025-10-14",
      "pins": 15,
      "vulnerable_pkgs": 2,
      "findings": 45,
@@ -350,8 +369,8 @@
      "verdict": "block",
      "coverage": 1.0,
      "graph": {
-      "nodes": 645,
-      "edges": 469,
+      "nodes": 648,
+      "edges": 471,
       "findings": 45
      },
      "high_plus": 14,
@@ -360,46 +379,46 @@
      "warden_flags": []
     },
     {
-     "sha": "b44fbeb3d9",
-     "date": "2026-03-18",
+     "sha": "89c248a0c4",
+     "date": "2026-04-09",
      "pins": 15,
      "vulnerable_pkgs": 2,
-     "findings": 32,
+     "findings": 27,
      "backtrack_correct": 2,
      "verdict": "block",
      "coverage": 1.0,
      "graph": {
-      "nodes": 714,
-      "edges": 516,
-      "findings": 32
+      "nodes": 717,
+      "edges": 518,
+      "findings": 27
      },
-     "high_plus": 7,
-     "high_plus_actionable": 7,
+     "high_plus": 5,
+     "high_plus_actionable": 5,
      "verdict_after_reachability": "block",
      "warden_flags": []
     },
     {
-     "sha": "5bd5d9d38d",
-     "date": "2026-09-21",
+     "sha": "e566e1c400",
+     "date": "2026-10-02",
      "pins": 15,
-     "vulnerable_pkgs": 1,
-     "findings": 13,
-     "backtrack_correct": 1,
-     "verdict": "block",
+     "vulnerable_pkgs": 0,
+     "findings": 0,
+     "backtrack_correct": 0,
+     "verdict": "pass",
      "coverage": 1.0,
      "graph": {
-      "nodes": 784,
-      "edges": 565,
-      "findings": 13
+      "nodes": 787,
+      "edges": 567,
+      "findings": 0
      },
-     "high_plus": 6,
-     "high_plus_actionable": 6,
-     "verdict_after_reachability": "block",
+     "high_plus": 0,
+     "high_plus_actionable": 0,
+     "verdict_after_reachability": "pass",
      "warden_flags": []
     }
    ],
    "head": {
-    "sha": "5bd5d9d38d22",
+    "sha": "e566e1c40099",
     "pins": 15,
     "reach_status_counts": {
      "imported": 14,
@@ -415,12 +434,14 @@
     "trivy_unmatched": 0
    },
    "reachability": {
-    "high_plus_total": 147,
-    "actionable_total": 146,
+    "high_plus_total": 139,
+    "actionable_total": 138,
     "downgraded_examples": [
      "CVE-2018-18074 requests==2.9.1"
     ],
-    "note": "historical snapshots analysed against HEAD sources"
+    "note": "historical snapshots analysed against HEAD sources",
+    "headline": false,
+    "caveat": "HEAD-sources mode: older snapshots are checked against today's imports; superseded by lineage_real_repos_materialized.json"
    }
   },
   {
@@ -429,9 +450,9 @@
    "ecosystem": "pypi",
    "manifest_commits": 216,
    "snapshots": 12,
-   "history_walk_s": 0.44,
-   "gate_ms_median": 11.8,
-   "gate_ms_max": 21.1,
+   "history_walk_s": 0.3,
+   "gate_ms_median": 9.2,
+   "gate_ms_max": 15.9,
    "attribution": {
     "tracegate": {
      "correct": 108,
@@ -750,7 +771,9 @@
      "CVE-2024-23342 ecdsa==0.13",
      "CVE-2026-41066 lxml==3.5.0"
     ],
-    "note": "historical snapshots analysed against HEAD sources"
+    "note": "historical snapshots analysed against HEAD sources",
+    "headline": false,
+    "caveat": "HEAD-sources mode: older snapshots are checked against today's imports; superseded by lineage_real_repos_materialized.json"
    }
   },
   {
@@ -759,9 +782,9 @@
    "ecosystem": "pypi",
    "manifest_commits": 2521,
    "snapshots": 12,
-   "history_walk_s": 9.38,
-   "gate_ms_median": 62.1,
-   "gate_ms_max": 553.9,
+   "history_walk_s": 7.21,
+   "gate_ms_median": 46.0,
+   "gate_ms_max": 523.6,
    "attribution": {
     "tracegate": {
      "correct": 226,
@@ -1127,7 +1150,9 @@
      "CVE-2026-49851 mistune==0.8.3",
      "CVE-2026-49851 mistune==0.8.4"
     ],
-    "note": "historical snapshots analysed against HEAD sources"
+    "note": "historical snapshots analysed against HEAD sources",
+    "headline": false,
+    "caveat": "HEAD-sources mode: older snapshots are checked against today's imports; superseded by lineage_real_repos_materialized.json"
    }
   },
   {
@@ -1136,9 +1161,9 @@
    "ecosystem": "golang",
    "manifest_commits": 332,
    "snapshots": 12,
-   "history_walk_s": 1.27,
-   "gate_ms_median": 291.0,
-   "gate_ms_max": 892.7,
+   "history_walk_s": 1.02,
+   "gate_ms_median": 221.4,
+   "gate_ms_max": 712.8,
    "attribution": {
     "tracegate": {
      "correct": 195,
@@ -1371,9 +1396,9 @@
    "ecosystem": "golang",
    "manifest_commits": 1028,
    "snapshots": 12,
-   "history_walk_s": 2.48,
-   "gate_ms_median": 290.2,
-   "gate_ms_max": 773.2,
+   "history_walk_s": 1.72,
+   "gate_ms_median": 230.4,
+   "gate_ms_max": 616.5,
    "attribution": {
     "tracegate": {
      "correct": 132,
@@ -1614,9 +1639,9 @@
    "ecosystem": "cargo",
    "manifest_commits": 434,
    "snapshots": 12,
-   "history_walk_s": 1.21,
-   "gate_ms_median": 35.9,
-   "gate_ms_max": 76.3,
+   "history_walk_s": 0.86,
+   "gate_ms_median": 28.3,
+   "gate_ms_max": 60.9,
    "attribution": {
     "tracegate": {
      "correct": 70,
@@ -1864,9 +1889,9 @@
    "ecosystem": "cargo",
    "manifest_commits": 515,
    "snapshots": 12,
-   "history_walk_s": 1.9,
-   "gate_ms_median": 63.1,
-   "gate_ms_max": 121.4,
+   "history_walk_s": 1.43,
+   "gate_ms_median": 50.2,
+   "gate_ms_max": 95.9,
    "attribution": {
     "tracegate": {
      "correct": 168,
@@ -2170,9 +2195,9 @@
    "ecosystem": "cargo",
    "manifest_commits": 378,
    "snapshots": 12,
-   "history_walk_s": 1.81,
-   "gate_ms_median": 110.2,
-   "gate_ms_max": 227.3,
+   "history_walk_s": 1.4,
+   "gate_ms_median": 89.0,
+   "gate_ms_max": 182.8,
    "attribution": {
     "tracegate": {
      "correct": 221,
@@ -2490,9 +2515,9 @@
    "ecosystem": "npm",
    "manifest_commits": 265,
    "snapshots": 12,
-   "history_walk_s": 3.53,
-   "gate_ms_median": 98.8,
-   "gate_ms_max": 510.5,
+   "history_walk_s": 3.07,
+   "gate_ms_median": 88.4,
+   "gate_ms_max": 505.5,
    "attribution": {
     "tracegate": {
      "correct": 899,
@@ -2933,9 +2958,9 @@
    "ecosystem": "npm",
    "manifest_commits": 2651,
    "snapshots": 12,
-   "history_walk_s": 44.16,
-   "gate_ms_median": 440.0,
-   "gate_ms_max": 879.5,
+   "history_walk_s": 39.85,
+   "gate_ms_median": 370.8,
+   "gate_ms_max": 763.0,
    "attribution": {
     "tracegate": {
      "correct": 565,
@@ -3575,9 +3600,9 @@
    "ecosystem": "npm",
    "manifest_commits": 418,
    "snapshots": 12,
-   "history_walk_s": 4.4,
-   "gate_ms_median": 119.6,
-   "gate_ms_max": 708.0,
+   "history_walk_s": 3.97,
+   "gate_ms_median": 96.1,
+   "gate_ms_max": 636.1,
    "attribution": {
     "tracegate": {
      "correct": 240,

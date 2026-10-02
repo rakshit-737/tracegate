@@ -1,4 +1,7 @@
 {
+ "run_id": 37003433022,
+ "run_url": "https://github.com/rakshit-737/tracegate/actions/runs/37003433022",
+ "commit": "8ae96e6481d61b99c1e367382faddc9c7f113582",
  "ecosystem": "RubyGems",
  "reference_size": 5000,
  "split": "time split: positives published < 2025-01-01 tune, >= 2025-01-01 test (OSV `published`, dominated by bulk backfill days); negatives 50/50 by sha256(name)",
@@ -22,7 +25,7 @@
    "precision_at_prev_0.01": 0.4562,
    "precision_at_prev_0.001": 0.0768,
    "recall_typo_labelled": 0.0,
-   "ms_per_name": 0.2587
+   "ms_per_name": 0.1987
   },
   "lev1 (top-5k)": {
    "tp": 149,
@@ -36,7 +39,7 @@
    "precision_at_prev_0.01": 0.0187,
    "precision_at_prev_0.001": 0.0019,
    "recall_typo_labelled": 0.0,
-   "ms_per_name": 0.0138
+   "ms_per_name": 0.0115
   },
   "typomania/TypoGard (top-5k)": {
    "tp": 55,
@@ -50,7 +53,7 @@
    "precision_at_prev_0.01": 0.0071,
    "precision_at_prev_0.001": 0.0007,
    "recall_typo_labelled": 0.0,
-   "ms_per_name": 0.2907
+   "ms_per_name": 0.2152
   },
   "pypi-scan (top-50)": {
    "tp": 126,
@@ -64,7 +67,7 @@
    "precision_at_prev_0.01": 0.481,
    "precision_at_prev_0.001": 0.0841,
    "recall_typo_labelled": 0.0,
-   "ms_per_name": 0.0071
+   "ms_per_name": 0.0057
   },
   "pypi-scan (top-5k)": {
    "tp": 144,
@@ -78,7 +81,7 @@
    "precision_at_prev_0.01": 0.0245,
    "precision_at_prev_0.001": 0.0025,
    "recall_typo_labelled": 0.0,
-   "ms_per_name": 0.0084
+   "ms_per_name": 0.0072
   },
   "tracegate (th=0.58)": {
    "tp": 132,
@@ -92,7 +95,7 @@
    "precision_at_prev_0.01": 0.0696,
    "precision_at_prev_0.001": 0.0074,
    "recall_typo_labelled": 0.0,
-   "ms_per_name": 0.1015
+   "ms_per_name": 0.0879
   },
   "tracegate (th=0.46, FPR-matched to lev1)": {
    "tp": 150,
@@ -106,7 +109,7 @@
    "precision_at_prev_0.01": 0.0206,
    "precision_at_prev_0.001": 0.0021,
    "recall_typo_labelled": 0.0,
-   "ms_per_name": 0.1015
+   "ms_per_name": 0.0879
   }
  },
  "curve": [

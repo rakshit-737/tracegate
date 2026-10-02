@@ -1,131 +1,131 @@
 {
   "osv/Alpine-all.zip": {
     "bytes": 4034121,
-    "fetched": "2026-10-02T10:25:20Z",
+    "fetched": "2026-10-02T11:52:56Z",
     "sha256": "c3a745816d2c9d303440b3fa684181fa554eb37b8ac824acef2e5706aac70579",
     "url": "https://osv-vulnerabilities.storage.googleapis.com/Alpine/all.zip"
   },
   "osv/Go-all.zip": {
-    "bytes": 11992078,
-    "fetched": "2026-10-02T10:25:20Z",
-    "sha256": "80875dcfcffffb1c42e9d293c7d0d3f1135b1fcc572c24870492f729f1a1d150",
+    "bytes": 11992182,
+    "fetched": "2026-10-02T11:52:56Z",
+    "sha256": "daba95c43d1d35e03065494d472b1d1413f0dfdaa3875998d940c78c90f984ec",
     "url": "https://osv-vulnerabilities.storage.googleapis.com/Go/all.zip"
   },
   "osv/NuGet-all.zip": {
     "bytes": 2503538,
-    "fetched": "2026-10-02T10:25:20Z",
+    "fetched": "2026-10-02T11:52:57Z",
     "sha256": "a58050f8574f35291b2fde40389fd7a632e64142b7c796526dbb162c2c43a5ae",
     "url": "https://osv-vulnerabilities.storage.googleapis.com/NuGet/all.zip"
   },
   "osv/PyPI-all.zip": {
     "bytes": 35335194,
-    "fetched": "2026-10-02T10:25:18Z",
+    "fetched": "2026-10-02T11:52:54Z",
     "sha256": "f2248ff617269c205001573b19074ff7215f3d11c1694feec4ae3d62dbaebbf4",
     "url": "https://osv-vulnerabilities.storage.googleapis.com/PyPI/all.zip"
   },
   "osv/RubyGems-all.zip": {
     "bytes": 5040104,
-    "fetched": "2026-10-02T10:25:20Z",
+    "fetched": "2026-10-02T11:52:57Z",
     "sha256": "b4f202bd02af0fe5bbdccc98cfd15e97c2e8e085c457e34c16353fc14a5b2616",
     "url": "https://osv-vulnerabilities.storage.googleapis.com/RubyGems/all.zip"
   },
   "osv/crates.io-all.zip": {
     "bytes": 3521862,
-    "fetched": "2026-10-02T10:25:20Z",
+    "fetched": "2026-10-02T11:52:57Z",
     "sha256": "cd0cdc31566826adde48e1640f0d6866448c02bc2126a44d2e09bd100f501c6e",
     "url": "https://osv-vulnerabilities.storage.googleapis.com/crates.io/all.zip"
   },
   "osv/npm-all.zip": {
     "bytes": 217349476,
-    "fetched": "2026-10-02T10:25:20Z",
+    "fetched": "2026-10-02T11:52:55Z",
     "sha256": "d5432a4ae3791cd8307076278ad981e1ec3fbbdf7f93366b9384e1976bba423d",
     "url": "https://osv-vulnerabilities.storage.googleapis.com/npm/all.zip"
   },
   "popular/crates-top.json": {
     "bytes": 486823,
-    "fetched": "2026-10-02T10:27:31Z",
+    "fetched": "2026-10-02T11:54:59Z",
     "rows": 10000,
     "sha256": "3e53adbbe87dc1e2de5bdd840f256bf01dfcafd3fef1b91b60aae817f041ab5f",
     "url": "https://crates.io/api/v1/crates?sort=downloads&per_page=100&page={page}"
   },
   "popular/npm-high-impact-top.js": {
     "bytes": 404035,
-    "fetched": "2026-10-02T10:25:21Z",
+    "fetched": "2026-10-02T11:52:58Z",
     "sha256": "bbc16e783283f23d38559a1322d93af27b8a7a884b1fa9c5a1dd84e810684f0c",
     "url": "https://raw.githubusercontent.com/wooorm/npm-high-impact/main/lib/top.js"
   },
   "popular/nuget-top.json": {
     "bytes": 248472,
-    "fetched": "2026-10-02T10:31:24Z",
+    "fetched": "2026-10-02T11:58:10Z",
     "rows": 4000,
     "sha256": "e85f383270938ae65a0f99e790cd4e7813aa11b5420911c4acab7e8ef8de989e",
     "url": "https://azuresearch-usnc.nuget.org/query?q=&take=1000&skip={skip}&semVerLevel=2.0.0"
   },
   "popular/rubygems-top.json": {
     "bytes": 501877,
-    "fetched": "2026-10-02T10:31:13Z",
+    "fetched": "2026-10-02T11:58:01Z",
     "rows": 10000,
-    "sha256": "72a79ef6daabbdf1586ab5bf852f7364a36be06f201badd8bc49ba546e70fb87",
+    "sha256": "a0212eace4298d19167cd4128fb806f9f87297008fe28d6102dacd7517119968",
     "url": "https://packages.ecosyste.ms/api/v1/registries/rubygems.org/packages?sort=downloads&order=desc&per_page=100&page={page}"
   },
   "popular/top-pypi-packages.min.json": {
     "bytes": 787401,
-    "fetched": "2026-10-02T10:25:21Z",
+    "fetched": "2026-10-02T11:52:58Z",
     "sha256": "55fee05ed02b628f05350a51780ec436efae39ea0810df5d5419e15b850c7041",
     "url": "https://hugovk.dev/top-pypi-packages/top-pypi-packages.min.json"
   },
   "repos/alacritty": {
-    "fetched": "2026-10-02T10:50:54Z",
+    "fetched": "2026-10-02T12:17:29Z",
     "head": "d692748d3f61253ebe9f5094320120d22f6a046f",
     "url": "https://github.com/alacritty/alacritty.git"
   },
   "repos/bat": {
-    "fetched": "2026-10-02T10:50:51Z",
+    "fetched": "2026-10-02T12:17:25Z",
     "head": "4608fc959aa8abf80d32198836511a570b7ae9ea",
     "url": "https://github.com/sharkdp/bat.git"
   },
   "repos/caddy": {
-    "fetched": "2026-10-02T10:50:36Z",
+    "fetched": "2026-10-02T12:17:11Z",
     "head": "ac834b5dc70a17dca296f47c78c64587d6631cbb",
     "url": "https://github.com/caddyserver/caddy.git"
   },
   "repos/excalidraw": {
-    "fetched": "2026-10-02T10:51:00Z",
+    "fetched": "2026-10-02T12:17:35Z",
     "head": "ed10ac7dca7e40f3f4a31269b4bfba980d0db41e",
     "url": "https://github.com/excalidraw/excalidraw.git"
   },
   "repos/healthchecks": {
-    "fetched": "2026-10-02T10:50:05Z",
-    "head": "92afbc8abfb9220478d7bad73c44da9ea2c64d2e",
+    "fetched": "2026-10-02T12:16:39Z",
+    "head": "e566e1c40099c86a207e5a9fee0cd991f0aa33bc",
     "url": "https://github.com/healthchecks/healthchecks.git"
   },
   "repos/hugo": {
-    "fetched": "2026-10-02T10:50:43Z",
+    "fetched": "2026-10-02T12:17:18Z",
     "head": "6b3ba3a7e22ae2809605b8118aeed08b244f1955",
     "url": "https://github.com/gohugoio/hugo.git"
   },
   "repos/mastodon": {
-    "fetched": "2026-10-02T10:52:17Z",
-    "head": "93ed63c33b195b56605fa24d0994be9825ba5e05",
+    "fetched": "2026-10-02T12:18:51Z",
+    "head": "73fe2b73467a9a62f5d421b80686c26e94de8328",
     "url": "https://github.com/mastodon/mastodon.git"
   },
   "repos/netbox": {
-    "fetched": "2026-10-02T10:50:09Z",
+    "fetched": "2026-10-02T12:16:44Z",
     "head": "251458b89a5eb2f5fe0d20ecd1140ba08f141a9c",
     "url": "https://github.com/netbox-community/netbox.git"
   },
   "repos/ripgrep": {
-    "fetched": "2026-10-02T10:50:47Z",
+    "fetched": "2026-10-02T12:17:21Z",
     "head": "3fce3b5bb0236da2df6d99672afb8a719642eca7",
     "url": "https://github.com/BurntSushi/ripgrep.git"
   },
   "repos/vue-core": {
-    "fetched": "2026-10-02T10:52:25Z",
+    "fetched": "2026-10-02T12:19:00Z",
     "head": "4ab865a848a1da3d10fb674f857e5fff13094644",
     "url": "https://github.com/vuejs/core.git"
   },
   "repos/warehouse": {
-    "fetched": "2026-10-02T10:50:32Z",
+    "fetched": "2026-10-02T12:17:07Z",
     "head": "81b91d6b819997cbcb0592691f71295ec895389e",
     "url": "https://github.com/pypi/warehouse.git"
   }

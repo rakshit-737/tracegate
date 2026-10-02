@@ -5,3 +5,6 @@ tests
 benchmarks
 *.json
 .venv
+*.key
+*.pem
+.env

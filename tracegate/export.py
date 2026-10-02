@@ -55,8 +55,11 @@ def to_cypher(g: ProvenanceGraph) -> str:
 
 
 class Neo4jSink:  # pragma: no cover - needs a running Neo4j
-    def __init__(self, uri: str = "bolt://localhost:7687", user: str = "neo4j", password: str = "tracegate"):
+    def __init__(self, uri: str = "bolt://localhost:7687", user: str = "neo4j", password: str | None = None):
+        import os
+
         from neo4j import GraphDatabase  # optional dependency
+        password = password or os.environ["NEO4J_PASSWORD"]
         self._driver = GraphDatabase.driver(uri, auth=(user, password))
 
     def write(self, g: ProvenanceGraph) -> int:

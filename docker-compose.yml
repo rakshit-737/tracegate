@@ -1,20 +1,25 @@
 # Local demo stack: TRACEGATE API/UI + Neo4j for graph exploration.
 #   docker compose up --build
-#   open http://localhost:8080 (UI) and http://localhost:7474 (Neo4j browser, neo4j/tracegate-demo)
-#   tracegate export events.json --format cypher | docker compose exec -T neo4j cypher-shell -u neo4j -p tracegate-demo
+#   NEO4J_PASSWORD=... TRACEGATE_PUBKEY_FILE=$HOME/.tracegate/ci.pub docker compose up --build
+#   open http://localhost:8080 (UI) and http://localhost:7474 (Neo4j browser)
+#   tracegate export events.json --format cypher | docker compose exec -T neo4j cypher-shell -u neo4j -p "$NEO4J_PASSWORD"
+# The API fails closed (503 on /v1/gate) unless a trust root is mounted; the built-in demo
+# scenarios (/v1/demo/*) always work.
 services:
   api:
     build: .
     ports: ["127.0.0.1:8080:8080"]
     environment:
-      TRACEGATE_KEYID: ci-demo
+      TRACEGATE_KEYID: ${TRACEGATE_KEYID:-ci}
+      TRACEGATE_PUBKEY: /run/secrets/tracegate.pub
+    volumes: ["${TRACEGATE_PUBKEY_FILE:-./ci.pub}:/run/secrets/tracegate.pub:ro"]
     read_only: true
     tmpfs: ["/tmp"]
   neo4j:
     image: neo4j:5-community
     ports: ["127.0.0.1:7474:7474", "127.0.0.1:7687:7687"]
     environment:
-      NEO4J_AUTH: neo4j/tracegate-demo
+      NEO4J_AUTH: neo4j/${NEO4J_PASSWORD:?set NEO4J_PASSWORD}
     volumes: ["neo4j-data:/data"]
 volumes:
   neo4j-data:

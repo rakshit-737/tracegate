@@ -1,0 +1,3 @@
+recursive-include tests/fixtures *
+include scripts/build_static_demo.py scripts/ci_signed_pipeline.sh
+include CHANGELOG.md SECURITY.md THREAT_MODEL.md

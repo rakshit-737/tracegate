@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use TRACEGATE, please cite it as below."
+title: "TRACEGATE: provenance-aware CI/CD security gate"
+authors:
+  - name: Rakshit
+repository-code: "https://github.com/rakshit-737/tracegate"
+url: "https://rakshit-737.github.io/tracegate/"
+license: MIT
+version: 1.0.0
+date-released: 2026-09-26

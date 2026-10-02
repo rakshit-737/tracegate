@@ -33,7 +33,8 @@ plugins:
       handlers:
         python:
           paths: [.]
-          options: {show_source: false, members_order: source, show_root_heading: true, heading_level: 3}
+          options: {show_source: false, members_order: source, show_root_heading: true, heading_level: 3,
+                    show_if_no_docstring: true}
 nav:
   - Home: index.md
   - Getting started: getting-started.md

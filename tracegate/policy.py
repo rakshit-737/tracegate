@@ -1,4 +1,4 @@
-"""Deterministic Python policy DSL (OPA/Rego is a TODO seam).
+"""Deterministic Python policy DSL, mirrored by policies/tracegate.rego (parity checked in CI, ADR 0003).
 
 Each rule inspects the enriched CollectResult and yields (verdict, reason dict).
 The overall verdict is the max over rules; every reason carries its graph path.

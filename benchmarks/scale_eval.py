@@ -17,6 +17,11 @@ SIZES = [(10, 50), (50, 100), (100, 200), (200, 400)]
 
 
 def main() -> None:
+    import argparse
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--out", default=str(Path(__file__).resolve().parents[1] / "results"),
+                    help="output directory (default: results/, the committed results)")
+    a = ap.parse_args()
     rows = []
     for svcs, deps in SIZES:
         envs = synth.signed(synth.random_scenario(svcs, deps))
@@ -30,7 +35,7 @@ def main() -> None:
         rows.append({"services": svcs, "deps": deps, "events": len(envs), **res.graph.stats(),
                      "gate_s_median": round(statistics.median(lat), 3)})
         print(rows[-1])
-    out = Path(__file__).resolve().parents[1] / "results"
+    out = Path(a.out)
     out.mkdir(exist_ok=True)
     (out / "scale_synthetic.json").write_text(json.dumps(rows, indent=1))
 

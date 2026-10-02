@@ -122,6 +122,7 @@ def pull(ref: str, out: Path, platform: str = "linux/amd64") -> None:
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        sys.exit(__doc__)
+    if len(sys.argv) != 3 or sys.argv[1] in ("-h", "--help"):
+        print(__doc__)
+        sys.exit(0 if len(sys.argv) == 2 and sys.argv[1] in ("-h", "--help") else 2)
     pull(sys.argv[1], Path(sys.argv[2]))

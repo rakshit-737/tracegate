@@ -52,6 +52,11 @@ def _canon(p: str | None) -> str | None:
 
 
 def main() -> None:
+    import argparse
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--out", default=str(Path(__file__).resolve().parents[1] / "results"),
+                    help="output directory (default: results/, the committed results)")
+    a = ap.parse_args()
     scans = data_root() / "scans"
     slugs = sorted(p.name[:-len(".syft.json")] for p in scans.glob("*.syft.json")
                    if (scans / p.name.replace(".syft.json", ".trivy.json")).exists()
@@ -142,7 +147,7 @@ def main() -> None:
         "warden": {"language_packages_scored": len(lang), "flagged": flagged},
         "note": "deployments are synthetic (one service per image); SBOM via Syft per-layer dir scans",
     }
-    res_dir = Path(__file__).resolve().parents[1] / "results"
+    res_dir = Path(a.out)
     res_dir.mkdir(exist_ok=True)
     (res_dir / "images_real.json").write_text(json.dumps(out, indent=1, default=str))
     print(json.dumps({k: v for k, v in out.items() if k not in ("images", "example_origin_story")}, indent=1, default=str))

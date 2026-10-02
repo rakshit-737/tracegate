@@ -115,3 +115,61 @@ jobs:
           version: 1.21.1
       - name: Rego policy agrees with the Python DSL
         run: python scripts/opa_parity.py
+
+  self-gate:
+    # Dogfooding: TRACEGATE gates its own container image with real Syft, Trivy, Bandit SARIF and
+    # pip-audit output plus the lineage of its pinned docs requirements. The verdict and the PR
+    # comment go to the job summary (advisory: base-image CVEs are outside this repo's control).
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: read
+      pull-requests: write
+    env:
+      SYFT_VERSION: v1.54.0
+      TRIVY_VERSION: v0.75.0
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - name: Install tools
+        run: |
+          pip install -e ".[crypto]" bandit[sarif] pip-audit
+          curl -sSfL https://raw.githubusercontent.com/anchore/syft/${SYFT_VERSION}/install.sh | sh -s -- -b /usr/local/bin ${SYFT_VERSION}
+          curl -sSfL https://raw.githubusercontent.com/aquasecurity/trivy/${TRIVY_VERSION}/contrib/install.sh | sh -s -- -b /usr/local/bin ${TRIVY_VERSION}
+      - name: Build, SBOM, scan, SAST, dependency audit
+        run: |
+          docker build -q -t tracegate:self .
+          syft tracegate:self -o syft-json=sbom.json
+          trivy image -q --format json -o trivy.json tracegate:self
+          bandit -q -r tracegate -f sarif -o bandit.sarif || true
+          pip-audit -r docs/requirements.txt -f json -o pip-audit.json || true
+      - name: Sign stage events and gate them
+        run: |
+          export TRACEGATE_KEYID=self
+          python -m tracegate.cli keygen "$RUNNER_TEMP/self"
+          export TRACEGATE_SIGNING_KEY="$RUNNER_TEMP/self.key"
+          python -m tracegate.cli lineage . docs/requirements.txt -o commits.json
+          python -m tracegate.cli ingest --syft sbom.json --trivy trivy.json --sarif bandit.sarif --commit "$GITHUB_SHA" -o img.json
+          python -m tracegate.cli merge commits.json img.json -o events.json
+          unset TRACEGATE_SIGNING_KEY
+          export TRACEGATE_PUBKEY="$RUNNER_TEMP/self.pub"
+          set +e; python -m tracegate.cli gate events.json --comment > comment.md; rc=$?; set -e
+          test "$rc" -le 1
+          ! grep -q provenance_integrity comment.md
+          { echo "exit code: $rc"; echo; head -c 60000 comment.md; } >> "$GITHUB_STEP_SUMMARY"
+      - name: Post the PR comment (same-repo PRs only)
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh pr comment ${{ github.event.pull_request.number }} --edit-last --create-if-none --body-file <(head -c 60000 comment.md)
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: self-gate
+          path: |
+            comment.md
+            pip-audit.json

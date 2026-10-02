@@ -1,0 +1,24 @@
+{
+ "workflow": "sigstore.yml",
+ "run_id": 36995327046,
+ "run_url": "https://github.com/rakshit-737/tracegate/actions/runs/36995327046",
+ "issuer": "https://token.actions.githubusercontent.com",
+ "entries": [
+  {
+   "artifact": "tracegate-1.0.0-py3-none-any.whl",
+   "sha256": "5ddfba5dba6c38f0cce7c4f5609d992c4f500b3375d031de28cabbbd060a1226",
+   "rekor_log_index": 3053211447,
+   "rekor_kind": "hashedrekord",
+   "integrated_time": 1790936701,
+   "rekor_url": "https://search.sigstore.dev/?logIndex=3053211447"
+  },
+  {
+   "artifact": "tracegate-1.0.0.tar.gz",
+   "sha256": "42faec879d6220d9e9c74a51703434779a05755092f59681f937fa29b509242c",
+   "rekor_log_index": 3053212375,
+   "rekor_kind": "hashedrekord",
+   "integrated_time": 1790936704,
+   "rekor_url": "https://search.sigstore.dev/?logIndex=3053212375"
+  }
+ ]
+}

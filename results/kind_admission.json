@@ -1,0 +1,21 @@
+{
+ "workflow": "kind-admission.yml",
+ "run_id": 36995327008,
+ "run_url": "https://github.com/rakshit-737/tracegate/actions/runs/36995327008",
+ "decisions": [
+  {
+   "deployment": "signed",
+   "image": "localhost:5000/tg-app@sha256:66a385968680ef87b821292b8760c9d221eacfdb05b03e53623b37dbaa717975",
+   "allowed": true,
+   "reason": "signed by trusted workflow; gate passed"
+  },
+  {
+   "deployment": "unsigned",
+   "image": "localhost:5000/tg-app@sha256:5f200ef4b0c544f8716e51aef105140a6363188f8ca659ed068edfff67d2805b",
+   "allowed": false,
+   "reason": "no Sigstore signature from ^https://github.com/rakshit-737/tracegate/\\.github/workflows/kind-admission\\.yml@: error during command execution: no signatures found"
+  }
+ ],
+ "signed_pod_phase": "Running",
+ "unsigned_deployment_created": false
+}

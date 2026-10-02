@@ -1,0 +1,55 @@
+name: benchmarks
+# Full-data evaluation on a GitHub runner (the dev laptop is shared): downloads the OSV dumps,
+# popularity lists and benchmark repositories, runs the typosquat (hash + time split, five
+# ecosystems, published-tool baselines) and lineage (11 repos, both reachability modes)
+# benchmarks, and uploads results/*.json. Only those small JSON files are committed.
+on:
+  workflow_dispatch:
+    inputs:
+      lineage:
+        description: run the lineage benchmark too
+        default: "true"
+permissions:
+  contents: read
+jobs:
+  bench:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    env:
+      TRACEGATE_DATA: ${{ github.workspace }}/../data
+      PYTHONUNBUFFERED: "1"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - run: pip install -e ".[bench,osv,crypto]" numpy
+      - name: Download datasets (OSV, popularity lists)
+        run: |
+          python scripts/download_data.py osv
+          python scripts/download_data.py popular || echo "some popularity lists failed; those ecosystems are skipped"
+      - name: Typosquat, hash split
+        run: python benchmarks/typosquat_eval.py --eco PyPI npm RubyGems crates.io NuGet 2>&1 | tee typosquat_hash.log
+      - name: Typosquat, time split
+        run: python benchmarks/typosquat_eval.py --split time --eco PyPI npm RubyGems crates.io NuGet 2>&1 | tee typosquat_time.log
+      - name: Clone benchmark repositories
+        if: inputs.lineage == 'true'
+        run: git config --global transfer.fsckObjects true && python scripts/download_data.py repos
+      - name: Lineage, HEAD sources
+        if: inputs.lineage == 'true'
+        run: python benchmarks/lineage_eval.py --snapshots 12 2>&1 | tee lineage.log
+      - name: Lineage, materialized per-snapshot sources (Python repos)
+        if: inputs.lineage == 'true'
+        run: python benchmarks/lineage_eval.py --snapshots 12 --materialize --repos healthchecks netbox warehouse 2>&1 | tee lineage_mat.log
+      - name: Dataset manifest
+        if: always()
+        run: cp "$TRACEGATE_DATA/MANIFEST.json" results/data_manifest.json || true
+      - if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: benchmark-results
+          path: |
+            results/
+            *.log

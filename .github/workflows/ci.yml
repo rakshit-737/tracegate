@@ -94,7 +94,7 @@ jobs:
         run: |
           docker build -t tracegate:ci .
           docker run -d --name tg -p 127.0.0.1:8080:8080 tracegate:ci
-          curl -sf --retry 15 --retry-connrefused --retry-delay 1 http://127.0.0.1:8080/healthz
+          curl -sf --retry 30 --retry-all-errors --retry-delay 1 http://127.0.0.1:8080/healthz
           code=$(curl -s -o /dev/null -w '%{http_code}' -X POST -H 'content-type: application/json' -d '[]' http://127.0.0.1:8080/v1/gate)
           test "$code" = 503 || { echo "expected fail-closed 503 without a trust root, got $code"; exit 1; }
           curl -sf -X POST http://127.0.0.1:8080/v1/demo/cve-origin | grep -q '"verdict":"block"'

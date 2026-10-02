@@ -9,7 +9,9 @@ Reference : top-5,000 PyPI projects = what a squatter would impersonate.
 
 Detectors compared:
   mvp-difflib : the original MVP heuristic (difflib ratio >= 0.8 vs 14 hard-coded names)
-  lev1        : plain Levenshtein <= 1 vs the same top-5k reference (typical OSS scanner)
+  lev1        : Damerau-1 (TRACEGATE's own typo1 technique alone) vs the same top-5k reference
+  typomania   : re-implementation of rustfoundation/typomania (port of TypoGard, Taylor et al. NSS 2020)
+  pypi-scan   : re-implementation of IQTLabs/pypi-scan (Levenshtein<=1, min length 5), top-50 and top-5k
   tracegate   : multi-technique TyposquatDetector (threshold sweep + ablation)
 
 Usage: python benchmarks/typosquat_eval.py [--ref 5000] [--out results/]
@@ -25,15 +27,18 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from tracegate.data import data_root, top_npm, top_pypi  # noqa: E402
+from tracegate.data import data_root, top_popular  # noqa: E402
 from tracegate.osv import iter_zip_records, mal_mentions_typosquat  # noqa: E402
 from tracegate.typosquat import TyposquatDetector, normalize  # noqa: E402
 from tracegate.warden import POPULAR, DifflibWarden  # noqa: E402
+
+PUBLISHED: dict[str, str] = {}  # normalised name -> earliest MAL `published` date (time split)
 
 
 def load_mal(zip_path: Path, eco: str) -> dict[str, bool]:
     """normalised name -> advisory text mentions typosquatting."""
     out: dict[str, bool] = {}
+    PUBLISHED.clear()
     for r in iter_zip_records(zip_path):
         if not r["id"].startswith("MAL-") or r.get("withdrawn"):
             continue
@@ -41,6 +46,9 @@ def load_mal(zip_path: Path, eco: str) -> dict[str, bool]:
             if a.get("package", {}).get("ecosystem") == eco:
                 n = normalize(a["package"]["name"])
                 out[n] = out.get(n, False) or mal_mentions_typosquat(r)
+                pub = (r.get("published") or "")[:10]
+                if pub and (n not in PUBLISHED or pub < PUBLISHED[n]):
+                    PUBLISHED[n] = pub
     return out
 
 
@@ -55,6 +63,11 @@ def evaluate(flag: dict[str, bool], pos: set[str], neg: set[str], typo_subset: s
     tp = sum(flag[n] for n in pos)
     fp = sum(flag[n] for n in neg)
     res = prf(tp, fp, len(pos) - tp, len(neg) - fp)
+    # precision at realistic base rates (the test set's class balance is artificial)
+    for prev in (0.01, 0.001):
+        r_, f_ = res["recall"], res["fpr"]
+        den = r_ * prev + f_ * (1 - prev)
+        res[f"precision_at_prev_{prev}"] = round(r_ * prev / den, 4) if den else 0.0
     res["recall_typo_labelled"] = round(sum(flag[n] for n in typo_subset) / max(1, len(typo_subset)), 4)
     return res
 
@@ -93,14 +106,21 @@ def bootstrap_ci(flags: dict[str, dict[str, bool]], pos: set[str], neg: set[str]
                                   for m, v in diffs.items()}}
 
 
-def run(eco: str, ref_n: int, neg_hi: int, out: Path) -> dict:
+# ecosystem -> (popularity list, reference size, negative band upper rank). NuGet's search API
+# caps at 4k names, so its bands are smaller; crates.io and RubyGems lists stop at 10k.
+ECOS = {"PyPI": ("pypi", 5000, 15000), "npm": ("npm", 5000, 15000), "RubyGems": ("rubygems", 5000, 10000),
+        "crates.io": ("crates", 5000, 10000), "NuGet": ("nuget", 1000, 4000)}
+POP_SOURCE = {"pypi": "hugovk/top-pypi-packages", "npm": "wooorm/npm-high-impact",
+              "rubygems": "packages.ecosyste.ms (rubygems.org, by downloads)",
+              "crates": "crates.io API (sort=downloads)", "nuget": "NuGet search API (totalDownloads)"}
+
+
+def run(eco: str, ref_n: int, neg_hi: int, out: Path, split: str = "hash", cutoff: str = "2025-01-01") -> dict:
     root = data_root()
-    if eco == "PyPI":
-        ranked = [normalize(n) for n in top_pypi()]
-        zip_path = root / "osv/PyPI-all.zip"
-    else:
-        ranked = [normalize(n) for n in top_npm()]
-        zip_path = root / "osv/npm-all.zip"
+    pop, d_ref, d_neg = ECOS[eco]
+    ref_n, neg_hi = ref_n or d_ref, neg_hi or d_neg
+    ranked = [normalize(n) for n in top_popular(pop)]
+    zip_path = root / f"osv/{eco}-all.zip"
     mal = load_mal(zip_path, eco)
     ref = ranked[:ref_n]
     known = set(ranked[:neg_hi])
@@ -109,8 +129,12 @@ def run(eco: str, ref_n: int, neg_hi: int, out: Path) -> dict:
     # deterministic 50/50 dev/test split: thresholds are tuned on dev, reported on test
     def is_test(n: str) -> bool:
         return int(hashlib.sha256(n.encode()).hexdigest(), 16) % 2 == 0
-    dev_pos, dev_neg = {n for n in pos if not is_test(n)}, {n for n in neg if not is_test(n)}
-    pos, neg = {n for n in pos if is_test(n)}, {n for n in neg if is_test(n)}
+    if split == "time":  # positives: tune on MAL records published before cutoff, report after
+        dev_pos = {n for n in pos if PUBLISHED.get(n, "0000") < cutoff}
+        pos = {n for n in pos if PUBLISHED.get(n, "0000") >= cutoff}
+    else:
+        dev_pos, pos = {n for n in pos if not is_test(n)}, {n for n in pos if is_test(n)}
+    dev_neg, neg = {n for n in neg if not is_test(n)}, {n for n in neg if is_test(n)}
     typo_subset = {n for n in pos if mal[n]}
     dev_typo = {n for n in dev_pos if mal[n]}
     names = sorted(pos | neg | dev_pos | dev_neg)
@@ -133,6 +157,16 @@ def run(eco: str, ref_n: int, neg_hi: int, out: Path) -> dict:
     flags_by["lev1 (top-5k)"] = flag
     results["lev1 (top-5k)"] = {**evaluate(flag, pos, neg, typo_subset),
                                 "ms_per_name": round(1000 * (time.perf_counter() - t0) / len(names), 4)}
+    # --- published detectors (re-implementations, see tracegate/baselines.py) --
+    from tracegate.baselines import PypiScan, Typomania
+    for label, det_ in (("typomania/TypoGard (top-5k)", Typomania(ref)),
+                        ("pypi-scan (top-50)", PypiScan(ranked[:50])),
+                        ("pypi-scan (top-5k)", PypiScan(ref))):
+        t0 = time.perf_counter()
+        flag = {n: det_.flag(n) for n in names}
+        flags_by[label] = flag
+        results[label] = {**evaluate(flag, pos, neg, typo_subset),
+                          "ms_per_name": round(1000 * (time.perf_counter() - t0) / len(names), 4)}
     # --- tracegate: full detector, threshold sweep --------------------------
     det = TyposquatDetector(ref)
     t0 = time.perf_counter()
@@ -171,16 +205,19 @@ def run(eco: str, ref_n: int, neg_hi: int, out: Path) -> dict:
                   if n in neg and m.score >= default_th), key=lambda x: -x[3])[:25]
     tps = sorted(((n, m.target, m.technique, m.score) for n, m in scored.items()
                   if n in pos and m.score >= default_th), key=lambda x: -x[3])[:25]
-    report = {"ecosystem": eco, "reference_size": len(ref), "split": "50/50 by sha256(name); numbers are TEST half",
+    split_desc = ("50/50 by sha256(name); numbers are TEST half" if split == "hash" else
+                  f"time split: positives published < {cutoff} tune, >= {cutoff} test (OSV `published`, "
+                  "dominated by bulk backfill days); negatives 50/50 by sha256(name)")
+    report = {"ecosystem": eco, "reference_size": len(ref), "split": split_desc,
               "chosen_threshold": default_th, "dev_positives": len(dev_pos), "dev_negatives": len(dev_neg),
               "positives": len(pos), "negatives": len(neg),
               "typo_labelled_positives": len(typo_subset), "results": results, "curve": curve,
               "bootstrap": bootstrap_ci(flags_by, pos, neg, "lev1 (top-5k)"),
               "ablation": ablation, "by_technique": by_tech, "examples_tp": tps, "examples_fp": fps,
               "sources": {"malicious": "OSV MAL-* (ossf/malicious-packages) via osv-vulnerabilities bulk dump",
-                          "popular": "hugovk/top-pypi-packages" if eco == "PyPI" else "wooorm/npm-high-impact"}}
+                          "popular": POP_SOURCE[pop]}}
     out.mkdir(parents=True, exist_ok=True)
-    (out / f"typosquat_{eco.lower()}.json").write_text(json.dumps(report, indent=1))
+    (out / f"typosquat_{eco.lower()}{'_time' if split == 'time' else ''}.json").write_text(json.dumps(report, indent=1))
     for k, v in results.items():
         print(f"  {k:26s} P={v['precision']:.3f} R={v['recall']:.3f} F1={v['f1']:.3f} "
               f"FPR={v['fpr']:.4f} R(typo-labelled)={v['recall_typo_labelled']:.3f} "
@@ -198,19 +235,30 @@ def plot(reports: list[dict], out: Path) -> None:
         return
     fig, ax = plt.subplots(figsize=(6, 4.2), dpi=120)
     colors = ["#2563eb", "#d97706"]
+    reports = [r for r in reports if r["ecosystem"] in ("PyPI", "npm")]
     for rep, c in zip(reports, colors):
         xs = [p["recall"] for p in rep["curve"]]
         ys = [p["precision"] for p in rep["curve"]]
         ax.plot(xs, ys, "-", color=c, label=f"tracegate ({rep['ecosystem']}) threshold sweep")
-        for name, marker in (("lev1 (top-5k)", "s"), ("mvp-difflib (14 names)", "x")):
-            r = rep["results"][name]
-            ax.plot(r["recall"], r["precision"], marker, color=c, markersize=8,
-                    label=f"{name.split(' ')[0]} ({rep['ecosystem']})")
+        labels = {"lev1 (top-5k)": ("s", "Damerau-1 (top-5k)"), "mvp-difflib (14 names)": ("x", "difflib (MVP, 14 names)"),
+                  "typomania/TypoGard (top-5k)": ("^", "typomania/TypoGard (top-5k)"),
+                  "pypi-scan (top-5k)": ("v", "pypi-scan (top-5k)")}
+        for name, (marker, lab) in labels.items():
+            if name in rep["results"]:
+                r = rep["results"][name]
+                ax.plot(r["recall"], r["precision"], marker, color=c, markersize=7, label=f"{lab} [{rep['ecosystem']}]")
+        for name, r in rep["results"].items():
+            if name.startswith("tracegate"):
+                ci = rep["bootstrap"]["ci"][name]["recall"]
+                ax.errorbar(r["recall"], r["precision"], xerr=[[r["recall"] - ci[0]], [ci[1] - r["recall"]]],
+                            fmt="o", color=c, markersize=6, capsize=3,
+                            label=f"TRACEGATE {name[len('tracegate '):]} [{rep['ecosystem']}]")
     ax.set_xlabel("recall (OSV MAL-* packages)")
-    ax.set_ylabel("precision (vs. legit ranks 5k-15k)")
+    ax.set_ylabel("precision at test-set class balance (not deployment)")
     ax.set_title("Typosquat detection on real malicious-package names")
     ax.grid(alpha=0.3)
-    ax.set_xlim(0, max(0.6, ax.get_xlim()[1]))
+    top = max(p["recall"] for rep in reports for p in rep["curve"])
+    ax.set_xlim(0, min(1.0, max(0.05, top * 1.2)))
     ax.set_ylim(0, 1.02)
     ax.legend(fontsize=7, loc="lower left")
     fig.tight_layout()
@@ -219,20 +267,25 @@ def plot(reports: list[dict], out: Path) -> None:
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--ref", type=int, default=5000)
-    ap.add_argument("--neg-hi", type=int, default=15000)
+    ap.add_argument("--ref", type=int, default=0, help="reference size (default per ecosystem, see ECOS)")
+    ap.add_argument("--neg-hi", type=int, default=0, help="negative band upper rank (default per ecosystem)")
     ap.add_argument("--out", default=str(Path(__file__).resolve().parents[1] / "results"))
-    ap.add_argument("--eco", nargs="*", default=["PyPI", "npm"])
+    ap.add_argument("--eco", nargs="*", default=["PyPI", "npm"], choices=list(ECOS))
+    ap.add_argument("--split", choices=["hash", "time"], default="hash")
+    ap.add_argument("--cutoff", default="2025-01-01")
+    ap.add_argument("--no-plot", action="store_true")
     a = ap.parse_args()
     out = Path(a.out)
     reps = []
     for eco in a.eco:
-        need = "osv/PyPI-all.zip" if eco == "PyPI" else "osv/npm-all.zip"
-        if not (data_root() / need).exists():
-            print(f"skip {eco}: {need} missing (run scripts/download_data.py osv)")
+        need = f"osv/{eco}-all.zip"
+        pop_file = {"pypi": "top-pypi-packages.min.json", "npm": "npm-high-impact-top.js"}.get(
+            ECOS[eco][0], f"{ECOS[eco][0]}-top.json")
+        if not (data_root() / need).exists() or not (data_root() / "popular" / pop_file).exists():
+            print(f"skip {eco}: {need} or popular/{pop_file} missing (run scripts/download_data.py)")
             continue
-        reps.append(run(eco, a.ref, a.neg_hi, out))
-    if reps:
+        reps.append(run(eco, a.ref, a.neg_hi, out, a.split, a.cutoff))
+    if reps and a.split == "hash" and not a.no_plot and {r["ecosystem"] for r in reps} >= {"PyPI", "npm"}:
         plot(reps, out)
 
 

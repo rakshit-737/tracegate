@@ -8,7 +8,7 @@
 - **Reachability triage.** A critical CVE in a package the app never imports or loads is downgraded from block to warn, with the evidence attached.
 - **Fail closed.** The gate blocks on an unsigned, forged or tampered attestation, and on a missing required stage.
 
-[Try the static demo](demo/){ .md-button .md-button--primary } [Getting started](getting-started.md){ .md-button } [Results](benchmarks.md){ .md-button }
+[Try the static demo](demo/index.html){ .md-button .md-button--primary } [Getting started](getting-started.md){ .md-button } [Evaluation](evaluation.md){ .md-button }
 
 ## At a glance
 

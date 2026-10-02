@@ -18,6 +18,7 @@ theme:
       toggle: {icon: material/weather-sunny, name: Light mode}
 markdown_extensions:
   - admonition
+  - pymdownx.magiclink
   - attr_list
   - tables
   - toc: {permalink: true}
@@ -37,10 +38,13 @@ plugins:
                     show_if_no_docstring: true}
 nav:
   - Home: index.md
+  - Live demo: demo/index.html
+  - How it works: how-it-works.md
   - Getting started: getting-started.md
+  - Evaluation: evaluation.md
+  - Reproduce: reproduce.md
   - Architecture: architecture.md
   - Datasets: datasets.md
-  - Benchmarks: benchmarks.md
   - CLI & API reference: reference.md
   - Threat model: threat-model.md
   - Security: security.md
@@ -54,4 +58,3 @@ nav:
       - adr/0006-version-aware-malicious-package-matching.md
   - Changelog: changelog.md
   - Limitations & roadmap: limitations.md
-  - Live demo: demo/index.html

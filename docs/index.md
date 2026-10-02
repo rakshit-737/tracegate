@@ -18,7 +18,8 @@
 
 | Result | Value |
 | --- | --- |
-| Backtrack agreement with `git blame`, 3,205 pairs, 11 repos | 88.8% [Wilson 87.7-89.8, ignores clustering]; Cargo 95.0% vs 54.7% and npm 83.9% vs 70.6% for exact-pin `git log -S`; pip and Go tie near 100% |
+| Backtrack agreement with `git blame`, 3,203 pairs, 11 repos | 88.8% [Wilson 87.7-89.8, ignores clustering]; Cargo 95.0% vs 54.7% and npm 83.9% vs 70.6% for exact-pin `git log -S`; on pip and Go the pickaxe is slightly better (100% vs 97.8% / 99.7%); repo-clustered bootstrap 79.0-97.5 |
+| Backtrack vs an independent oracle (231 bot single-package bumps, later snapshots) | 100% (blame 94.8%, exact-pin `git log -S` 85.3%) |
 | High/critical findings left actionable after reachability | -5.7% (each snapshot against its own sources); the remaining downgrades are unaudited |
 | Typosquat F1, PyPI | 0.133 dev-tuned / 0.153 FPR-matched vs 0.147 Damerau-1, 0.125 and 0.112 for our ports of typomania/TypoGard and pypi-scan (low recall for all) |
 | Signing and admission | keyless Sigstore signing with Rekor checks in CI; kind cluster admits only the signed image |

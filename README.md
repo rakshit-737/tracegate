@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 ![Core deps](https://img.shields.io/badge/core%20deps-stdlib%20only-lightgrey)
 
-**TRACEGATE attributes every scanner finding to the commit and PR that introduced the vulnerable version by version-aware diffing of lock-file history, inside a fail-closed, signature-verified CI gate. Across 11 repos and 4 ecosystems it agrees with `git blame` on 88.8% of findings, and on Cargo and npm lock files it is far closer to blame than an exact-pin `git log -S` pickaxe (Cargo 95.0% vs 54.7%, npm 83.9% vs 70.6%); on pip and Go the pickaxe ties blame.** ([Evaluation](https://rakshit-737.github.io/tracegate/evaluation/))
+**TRACEGATE attributes every scanner finding to the commit and PR that introduced the vulnerable version by version-aware diffing of lock-file history, inside a fail-closed, signature-verified CI gate. Across 11 repos and 4 ecosystems it agrees with `git blame` on 88.8% of findings (agreement, not correctness: blame shares the pin parser); against an independent oracle of 231 single-package bot bumps re-checked at later snapshots it is right on all 231 vs 94.8% for blame, and on Cargo and npm lock files it is far closer to blame than an exact-pin `git log -S` pickaxe (Cargo 95.0% vs 54.7%, npm 83.9% vs 70.6%); on pip and Go the one-line pickaxe matches blame exactly and slightly outperforms TRACEGATE (TRACEGATE 97.8% / 99.7%).** ([Evaluation](https://rakshit-737.github.io/tracegate/evaluation/))
 
 [![Lineage explorer: cve-origin scenario after backtracking CVE-2020-14343](docs/img/demo.png)](https://rakshit-737.github.io/tracegate/demo/)
 
@@ -45,10 +45,11 @@ All numbers come from the committed runs in [`results/`](results/), produced by 
 
 | Question | Data | TRACEGATE | Baselines |
 | --- | --- | --- | --- |
-| Finding -> introducing commit (agreement with `git blame --first-parent`) | 3,205 vulnerable pin-snapshot pairs, 132 snapshots of 11 repos, 4 ecosystems | **88.8%** [Wilson 87.7-89.8, treats correlated pairs as independent; per-repo range 62-100%] | exact-pin `git log -S`: 74.5%; last manifest commit: 14.3%; first pickaxe mention: 14.9% |
-| ... per ecosystem | pip 364 / Go 328 / Cargo 483 / npm 2,030 pairs | 97.8% / 99.7% / **95.0%** / **83.9%** | exact-pin `git log -S`: 100% / 100% / 54.7% / 70.6% |
-| Reachability: high/critical findings left actionable | 895 high+ OSV findings, 36 snapshots of 3 Python repos, each analysed against its own sources | 844 (**-5.7%**); the 51 downgrades are not audited, so the false-unreached rate is unmeasured | 895 (raw scanner output) |
-| Typosquat, PyPI (hash split, test half) | 5,964 OSV `MAL-*` names vs 4,973 packages ranked 5k-15k | F1 0.133 at the dev-tuned default (FPR 1.7%); 0.153 at FPR 3.2% with the threshold matched to Damerau-1's FPR on the dev half (paired F1 vs Damerau-1: +0.007 [+0.002, +0.011]) | Damerau-1 0.147; our port of typomania/TypoGard 0.125; our port of pypi-scan 0.112 |
+| Finding -> introducing commit (agreement with `git blame --first-parent`) | 3,203 vulnerable pin-snapshot pairs, 132 snapshots of 11 repos, 4 ecosystems | **88.8%** [Wilson 87.7-89.8; repo-clustered bootstrap 79.0-97.5; per-repo range 62-100%] | exact-pin `git log -S`: 74.5%; last manifest commit: 14.3%; first pickaxe mention: 14.9% |
+| ... per ecosystem | pip 362 / Go 328 / Cargo 483 / npm 2,030 pairs | 97.8% / 99.7% / **95.0%** / **83.9%** | exact-pin `git log -S`: 100% / 100% / 54.7% / 70.6% |
+| Finding -> introducing commit, **independent oracle** (bot single-package bumps, label from the commit subject, not from the parser or blame) | 243 bumps in 10 repos, scored at the bump and at the last later snapshot still pinning it | **231/231** at later snapshots (100%) | `git blame` 219/231 (94.8%); exact-pin `git log -S` 197/231 (85.3%) |
+| Reachability: high/critical findings left actionable | 887 high+ OSV findings, 36 snapshots of 3 Python repos, each analysed against its own sources | 836 (**-5.7%**); the 51 downgrades are not audited, so the false-unreached rate is unmeasured | 887 (raw scanner output) |
+| Typosquat, PyPI (hash split, test half) | 5,964 OSV `MAL-*` names vs 4,973 packages ranked 5k-15k | F1 0.133 at the dev-tuned default (FPR 1.7%); 0.153 at FPR 3.2% with the threshold matched to Damerau-1's FPR on the dev half (paired F1 vs Damerau-1: +0.007 [+0.002, +0.011]) | Damerau-1 0.147; typomania/TypoGard 0.125 (port matches the original typomania's flags on 100% of test names; original TypoGard script 0.121); our port of pypi-scan 0.112 |
 | Keyless signing | wheel + sdist of this repo | signed with GitHub OIDC, verified, Rekor entries checked ([evidence](results/sigstore_evidence.json)) | - |
 | Admission | kind cluster, 3 images | signed image Running; unsigned image denied by cosign; a cosign-valid image whose signed provenance lacks build/scan stages denied by the TRACEGATE gate ([decisions](results/kind_admission.json)) | cosign alone would admit the third image |
 | Gate latency (median per repo) | real lineage graphs | 6-62 ms (pip), 36-110 ms (Cargo), 99-440 ms (npm), 290 ms (Go); max 893 ms | - |
@@ -230,9 +231,9 @@ Evaluation design, including the splits, ground truth and why download counts ar
 | Sigstore / SLSA / in-toto | attestation formats and verification | emits DSSE + in-toto SLSA statements; its contribution is the queryable graph on top |
 | GUAC (OpenSSF) | supply-chain metadata graph | GUAC is a large multi-service aggregator; TRACEGATE is a stdlib-only CI gate with deterministic verdicts and commit-level backtracking |
 | Snyk / GitHub Advanced Security | commercial suites | open source, and gives one graph you can query across stages |
-| typomania / TypoGard (Taylor et al., NSS 2020), pypi-scan | name similarity | our ports (not validated against the original code) benchmarked on the same splits (see Evaluation) |
+| typomania / TypoGard (Taylor et al., NSS 2020), pypi-scan | name similarity | original typomania and TypoGard code run on the same splits in CI (port agreement 98.99-100%); pypi-scan is our port (see Evaluation) |
 
-SBOMs, scanning and attestation formats are not novel. The contribution is retroactive, version-aware attribution of findings to introducing commits on lock-file history (measured against `git blame`, it beats an exact-pin pickaxe on Cargo and npm locks and ties it on pip and Go), delivered inside a fail-closed, signed gate. Cross-tool identity, reachability and typosquat scoring are supporting components.
+SBOMs, scanning and attestation formats are not novel. The contribution is retroactive, version-aware attribution of findings to introducing commits on lock-file history (measured as agreement with `git blame`, not correctness: it beats an exact-pin pickaxe on Cargo and npm locks, and the pickaxe is slightly better on pip and Go), delivered inside a fail-closed, signed gate. Cross-tool identity, reachability and typosquat scoring are supporting components.
 
 ## Limitations
 

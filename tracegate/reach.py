@@ -32,7 +32,7 @@ from .ids import normalize_name
 KNOWN_IMPORTS: dict[str, list[str]] = {
     "pyyaml": ["yaml"], "pillow": ["PIL"], "beautifulsoup4": ["bs4"], "python-dateutil": ["dateutil"],
     "pyjwt": ["jwt"], "psycopg2-binary": ["psycopg2"], "psycopg-binary": ["psycopg"], "psycopg-c": ["psycopg"],
-    "psycopg-pool": ["psycopg_pool"], "pycryptodome": ["Crypto"], "pycryptodomex": ["Cryptodome"],
+    "psycopg-pool": ["psycopg_pool"], "pycryptodome": ["Crypto"], "pycrypto": ["Crypto"], "pycryptodomex": ["Cryptodome"],
     "scikit-learn": ["sklearn"], "opencv-python": ["cv2"], "protobuf": ["google.protobuf", "google"],
     "google-cloud-storage": ["google.cloud.storage"], "google-auth": ["google.auth"],
     "google-api-core": ["google.api_core"], "googleapis-common-protos": ["google.api", "google.rpc"],
@@ -70,7 +70,32 @@ IMPLIED_BY_MODULE: dict[str, tuple[str, ...]] = {
     "zoneinfo": ("tzdata",),
     "redis": ("hiredis",),                             # redis-py auto-selects the hiredis parser
     "requests": ("urllib3", "idna", "certifi", "charset-normalizer"),
+    # library install_requires that `# via` annotations miss on older, un-annotated manifests
+    "paramiko": ("ecdsa", "pycrypto", "pycryptodome", "cryptography", "bcrypt", "pynacl", "pyasn1"),
+    "ncclient": ("lxml", "paramiko", "six"),
+    "readme_renderer": ("bleach", "docutils", "pygments"),
+    "alembic": ("mako", "sqlalchemy"),
+    "rsa": ("pyasn1",),
 }
+# Source tokens that make a framework load a package lazily: token -> dists.
+IMPLIED_BY_TOKEN: dict[str, tuple[str, ...]] = {
+    "ImageField": ("pillow",),   # Django validates ImageField uploads with Pillow
+}
+
+
+def _token_hits(src_dirs: list[Path]) -> set[str]:
+    hits: set[str] = set()
+    for d in src_dirs:
+        files = [d] if d.is_file() else (d.rglob("*.py") if d.is_dir() else [])
+        for p in files:
+            try:
+                txt = p.read_text(encoding="utf-8", errors="replace")
+            except OSError:
+                continue
+            hits |= {t for t in IMPLIED_BY_TOKEN if t in txt}
+            if len(hits) == len(IMPLIED_BY_TOKEN):
+                return hits
+    return hits
 ENTRYPOINT_FILES = ("Dockerfile", "Procfile", "*.sh", "*.ini", "*.cfg", "*.toml", "*.yml", "*.yaml",
                     "*.conf", "gunicorn*.py", "uwsgi*")
 _DOTTED = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)+$")
@@ -212,8 +237,13 @@ def static_reachability(pins: dict[str, str], src_dirs: list[Path], repo: Path,
                     rep.status[dist], rep.evidence[dist] = "transitive", f"required by reachable {sorted(parents)[0]}"
                     changed = True
 
+    for tok in _token_hits(src_dirs):
+        for d in IMPLIED_BY_TOKEN[tok]:
+            if d in pins and d not in rep.status:
+                rep.status[d], rep.evidence[d] = "transitive", f"loaded lazily for '{tok}' in app sources"
     for prefix, dists in IMPLIED_BY_MODULE.items():
-        if prefix in mods:
+        if prefix in mods or any(m in mods for m in import_names(prefix)) or (
+                prefix in rep.status and rep.status[prefix] != "unreached"):
             for d in dists:
                 if d in pins and d not in rep.status:
                     rep.status[d], rep.evidence[d] = "transitive", f"loaded implicitly by '{prefix}'"

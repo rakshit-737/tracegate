@@ -16,7 +16,9 @@ Baselines for attribution:
                          (what you get from "git log -1 -- requirements.txt")
   pickaxe-first        : oldest commit whose manifest diff mentions the package
                          (git log -G; finds when the *package* arrived, not the version)
-  scanner-only         : Trivy/OSV output alone carries no commit -> 0 %
+  pickaxe-exact-pin    : `git log --first-parent -1 -S'<exact pin line>' <snapshot> -- manifest`,
+                         the strongest one-liner a practitioner would write (near-identical to blame)
+  scanner-only         : Trivy/OSV output alone carries no commit -> n/a (not measured)
 
 At HEAD, static reachability (tracegate.reach) is applied to measure how much
 it shrinks the actionable (HIGH/CRITICAL) alert list.
@@ -50,7 +52,7 @@ from tracegate.gitlineage import (  # noqa: E402
 )
 from tracegate.ids import normalize_name, purl  # noqa: E402
 from tracegate.ingest import syft_json_to_build, trivy_json_to_scan  # noqa: E402
-from tracegate.lockfiles import ecosystem_for  # noqa: E402
+from tracegate.lockfiles import ecosystem_for, pin_lines  # noqa: E402
 from tracegate.models import Severity, StageEvent  # noqa: E402
 from tracegate.osv import OsvIndex  # noqa: E402
 from tracegate.policy import evaluate  # noqa: E402
@@ -115,7 +117,8 @@ def eval_repo(name: str, osvs: dict[str, OsvIndex], n_snap: int, warden,
         return None
     idx = sorted({round(i * (len(hist) - 1) / max(1, n_snap - 1)) for i in range(n_snap)})
     signer, verifier = HmacSigner("bench", KEY), Verifier({"bench": KEY})
-    rows = {"tracegate": [0, 0], "last-manifest-commit": [0, 0], "pickaxe-first": [0, 0]}
+    rows = {"tracegate": [0, 0], "last-manifest-commit": [0, 0], "pickaxe-first": [0, 0],
+            "pickaxe-exact-pin": [0, 0]}
     disagreements, gate_ms, per_snapshot, reach_rows = [], [], [], []
     pick_cache: dict[str, str | None] = {}
     strings: set[str] = set()
@@ -142,6 +145,8 @@ def eval_repo(name: str, osvs: dict[str, OsvIndex], n_snap: int, warden,
         vuln_pkgs = sorted({key(res.graph.nodes[f.node_id].attrs["name"])
                             for f in res.graph.findings if f.source in ("osv", "trivy")})
         n_ok = 0
+        snap_lines = _git(repo, "show", f"{mc.sha}:{mc.path or manifest}").splitlines()
+        line_of = {key(n): v[1] for n, v in pin_lines(mc.path or manifest, chr(10).join(snap_lines)).items()}
         for pkg in vuln_pkgs:
             if pkg not in truth:
                 continue
@@ -164,10 +169,16 @@ def eval_repo(name: str, osvs: dict[str, OsvIndex], n_snap: int, warden,
             pk = pick_cache[pkg]
             rows["pickaxe-first"][0] += pk == want
             rows["pickaxe-first"][1] += 1
+            li = line_of.get(pkg)
+            tok = snap_lines[li].strip() if li is not None and li < len(snap_lines) else ""
+            ex = _git(repo, "log", "--first-parent", "-1", "--format=%H", f"-S{tok}", mc.sha, "--",
+                      mc.path or manifest).strip() if tok else ""
+            rows["pickaxe-exact-pin"][0] += ex == want
+            rows["pickaxe-exact-pin"][1] += 1
         per_snapshot.append({"sha": mc.sha[:10], "date": time.strftime("%Y-%m-%d", time.gmtime(mc.timestamp)),
                              "pins": len(pins), "vulnerable_pkgs": len(vuln_pkgs),
                              "findings": sum(f.source in ("osv", "trivy") for f in res.graph.findings),
-                             "backtrack_correct": n_ok, "verdict": dec.verdict.value,
+                             "backtrack_correct": n_ok, "verdict": dec.verdict.value, "coverage": round(res.coverage, 3),
                              "graph": res.graph.stats()})
         if not reach_on:
             per_snapshot[-1]["warden_flags"] = [f.title for f in res.graph.findings if f.source == "warden"]
@@ -211,7 +222,8 @@ def eval_repo(name: str, osvs: dict[str, OsvIndex], n_snap: int, warden,
             }
     acc = {k: {"correct": v[0], "total": v[1], "accuracy": round(v[0] / v[1], 4) if v[1] else None}
            for k, v in rows.items()}
-    acc["scanner-only"] = {"correct": 0, "total": rows["tracegate"][1], "accuracy": 0.0}
+    acc["scanner-only"] = {"correct": None, "total": rows["tracegate"][1], "accuracy": None,
+                           "note": "n/a: scanner output carries no commit"}
     out = {"repo": name, "manifest": manifest, "ecosystem": eco, "manifest_commits": len(hist), "snapshots": len(idx),
            "history_walk_s": round(t_hist, 2), "gate_ms_median": round(statistics.median(gate_ms), 1),
            "gate_ms_max": round(max(gate_ms), 1), "attribution": acc, "disagreements": disagreements,
@@ -219,7 +231,9 @@ def eval_repo(name: str, osvs: dict[str, OsvIndex], n_snap: int, warden,
            "reachability": {"high_plus_total": sum(r[0] for r in reach_rows),
                             "actionable_total": sum(r[1] for r in reach_rows),
                             "downgraded_examples": sorted({x for r in reach_rows for x in r[2]})[:20],
-                            "note": "historical snapshots analysed against HEAD sources"}
+                            "note": ("each snapshot analysed against its own materialized sources"
+                                     if per_snapshot_sources else
+                                     "historical snapshots analysed against HEAD sources")}
            if reach_on else None}
     print(f"[{name}] commits={len(hist)} snapshots={len(idx)} " +
           " ".join(f"{k}={v['accuracy']}" for k, v in acc.items()) +
@@ -227,6 +241,17 @@ def eval_repo(name: str, osvs: dict[str, OsvIndex], n_snap: int, warden,
                                                   f"->actionable={out['reachability']['actionable_total']}"
                                                   if reach_on else ""))
     return out
+
+
+def wilson(c: int, n: int, z: float = 1.96) -> list[float] | None:
+    """Wilson score 95% interval (ignores clustering of pins within repos)."""
+    if not n:
+        return None
+    p = c / n
+    d = 1 + z * z / n
+    m = (p + z * z / (2 * n)) / d
+    h = z * ((p * (1 - p) / n + z * z / (4 * n * n)) ** 0.5) / d
+    return [round(m - h, 4), round(m + h, 4)]
 
 
 def main() -> None:
@@ -255,12 +280,17 @@ def main() -> None:
     tot = {}
     for r in results:
         for k, v in r["attribution"].items():
+            if v["correct"] is None:
+                continue
             c, t = tot.get(k, (0, 0))
             tot[k] = (c + v["correct"], t + v["total"])
-    summary = {k: {"correct": c, "total": t, "accuracy": round(c / t, 4) if t else None} for k, (c, t) in tot.items()}
+    summary = {k: {"correct": c, "total": t, "accuracy": round(c / t, 4) if t else None,
+                   "wilson95": wilson(c, t)} for k, (c, t) in tot.items()}
     by_eco: dict[str, dict] = {}
     for r in results:
         for k, v in r["attribution"].items():
+            if v["correct"] is None:
+                continue
             e = by_eco.setdefault(r["ecosystem"], {}).setdefault(k, [0, 0])
             e[0] += v["correct"]
             e[1] += v["total"]
@@ -269,6 +299,8 @@ def main() -> None:
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
     (out / ("lineage_real_repos_materialized.json" if a.materialize else "lineage_real_repos.json")).write_text(json.dumps({"summary": summary, "summary_by_ecosystem": summary_by_eco,
+                                "mode": "materialized per-snapshot sources" if a.materialize else "HEAD sources",
+                                "materialize": a.materialize,
                                 "repos": results}, indent=1))
     print("TOTAL", json.dumps(summary))
 

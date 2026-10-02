@@ -28,6 +28,6 @@
 | Sigstore / SLSA / in-toto | attestation formats and verification | emits DSSE + in-toto SLSA statements; its contribution is the queryable graph on top |
 | GUAC (OpenSSF) | supply-chain metadata graph | GUAC is a large multi-service aggregator; TRACEGATE is a stdlib-only CI gate with deterministic verdicts and commit-level backtracking |
 | Snyk / GitHub Advanced Security | commercial suites | open source, and gives one graph you can query across stages |
-| typomania / TypoGard (Taylor et al., NSS 2020), pypi-scan | name similarity | re-implemented and benchmarked on the same splits (see Evaluation) |
+| typomania / TypoGard (Taylor et al., NSS 2020), pypi-scan | name similarity | our ports (not validated against the original code) benchmarked on the same splits (see Evaluation) |
 
 SBOMs, scanning and attestation formats are not novel. The contribution is the integration: canonical cross-tool identity, finding -> commit backtracking evaluated against git blame, and reachability-aware, fail-closed gating.

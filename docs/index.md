@@ -1,6 +1,6 @@
 # TRACEGATE
 
-**TRACEGATE attributes every scanner finding to the commit and PR that introduced the vulnerable version by version-aware diffing of lock-file history, inside a fail-closed, signature-verified CI gate: 88.8% agreement with `git blame` across 11 repos and 4 ecosystems, and 95.0% vs 54.7% for an exact-pin `git log -S` on Cargo lock files.** [Evaluation](evaluation.md)
+**TRACEGATE attributes every scanner finding to the commit and PR that introduced the vulnerable version by version-aware diffing of lock-file history, inside a fail-closed, signature-verified CI gate: 88.8% agreement with `git blame` across 11 repos and 4 ecosystems; on Cargo and npm lock files it is far closer to blame than an exact-pin `git log -S` pickaxe (95.0% vs 54.7%, 83.9% vs 70.6%), and on pip and Go the pickaxe ties.** [Evaluation](evaluation.md)
 
 [![Lineage explorer after backtracking CVE-2020-14343](img/demo.png)](demo/index.html)
 
@@ -18,9 +18,9 @@
 
 | Result | Value |
 | --- | --- |
-| Backtrack agreement with `git blame`, 3,205 pairs, 11 repos | 88.8% [87.7-89.8]; Cargo 95.0% vs 54.7% and npm 83.9% vs 70.6% for exact-pin `git log -S`; pip and Go tie near 100% |
-| High/critical findings left actionable after reachability | -10.2% (HEAD sources), -5.7% (per-snapshot sources), after an audit that removed false "unreached" cases |
-| Typosquat F1, PyPI | 0.153 vs 0.147 Damerau-1, 0.125 typomania/TypoGard, 0.112 pypi-scan (low recall for all) |
+| Backtrack agreement with `git blame`, 3,205 pairs, 11 repos | 88.8% [Wilson 87.7-89.8, ignores clustering]; Cargo 95.0% vs 54.7% and npm 83.9% vs 70.6% for exact-pin `git log -S`; pip and Go tie near 100% |
+| High/critical findings left actionable after reachability | -5.7% (each snapshot against its own sources); the remaining downgrades are unaudited |
+| Typosquat F1, PyPI | 0.133 dev-tuned / 0.153 FPR-matched vs 0.147 Damerau-1, 0.125 and 0.112 for our ports of typomania/TypoGard and pypi-scan (low recall for all) |
 | Signing and admission | keyless Sigstore signing with Rekor checks in CI; kind cluster admits only the signed image |
 
 ## At a glance

@@ -3,6 +3,7 @@
  "reference_size": 1000,
  "split": "50/50 by sha256(name); numbers are TEST half",
  "chosen_threshold": 0.56,
+ "fpr_matching": "dev split: lowest threshold with dev FPR <= lev1 dev FPR",
  "dev_positives": 404,
  "dev_negatives": 1491,
  "positives": 377,

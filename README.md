@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 ![Core deps](https://img.shields.io/badge/core%20deps-stdlib%20only-lightgrey)
 
-**TRACEGATE attributes every scanner finding to the commit and PR that introduced the vulnerable version by version-aware diffing of lock-file history, inside a fail-closed, signature-verified CI gate: 88.8% agreement with `git blame` across 11 repos and 4 ecosystems, and 95.0% vs 54.7% for an exact-pin `git log -S` on Cargo lock files, where line-based attribution breaks.** ([Evaluation](https://rakshit-737.github.io/tracegate/evaluation/))
+**TRACEGATE attributes every scanner finding to the commit and PR that introduced the vulnerable version by version-aware diffing of lock-file history, inside a fail-closed, signature-verified CI gate. Across 11 repos and 4 ecosystems it agrees with `git blame` on 88.8% of findings, and on Cargo and npm lock files it is far closer to blame than an exact-pin `git log -S` pickaxe (Cargo 95.0% vs 54.7%, npm 83.9% vs 70.6%); on pip and Go the pickaxe ties blame.** ([Evaluation](https://rakshit-737.github.io/tracegate/evaluation/))
 
 [![Lineage explorer: cve-origin scenario after backtracking CVE-2020-14343](docs/img/demo.png)](https://rakshit-737.github.io/tracegate/demo/)
 
@@ -15,19 +15,19 @@
 ## Try it in 60 seconds
 
 1. **Zero install:** open the [live demo](https://rakshit-737.github.io/tracegate/demo/). The `cve-origin` scenario loads with a BLOCK verdict; type `CVE-2020-14343` and press Enter to see the origin story (PR #42) and the blast radius.
-2. **Release wheel** (do not `pip install tracegate`: that PyPI name belongs to an unrelated project):
+2. **From source** (the fail-closed gate and `--demo` are on `main` and not yet in a release; do not `pip install tracegate`: that PyPI name belongs to an unrelated project):
 
    ```bash
    python -m venv .venv && . .venv/bin/activate
-   pip install https://github.com/rakshit-737/tracegate/releases/download/v1.0.0/tracegate-1.0.0-py3-none-any.whl
+   pip install "git+https://github.com/rakshit-737/tracegate@main"
    tracegate demo                                      # six scenarios, about 2 seconds
    tracegate synth cve-origin ev.json
    tracegate --demo backtrack ev.json CVE-2020-14343   # "introduced_by": {"pr": 42, ...}
    tracegate --demo gate ev.json --comment             # "## TRACEGATE: BLOCK", exit 1
    ```
 
-   `--demo` trusts the public demo key (the next release; v1.0.0 trusts it implicitly). Without a configured key the gate refuses to run (exit 2).
-3. **Container:** `docker run --rm -p 127.0.0.1:8080:8080 ghcr.io/rakshit-737/tracegate:1.0.0`, then open http://127.0.0.1:8080 and run a scenario.
+   `--demo` (accepted before or after the subcommand) trusts the public demo key. Without a configured key the gate refuses to run (exit 2). The v1.0.0 release wheel predates both: it has no `--demo` flag and trusts the demo key implicitly, so do not use it for a real gate.
+3. **Container (build from source):** `docker build -t tracegate . && docker run --rm -p 127.0.0.1:8080:8080 tracegate`, then open http://127.0.0.1:8080 and run a scenario. The published `ghcr.io/rakshit-737/tracegate:1.0.0` image is the older fail-open build.
 
 **TRACEGATE is a provenance-aware CI/CD security gate.** It merges real Syft SBOMs, Trivy scans, git history and OSV data into one signed, content-addressed provenance graph. It can then answer the question most scanners leave open: *which commit, and which PR, put this CVE in production, and what else inherits it?*
 
@@ -45,10 +45,10 @@ All numbers come from the committed runs in [`results/`](results/), produced by 
 
 | Question | Data | TRACEGATE | Baselines |
 | --- | --- | --- | --- |
-| Finding -> introducing commit (agreement with `git blame --first-parent`) | 3,205 vulnerable pin-snapshot pairs, 132 snapshots of 11 repos, 4 ecosystems | **88.8%** [95% CI 87.7-89.8] | exact-pin `git log -S`: 74.5%; last manifest commit: 14.3%; first pickaxe mention: 14.9% |
+| Finding -> introducing commit (agreement with `git blame --first-parent`) | 3,205 vulnerable pin-snapshot pairs, 132 snapshots of 11 repos, 4 ecosystems | **88.8%** [Wilson 87.7-89.8, treats correlated pairs as independent; per-repo range 62-100%] | exact-pin `git log -S`: 74.5%; last manifest commit: 14.3%; first pickaxe mention: 14.9% |
 | ... per ecosystem | pip 364 / Go 328 / Cargo 483 / npm 2,030 pairs | 97.8% / 99.7% / **95.0%** / **83.9%** | exact-pin `git log -S`: 100% / 100% / 54.7% / 70.6% |
-| Reachability: high/critical findings left actionable | 895 high+ OSV findings, 36 snapshots of 3 Python repos | 804 (**-10.2%**) with HEAD sources; 844 (**-5.7%**) with each snapshot's own sources | 895 (raw scanner output) |
-| Typosquat, PyPI (hash split, test half) | 5,964 OSV `MAL-*` names vs 4,973 packages ranked 5k-15k | F1 0.153 at FPR 3.2% (paired F1 vs Damerau-1: +0.007 [+0.002, +0.011]) | Damerau-1 0.147; typomania/TypoGard 0.125; pypi-scan 0.112 |
+| Reachability: high/critical findings left actionable | 895 high+ OSV findings, 36 snapshots of 3 Python repos, each analysed against its own sources | 844 (**-5.7%**); the 51 downgrades are not audited, so the false-unreached rate is unmeasured | 895 (raw scanner output) |
+| Typosquat, PyPI (hash split, test half) | 5,964 OSV `MAL-*` names vs 4,973 packages ranked 5k-15k | F1 0.133 at the dev-tuned default (FPR 1.7%); 0.153 at FPR 3.2% with the threshold matched to Damerau-1's FPR on the dev half (paired F1 vs Damerau-1: +0.007 [+0.002, +0.011]) | Damerau-1 0.147; our port of typomania/TypoGard 0.125; our port of pypi-scan 0.112 |
 | Keyless signing | wheel + sdist of this repo | signed with GitHub OIDC, verified, Rekor entries checked ([evidence](results/sigstore_evidence.json)) | - |
 | Admission | kind cluster, 2 images | signed image Running, unsigned denied ([decisions](results/kind_admission.json)) | - |
 | Gate latency (median per repo) | real lineage graphs | 6-62 ms (pip), 36-110 ms (Cargo), 99-440 ms (npm), 290 ms (Go); max 893 ms | - |
@@ -56,8 +56,8 @@ All numbers come from the committed runs in [`results/`](results/), produced by 
 What the numbers mean, stated plainly:
 
 - **On pip and Go manifests, backtracking is not better than a one-line `git log -S` on the exact pin line** (both near 100%; blame and pickaxe are nearly the same algorithm). TRACEGATE's version-aware diff only wins on **lock files whose lines get rewritten without a version change**: Cargo.lock (95.0% vs 54.7%) and npm/yarn/pnpm locks (83.9% vs 70.6%). It is weakest on vue-core (62%) and mastodon (78%), where one package name carries several versions and the parsers keep only one (a known limitation). The ground truth is line blame, so on rewritten lines it is itself debatable.
-- **The reachability reduction shrank after an audit.** Earlier runs reported -15.1% / -25.8%; most of those "unreached" packages were in fact loaded (pycrypto via `Crypto`, paramiko's and ncclient's dependencies, Pillow via Django `ImageField`). With those rules fixed and newer OSV data the reduction is -10.2% (HEAD sources) and -5.7% (per-snapshot sources). There is still no exploitability ground truth.
-- **Typosquat recall is low for every detector** (most `MAL-*` names are spam or dependency confusion). The test sets are mostly malicious (PyPI 55%, npm 96%), so precision there is not deployment precision: at a 1% base rate TRACEGATE's precision would be about 3-4%. On a time split (tune before 2025, test after) every PyPI detector roughly halves (TRACEGATE F1 0.083 vs Damerau-1 0.066). On RubyGems, crates.io and NuGet no name-similarity detector is useful.
+- **The reachability reduction is small and unaudited.** Earlier runs reported -15.1% / -25.8%; an audit showed most of those "unreached" packages were loaded (pycrypto via `Crypto`, paramiko, Pillow via Django `ImageField`). A mode that judged historical pins against today's sources still downgraded some of those same packages (pycrypto and paramiko in netbox, requests in healthchecks), so it is no longer reported. The remaining figure, -5.7%, analyses each snapshot against its own sources; its 51 downgrades (mostly transitive packages in warehouse: rsa, pyasn1, cbor2, pygments, pyyaml) have not been checked by hand, so the false-unreached rate is unknown and the figure is an upper bound on useful triage. There is no exploitability ground truth.
+- **Typosquat recall is low for every detector** (most `MAL-*` names are spam or dependency confusion). The test sets are mostly malicious (PyPI 55%, npm 96%), so precision there is not deployment precision: at a 1% base rate TRACEGATE's precision would be about 3-4%. On a time split (tune before 2025, test after) every PyPI detector roughly halves (TRACEGATE F1 0.059 at the dev-tuned default, 0.083 FPR-matched, vs Damerau-1 0.066). On RubyGems, crates.io and NuGet no name-similarity detector is useful.
 
 ### Real images: what the gate sees
 
@@ -230,9 +230,9 @@ Evaluation design, including the splits, ground truth and why download counts ar
 | Sigstore / SLSA / in-toto | attestation formats and verification | emits DSSE + in-toto SLSA statements; its contribution is the queryable graph on top |
 | GUAC (OpenSSF) | supply-chain metadata graph | GUAC is a large multi-service aggregator; TRACEGATE is a stdlib-only CI gate with deterministic verdicts and commit-level backtracking |
 | Snyk / GitHub Advanced Security | commercial suites | open source, and gives one graph you can query across stages |
-| typomania / TypoGard (Taylor et al., NSS 2020), pypi-scan | name similarity | re-implemented and benchmarked on the same splits (see Evaluation) |
+| typomania / TypoGard (Taylor et al., NSS 2020), pypi-scan | name similarity | our ports (not validated against the original code) benchmarked on the same splits (see Evaluation) |
 
-SBOMs, scanning and attestation formats are not novel. The contribution is retroactive, version-aware attribution of findings to introducing commits on lock-file history (it beats line-based attribution on Cargo and npm locks and ties it on pip and Go), delivered inside a fail-closed, signed gate. Cross-tool identity, reachability and typosquat scoring are supporting components.
+SBOMs, scanning and attestation formats are not novel. The contribution is retroactive, version-aware attribution of findings to introducing commits on lock-file history (measured against `git blame`, it beats an exact-pin pickaxe on Cargo and npm locks and ties it on pip and Go), delivered inside a fail-closed, signed gate. Cross-tool identity, reachability and typosquat scoring are supporting components.
 
 ## Limitations
 

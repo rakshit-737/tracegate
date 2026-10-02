@@ -209,7 +209,7 @@ def run(eco: str, ref_n: int, neg_hi: int, out: Path, split: str = "hash", cutof
                   f"time split: positives published < {cutoff} tune, >= {cutoff} test (OSV `published`, "
                   "dominated by bulk backfill days); negatives 50/50 by sha256(name)")
     report = {"ecosystem": eco, "reference_size": len(ref), "split": split_desc,
-              "chosen_threshold": default_th, "dev_positives": len(dev_pos), "dev_negatives": len(dev_neg),
+              "chosen_threshold": default_th, "fpr_matching": "dev split: lowest threshold with dev FPR <= lev1 dev FPR", "dev_positives": len(dev_pos), "dev_negatives": len(dev_neg),
               "positives": len(pos), "negatives": len(neg),
               "typo_labelled_positives": len(typo_subset), "results": results, "curve": curve,
               "bootstrap": bootstrap_ci(flags_by, pos, neg, "lev1 (top-5k)"),

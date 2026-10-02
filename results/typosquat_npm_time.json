@@ -3,6 +3,7 @@
  "reference_size": 5000,
  "split": "time split: positives published < 2025-01-01 tune, >= 2025-01-01 test (OSV `published`, dominated by bulk backfill days); negatives 50/50 by sha256(name)",
  "chosen_threshold": 0.52,
+ "fpr_matching": "dev split: lowest threshold with dev FPR <= lev1 dev FPR",
  "dev_positives": 17270,
  "dev_negatives": 4028,
  "positives": 201706,

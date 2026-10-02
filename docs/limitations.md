@@ -10,6 +10,10 @@
 - **Typosquat recall is low in absolute terms** (see the [Evaluation](evaluation.md)). Treat it as one signal, not a malware detector.
 - **SAST comes in as SARIF 2.1.0** (`tracegate ingest --sarif`, tested on Bandit-style fixtures). SAST findings are attached to files, not to dependencies, so reachability does not apply to them.
 - Image deployments in the image benchmark are synthetic (one service per image).
+- **Bot-bump oracle is a capped convenience sample.** At most 40 bumps per repo are evaluated (warehouse, hugo, bat, excalidraw and mastodon hit the cap); ripgrep and alacritty contribute one case each and netbox none. For a single-package bump the oracle label and TRACEGATE's answer are close to the same event, so the oracle tests version tracking under line rewrites, not attribution when lines are reformatted; multi-package bumps, reverts and re-bumps are not yet in it. The repo-clustered bootstrap for 231/231 is degenerate; the one-sided Clopper-Pearson 95% lower bound is about 98.7%.
+- **Pooled 88.8% is an implementation figure.** It includes the one-version-per-name parser limitation above, which depresses vue-core (pnpm) and mastodon (yarn); it is not a pure property of the method.
+- **Some result files lack a run id.** `data_manifest.json`, `scale_synthetic.json` and `images_real.json` were generated locally.
+- **Docs build is two steps.** Run `python scripts/build_static_demo.py` before `mkdocs build --strict`, or the demo ships without data (docs.yml does this).
 
 ## Roadmap
 

@@ -6,6 +6,10 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-10-02
+
+Supersedes v1.0.0, whose wheel and image trust the demo key implicitly (fail-open).
+
 ### Added
 - Independent backtracking oracle from single-package Dependabot/Renovate bumps (`results/lineage_bot_bump_oracle.json`): TRACEGATE 231/231 at later snapshots, `git blame` 219/231, exact-pin pickaxe 197/231; repo-clustered bootstrap intervals for all lineage figures.
 - The original TypoGard script and the original typomania binary run on the same typosquat splits in the benchmarks workflow (`results/typosquat_originals.json`); our typomania port agrees on 99.97-100% of names.

@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 ![Core deps](https://img.shields.io/badge/core%20deps-stdlib%20only-lightgrey)
 
-**TRACEGATE attributes every scanner finding to the commit and PR that introduced the vulnerable version by version-aware diffing of lock-file history, inside a fail-closed, signature-verified CI gate. Across 11 repos and 4 ecosystems it agrees with `git blame` on 88.8% of findings (agreement, not correctness: blame shares the pin parser); against an independent oracle of 231 single-package bot bumps re-checked at later snapshots it is right on all 231 vs 94.8% for blame, and on Cargo and npm lock files it is far closer to blame than an exact-pin `git log -S` pickaxe (Cargo 95.0% vs 54.7%, npm 83.9% vs 70.6%); on pip and Go the one-line pickaxe matches blame exactly and slightly outperforms TRACEGATE (TRACEGATE 97.8% / 99.7%).** ([Evaluation](https://rakshit-737.github.io/tracegate/evaluation/))
+**TRACEGATE attributes every scanner finding to the commit and PR that introduced the vulnerable version by version-aware diffing of lock-file history, inside a fail-closed, signature-verified CI gate. Across 11 repos and 4 ecosystems it agrees with `git blame` on 88.8% of findings (agreement, not correctness: blame shares the pin parser); against an independent oracle of 231 single-package bot bumps re-checked at later snapshots it is right on 243/243 at the bump (blame 99.2%) and 231/231 at later snapshots (blame 94.8%; exact lower 95% bound 98.7%), which tests version tracking under line rewrites rather than attribution independent of the pin parser, and on Cargo and npm lock files it is far closer to blame than an exact-pin `git log -S` pickaxe (Cargo 95.0% vs 54.7%, npm 83.9% vs 70.6%); on pip and Go the one-line pickaxe matches blame exactly and slightly outperforms TRACEGATE (TRACEGATE 97.8% / 99.7%).** ([Evaluation](https://rakshit-737.github.io/tracegate/evaluation/))
 
 [![Lineage explorer: cve-origin scenario after backtracking CVE-2020-14343](docs/img/demo.png)](https://rakshit-737.github.io/tracegate/demo/)
 
@@ -15,19 +15,19 @@
 ## Try it in 60 seconds
 
 1. **Zero install:** open the [live demo](https://rakshit-737.github.io/tracegate/demo/). The `cve-origin` scenario loads with a BLOCK verdict; type `CVE-2020-14343` and press Enter to see the origin story (PR #42) and the blast radius.
-2. **From source** (the fail-closed gate and `--demo` are on `main` and not yet in a release; do not `pip install tracegate`: that PyPI name belongs to an unrelated project):
+2. **From source** (v1.1.0 or later; do not `pip install tracegate`: that PyPI name belongs to an unrelated project):
 
    ```bash
    python -m venv .venv && . .venv/bin/activate
-   pip install "git+https://github.com/rakshit-737/tracegate@main"
+   pip install "git+https://github.com/rakshit-737/tracegate@v1.1.0"
    tracegate demo                                      # six scenarios, about 2 seconds
    tracegate synth cve-origin ev.json
    tracegate --demo backtrack ev.json CVE-2020-14343   # "introduced_by": {"pr": 42, ...}
    tracegate --demo gate ev.json --comment             # "## TRACEGATE: BLOCK", exit 1
    ```
 
-   `--demo` (accepted before or after the subcommand) trusts the public demo key. Without a configured key the gate refuses to run (exit 2). The v1.0.0 release wheel predates both: it has no `--demo` flag and trusts the demo key implicitly, so do not use it for a real gate.
-3. **Container (build from source):** `docker build -t tracegate . && docker run --rm -p 127.0.0.1:8080:8080 tracegate`, then open http://127.0.0.1:8080 and run a scenario. The published `ghcr.io/rakshit-737/tracegate:1.0.0` image is the older fail-open build.
+   `--demo` (accepted before or after the subcommand) trusts the public demo key. Without a configured key the gate refuses to run (exit 2). The v1.0.0 release (wheel and `:1.0.0` image) predates both: it trusts the demo key implicitly (fail-open) and is superseded by v1.1.0.
+3. **Container (build from source):** `docker build -t tracegate . && docker run --rm -p 127.0.0.1:8080:8080 tracegate`, then open http://127.0.0.1:8080 and run a scenario. Or pull `ghcr.io/rakshit-737/tracegate:1.1.0`; the `:1.0.0` image is the superseded fail-open build.
 
 **TRACEGATE is a provenance-aware CI/CD security gate.** It merges real Syft SBOMs, Trivy scans, git history and OSV data into one signed, content-addressed provenance graph. It can then answer the question most scanners leave open: *which commit, and which PR, put this CVE in production, and what else inherits it?*
 
@@ -41,7 +41,7 @@
 
 ## Headline results (real public data)
 
-All numbers come from the committed runs in [`results/`](results/), produced by the [`benchmarks` workflow](https://github.com/rakshit-737/tracegate/actions/runs/36995342662) on a GitHub runner. Methodology, every table and confidence interval: [Evaluation](https://rakshit-737.github.io/tracegate/evaluation/). Commands: [Reproduce](https://rakshit-737.github.io/tracegate/reproduce/).
+All numbers come from the committed runs in [`results/`](results/), produced by the [`benchmarks` workflow](https://github.com/rakshit-737/tracegate/actions/runs/37003433022) on a GitHub runner. Methodology, every table and confidence interval: [Evaluation](https://rakshit-737.github.io/tracegate/evaluation/). Commands: [Reproduce](https://rakshit-737.github.io/tracegate/reproduce/).
 
 | Question | Data | TRACEGATE | Baselines |
 | --- | --- | --- | --- |
@@ -245,6 +245,10 @@ SBOMs, scanning and attestation formats are not novel. The contribution is retro
 - **Typosquat recall is low in absolute terms** (see above). Treat it as one signal, not a malware detector.
 - **SAST comes in as SARIF 2.1.0** (`tracegate ingest --sarif`, tested on Bandit-style fixtures). SAST findings are attached to files, not to dependencies, so reachability does not apply to them.
 - Image deployments in the image benchmark are synthetic (one service per image).
+- **Bot-bump oracle is a capped convenience sample.** At most 40 bumps per repo are evaluated (warehouse, hugo, bat, excalidraw and mastodon hit the cap); ripgrep and alacritty contribute one case each and netbox none. For a single-package bump the oracle label and TRACEGATE's answer are close to the same event, so the oracle tests version tracking under line rewrites, not attribution when lines are reformatted; multi-package bumps, reverts and re-bumps are not yet in it. The repo-clustered bootstrap for 231/231 is degenerate; the one-sided Clopper-Pearson 95% lower bound is about 98.7%.
+- **Pooled 88.8% is an implementation figure.** It includes the one-version-per-name parser limitation above, which depresses vue-core (pnpm) and mastodon (yarn); it is not a pure property of the method.
+- **Some result files lack a run id.** `data_manifest.json`, `scale_synthetic.json` and `images_real.json` were generated locally.
+- **Docs build is two steps.** Run `python scripts/build_static_demo.py` before `mkdocs build --strict`, or the demo ships without data (docs.yml does this).
 
 ## Roadmap
 

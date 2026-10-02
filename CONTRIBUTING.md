@@ -43,5 +43,6 @@ python -m pytest -q -m realdata
 ```bash
 pip install -r docs/requirements.txt -e .
 python scripts/build_static_demo.py   # writes docs/demo/data/*.json (git-ignored)
+python scripts/build_static_demo.py   # generates docs/demo/data first
 mkdocs serve
 ```

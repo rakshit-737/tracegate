@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tracegate"
-version = "1.0.0"
+version = "1.1.0"
 description = "Provenance-aware CI/CD security gate: signed SBOM lineage graph, finding->commit backtracking, reachability triage"
 readme = "README.md"
 license = "MIT"

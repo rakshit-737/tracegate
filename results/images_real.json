@@ -1,4 +1,11 @@
 {
+ "run_id": null,
+ "run_url": null,
+ "generated": "local",
+ "command": "python benchmarks/images_eval.py (after scripts/scan_real.py images)",
+ "commit": "0e74b55d157f4a54ab67ad302fece1d45765441b",
+ "generated_at": "2026-09-26",
+ "provenance_note": "generated on the dev laptop and committed in 0e74b55; no Actions run",
  "images": [
   {
    "image": "alpine:3.14.2",

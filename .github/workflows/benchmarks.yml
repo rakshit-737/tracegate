@@ -1,23 +1,38 @@
 name: benchmarks
-# Full-data evaluation on a GitHub runner (the dev laptop is shared): downloads the OSV dumps,
-# popularity lists and benchmark repositories, runs the typosquat (hash + time split, five
-# ecosystems, published-tool baselines) and lineage (11 repos, both reachability modes)
-# benchmarks, and uploads results/*.json. Only those small JSON files are committed.
+# Full-data evaluation on GitHub runners (the dev laptop is shared). Every leg downloads its own
+# data, runs one benchmark and uploads results/*.json plus its log; only those small JSON files are
+# committed, and each records this run's id (run_meta). Legs:
+#   typosquat     hash + time split, five ecosystems, original TypoGard / typomania (optional input)
+#   lineage       11 repos at the heads of the committed run (--pin-from), multi-version readers,
+#                 then the same data with the old one-version-per-name readers (before/after), plus
+#                 the evidence for adjudicating disagreements
+#   oracle        bot-bump oracle with its strata
+#   materialized  Python repos, each snapshot against its own sources; every downgrade with evidence
+#   images        real Syft + Trivy over 7 pinned public images (pulled as data, never run)
+#   scale         synthetic graph-growth benchmark
 on:
   workflow_dispatch:
     inputs:
       lineage:
-        description: run the lineage benchmark too
+        description: run the lineage, oracle and materialized legs
+        default: "true"
+      typosquat:
+        description: run the typosquat legs too
+        default: "false"
+      images:
+        description: run the real-image and scale legs
         default: "true"
 permissions:
   contents: read
+env:
+  PYTHONUNBUFFERED: "1"
 jobs:
-  bench:
+  typosquat:
+    if: inputs.typosquat == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 300
+    timeout-minutes: 120
     env:
       TRACEGATE_DATA: ${{ github.workspace }}/../data
-      PYTHONUNBUFFERED: "1"
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -48,23 +63,105 @@ jobs:
           TYPOGARD_SHA: 9c106362605c920126736993100a213c9448961e
           TYPOMANIA_SHA: 10e27e87cabdd494e23ed07034484b93782db8de
         run: |
-          python benchmarks/originals_eval.py --dump ../dump --typogard ../typogard_npm.py             --typomania ../typomania/target/release/examples/registry             --typogard-commit "$TYPOGARD_SHA" --typomania-commit "$TYPOMANIA_SHA" 2>&1 | tee originals.log
-      - name: Clone benchmark repositories
-        if: inputs.lineage == 'true'
-        run: git config --global transfer.fsckObjects true && python scripts/download_data.py repos
-      - name: Lineage, HEAD sources
-        if: inputs.lineage == 'true'
-        run: python benchmarks/lineage_eval.py --snapshots 12 --oracle 2>&1 | tee lineage.log
-      - name: Lineage, materialized per-snapshot sources (Python repos)
-        if: inputs.lineage == 'true'
-        run: python benchmarks/lineage_eval.py --snapshots 12 --materialize --repos healthchecks netbox warehouse 2>&1 | tee lineage_mat.log
-      - name: Dataset manifest
+          python benchmarks/originals_eval.py --dump ../dump --typogard ../typogard_npm.py \
+            --typomania ../typomania/target/release/examples/registry \
+            --typogard-commit "$TYPOGARD_SHA" --typomania-commit "$TYPOMANIA_SHA" 2>&1 | tee originals.log
+      - name: Dataset manifest (stamped with this run)
         if: always()
-        run: cp "$TRACEGATE_DATA/MANIFEST.json" results/data_manifest.json || true
+        run: python scripts/stamp_manifest.py "$TRACEGATE_DATA/MANIFEST.json" results/data_manifest_typosquat.json
       - if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: benchmark-results
+          name: typosquat-results
+          path: |
+            results/
+            *.log
+
+  lineage:
+    if: inputs.lineage == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    strategy:
+      fail-fast: false
+      matrix:
+        leg: [lineage, oracle, materialized]
+    env:
+      TRACEGATE_DATA: ${{ github.workspace }}/../data
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - run: pip install -e ".[bench,osv,crypto]" numpy
+      - name: Download OSV dumps and the PyPI / npm popularity lists
+        if: matrix.leg != 'oracle'
+        run: |
+          python scripts/download_data.py osv
+          python scripts/download_data.py popular --only pypi npm
+      - name: Clone the benchmark repositories at the heads the committed run used
+        run: |
+          git config --global transfer.fsckObjects true
+          ONLY=""
+          if [ "${{ matrix.leg }}" = materialized ]; then ONLY="--only healthchecks netbox warehouse"; fi
+          python scripts/download_data.py repos --pin-from results/data_manifest.json $ONLY
+      - name: Run the ${{ matrix.leg }} leg
+        run: |
+          case "${{ matrix.leg }}" in
+            lineage)
+              python benchmarks/lineage_eval.py --snapshots 12
+              python benchmarks/lineage_eval.py --snapshots 12 --single-version
+              python benchmarks/adjudicate.py --evidence ;;
+            oracle)
+              python benchmarks/lineage_eval.py --oracle-only ;;
+            materialized)
+              python benchmarks/lineage_eval.py --snapshots 12 --materialize --repos healthchecks netbox warehouse ;;
+          esac 2>&1 | tee ${{ matrix.leg }}.log
+      - name: Dataset manifest (stamped with this run)
+        if: always() && matrix.leg == 'lineage'
+        run: python scripts/stamp_manifest.py "$TRACEGATE_DATA/MANIFEST.json" results/data_manifest.json
+      - if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: ${{ matrix.leg }}-results
+          path: |
+            results/
+            *.log
+
+  images:
+    if: inputs.images == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      TRACEGATE_DATA: ${{ github.workspace }}/../data
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - run: pip install -e ".[bench,osv,crypto]" numpy
+      - name: Scale benchmark (synthetic)
+        run: python benchmarks/scale_eval.py 2>&1 | tee scale.log
+      - name: Download Syft / Trivy (checksum-verified), the Trivy DB, OSV and popularity lists
+        run: |
+          python scripts/download_data.py tools
+          python scripts/download_data.py osv
+          python scripts/download_data.py popular --only pypi npm
+          "$TRACEGATE_DATA/bin/trivy" image --download-db-only --cache-dir "$TRACEGATE_DATA/trivy-cache"
+      - name: Pull the 7 pinned images as data and scan them with Syft and Trivy (never run)
+        run: python scripts/scan_real.py images 2>&1 | tee scan.log
+      - name: Images benchmark
+        run: python benchmarks/images_eval.py 2>&1 | tee images.log
+      - name: Dataset manifest (stamped with this run)
+        if: always()
+        run: python scripts/stamp_manifest.py "$TRACEGATE_DATA/MANIFEST.json" results/data_manifest_images.json
+      - if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: images-results
           path: |
             results/
             *.log

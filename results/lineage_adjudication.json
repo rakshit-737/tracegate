@@ -1,0 +1,1019 @@
+{
+ "run_id": null,
+ "run_url": null,
+ "commit": "96088fd742c1927c47cb6ab726116b271a3bf64c",
+ "generated": "local",
+ "generated_at": "2026-10-03T03:59:02Z",
+ "command": "python benchmarks/adjudicate_verdicts.py",
+ "source": "lineage_adjudication_evidence.json",
+ "source_run_id": 37091106360,
+ "sample_rule": "all pypi+golang disagreements; random.Random(0).sample of 50 cargo+npm disagreements",
+ "rule": "The rule a reader applies to each sampled disagreement (and that this script records, so the verdicts can be re-derived and checked): among the candidate commits, the correct introducer of X@V is the newest one whose diff makes X@V appear, i.e. X@V is absent at its first parent (or the file does not exist there under that path) and present after it. A candidate whose first parent already pins X@V only rewrote the line. The version lists come from the multi-version reader and the hunks show the edit itself; every case was also read by hand (the `note` field records the kind of rewrite the other methods credited). Cases where no candidate satisfies the rule, or more than one does, are left undecided.",
+ "cases": [
+  {
+   "repo": "warehouse",
+   "ecosystem": "pypi",
+   "manifest": "requirements/main.txt",
+   "snapshot": "2fd1fb6b26c1",
+   "package": "html5lib",
+   "version": "0.9999999",
+   "tracegate": "d20db4e0e567",
+   "blame": "3932163e87fa",
+   "pickaxe_package_specific": "3932163e87fa",
+   "pickaxe_version_line": "3932163e87fa",
+   "correct": "d20db4e0e567",
+   "note": "checked by hand: d20db4e changes requirements.txt from html5lib==0.999999 to 0.9999999 (the manifest was later moved to requirements/main.txt, so the evidence lists no versions under the current path); the first parent of 3932163 ('Merge pull request #1044 from dstufft/hashes') already pins 0.9999999 in requirements/main.txt: merge commit (meta-change)"
+  },
+  {
+   "repo": "warehouse",
+   "ecosystem": "pypi",
+   "manifest": "requirements/main.txt",
+   "snapshot": "2fd1fb6b26c1",
+   "package": "pygments",
+   "version": "2.1.3",
+   "tracegate": "d92a5bae5cd3",
+   "blame": "3932163e87fa",
+   "pickaxe_package_specific": "3932163e87fa",
+   "pickaxe_version_line": "3932163e87fa",
+   "correct": "d92a5bae5cd3",
+   "note": "d92a5bae5c ('Merge pull request #995 from dstufft/upgrade') makes pygments@2.1.3 appear; 3932163e87 ('Merge pull request #1044 from dstufft/hashes') already had it at its parent: merge commit (meta-change)"
+  },
+  {
+   "repo": "warehouse",
+   "ecosystem": "pypi",
+   "manifest": "requirements/main.txt",
+   "snapshot": "4dbf0b4b7510",
+   "package": "babel",
+   "version": "2.6.0",
+   "tracegate": "3ba9bb9c6f41",
+   "blame": "d8bb63bf22ac",
+   "pickaxe_package_specific": "d8bb63bf22ac",
+   "pickaxe_version_line": "d8bb63bf22ac",
+   "correct": "3ba9bb9c6f41",
+   "note": "3ba9bb9c6f ('Update babel to 2.6.0 (#4092)') makes babel@2.6.0 appear; d8bb63bf22 ('Bump boto3 from 1.9.31 to 1.9.32 (#4934)') already had it at its parent: unrelated update that rewrote or re-sorted the line"
+  },
+  {
+   "repo": "warehouse",
+   "ecosystem": "pypi",
+   "manifest": "requirements/main.txt",
+   "snapshot": "4dbf0b4b7510",
+   "package": "celery",
+   "version": "4.2.1",
+   "tracegate": "373abd48861b",
+   "blame": "d8bb63bf22ac",
+   "pickaxe_package_specific": "d8bb63bf22ac",
+   "pickaxe_version_line": "d8bb63bf22ac",
+   "correct": "373abd48861b",
+   "note": "373abd4886 ('Update celery from 4.2.0 to 4.2.1 (#4312)') makes celery@4.2.1 appear; d8bb63bf22 ('Bump boto3 from 1.9.31 to 1.9.32 (#4934)') already had it at its parent: unrelated update that rewrote or re-sorted the line"
+  },
+  {
+   "repo": "warehouse",
+   "ecosystem": "pypi",
+   "manifest": "requirements/main.txt",
+   "snapshot": "4dbf0b4b7510",
+   "package": "jinja2",
+   "version": "2.10",
+   "tracegate": "75ed5f880909",
+   "blame": "d8bb63bf22ac",
+   "pickaxe_package_specific": "d8bb63bf22ac",
+   "pickaxe_version_line": "d8bb63bf22ac",
+   "correct": "75ed5f880909",
+   "note": "75ed5f8809 ('Update jinja2 to 2.10 (#2567)') makes jinja2@2.10 appear; d8bb63bf22 ('Bump boto3 from 1.9.31 to 1.9.32 (#4934)') already had it at its parent: unrelated update that rewrote or re-sorted the line"
+  },
+  {
+   "repo": "warehouse",
+   "ecosystem": "pypi",
+   "manifest": "requirements/main.txt",
+   "snapshot": "4dbf0b4b7510",
+   "package": "mako",
+   "version": "1.0.7",
+   "tracegate": "49df5fda3781",
+   "blame": "d8bb63bf22ac",
+   "pickaxe_package_specific": "d8bb63bf22ac",
+   "pickaxe_version_line": "d8bb63bf22ac",
+   "correct": "49df5fda3781",
+   "note": "49df5fda37 ('Update mako from 1.0.6 to 1.0.7 (#2189)') makes mako@1.0.7 appear; d8bb63bf22 ('Bump boto3 from 1.9.31 to 1.9.32 (#4934)') already had it at its parent: unrelated update that rewrote or re-sorted the line"
+  },
+  {
+   "repo": "warehouse",
+   "ecosystem": "pypi",
+   "manifest": "requirements/main.txt",
+   "snapshot": "4dbf0b4b7510",
+   "package": "pygments",
+   "version": "2.2.0",
+   "tracegate": "6e1554f23cb0",
+   "blame": "d8bb63bf22ac",
+   "pickaxe_package_specific": "d8bb63bf22ac",
+   "pickaxe_version_line": "d8bb63bf22ac",
+   "correct": "6e1554f23cb0",
+   "note": "6e1554f23c ('Update pygments to 2.2.0 (#1687)') makes pygments@2.2.0 appear; d8bb63bf22 ('Bump boto3 from 1.9.31 to 1.9.32 (#4934)') already had it at its parent: unrelated update that rewrote or re-sorted the line"
+  },
+  {
+   "repo": "warehouse",
+   "ecosystem": "pypi",
+   "manifest": "requirements/main.txt",
+   "snapshot": "66d1d2636841",
+   "package": "celery",
+   "version": "4.4.7",
+   "tracegate": "93deda17e67b",
+   "blame": "502a42b536bb",
+   "pickaxe_package_specific": "502a42b536bb",
+   "pickaxe_version_line": "502a42b536bb",
+   "correct": "93deda17e67b",
+   "note": "93deda17e6 ('Bump celery[sqs] from 4.4.6 to 4.4.7 (#8362)') makes celery@4.4.7 appear; 502a42b536 ('Remove [sqs] extra from celery dependency (#9032)') already had it at its parent: unrelated update that rewrote or re-sorted the line"
+  },
+  {
+   "repo": "hugo",
+   "ecosystem": "golang",
+   "manifest": "go.mod",
+   "snapshot": "78db8aebcaeb",
+   "package": "github.com/aws/aws-sdk-go",
+   "version": "v1.50.7",
+   "tracegate": "4d98b0ed6a8a",
+   "blame": "a1c64989df47",
+   "pickaxe_package_specific": "a1c64989df47",
+   "pickaxe_version_line": "a1c64989df47",
+   "correct": "4d98b0ed6a8a",
+   "note": "4d98b0ed6a ('build(deps): bump github.com/aws/aws-sdk-go from 1.48.6 to 1.50.7') makes github.com/aws/aws-sdk-go@v1.50.7 appear; a1c64989df ('Upgrade to deploy to use AWS SDK V2') already had it at its parent: unrelated update that rewrote or re-sorted the line"
+  },
+  {
+   "repo": "vue-core",
+   "ecosystem": "npm",
+   "manifest": "pnpm-lock.yaml",
+   "snapshot": "4331af909338",
+   "package": "extract-zip",
+   "version": "2.0.1",
+   "tracegate": "61c5fbd3e351",
+   "blame": "847658b7a2e7",
+   "pickaxe_package_specific": "847658b7a2e7",
+   "pickaxe_version_line": "847658b7a2e7",
+   "correct": "61c5fbd3e351",
+   "note": "61c5fbd3e3 ('workflow: move to pnpm (#4766)') makes extract-zip@2.0.1 appear; 847658b7a2 ('release: v3.3.0-beta.5') already had it at its parent: lock-file format rewrite"
+  },
+  {
+   "repo": "vue-core",
+   "ecosystem": "npm",
+   "manifest": "pnpm-lock.yaml",
+   "snapshot": "31deff4c32fc",
+   "package": "cross-spawn",
+   "version": "7.0.3",
+   "tracegate": "61c5fbd3e351",
+   "blame": "5f0c6e4a05e2",
+   "pickaxe_package_specific": "5f0c6e4a05e2",
+   "pickaxe_version_line": "5f0c6e4a05e2",
+   "correct": "61c5fbd3e351",
+   "note": "61c5fbd3e3 ('workflow: move to pnpm (#4766)') makes cross-spawn@7.0.3 appear; 5f0c6e4a05 ('chore: Merge branch 'main' into minor') already had it at its parent: merge commit (meta-change)"
+  },
+  {
+   "repo": "mastodon",
+   "ecosystem": "npm",
+   "manifest": "yarn.lock",
+   "snapshot": "6f34fdcd86b7",
+   "package": "lodash",
+   "version": "4.17.21",
+   "tracegate": "684dcd6ab0b2",
+   "blame": "f896d8587a96",
+   "pickaxe_package_specific": "84266f87e7f3",
+   "pickaxe_version_line": "210084bb9e73",
+   "correct": "684dcd6ab0b2",
+   "note": "684dcd6ab0 ('Bump lodash from 4.17.20 to 4.17.21 (#15774)') makes lodash@4.17.21 appear; 210084bb9e ('Bump @babel/plugin-transform-runtime from 7.12.17 ') already had it at its parent: unrelated update that rewrote or re-sorted the line; 84266f87e7 ('Replace from Code Climate to Super-Linter (#18587)') already had it at its parent: unrelated update that rewrote or re-sorted the line; f896d8587a ('Bump @babel/preset-env from 7.12.17 to 7.13.5 (#15') already had it at its parent: unrelated update that rewrote or re-sorted the line"
+  },
+  {
+   "repo": "mastodon",
+   "ecosystem": "npm",
+   "manifest": "yarn.lock",
+   "snapshot": "24ffa00bca16",
+   "package": "minimatch",
+   "version": "3.1.2",
+   "tracegate": "f2b847406913",
+   "blame": "757d7c73c0ca",
+   "pickaxe_package_specific": "8c579c5b34b9",
+   "pickaxe_version_line": "e22266453960",
+   "correct": "f2b847406913",
+   "note": "f2b8474069 ('Bump eslint-plugin-react from 7.28.0 to 7.29.2 (#17672)') makes minimatch@3.1.2 appear; 757d7c73c0 ('Upgrade to Yarn 4, remove support for Node 16 (#27') already had it at its parent: lock-file format rewrite; 8c579c5b34 ('Migrate from Jest to Vitest (#34454)') already had it at its parent: unrelated update that rewrote or re-sorted the line; e222664539 ('Update DefinitelyTyped types (non-major) (#37073)') already had it at its parent: unrelated update that rewrote or re-sorted the line"
+  },
+  {
+   "repo": "vue-core",
+   "ecosystem": "npm",
+   "manifest": "pnpm-lock.yaml",
+   "snapshot": "4f6ef92ad9b9",
+   "package": "lodash",
+   "version": "4.17.21",
+   "tracegate": "61c5fbd3e351",
+   "blame": "5f0c6e4a05e2",
+   "pickaxe_package_specific": "5f0c6e4a05e2",
+   "pickaxe_version_line": "5f0c6e4a05e2",
+   "correct": "61c5fbd3e351",
+   "note": "61c5fbd3e3 ('workflow: move to pnpm (#4766)') makes lodash@4.17.21 appear; 5f0c6e4a05 ('chore: Merge branch 'main' into minor') already had it at its parent: merge commit (meta-change)"
+  },
+  {
+   "repo": "vue-core",
+   "ecosystem": "npm",
+   "manifest": "pnpm-lock.yaml",
+   "snapshot": "c950b4c0c4e4",
+   "package": "js-yaml",
+   "version": "4.1.0",
+   "tracegate": "53e3533b75ad",
+   "blame": "5f0c6e4a05e2",
+   "pickaxe_package_specific": "5f0c6e4a05e2",
+   "pickaxe_version_line": "5f0c6e4a05e2",
+   "correct": "53e3533b75ad",
+   "note": "53e3533b75 ('chore: bump deps') makes js-yaml@4.1.0 appear; 5f0c6e4a05 ('chore: Merge branch 'main' into minor') already had it at its parent: merge commit (meta-change)"
+  },
+  {
+   "repo": "vue-core",
+   "ecosystem": "npm",
+   "manifest": "pnpm-lock.yaml",
+   "snapshot": "4331af909338",
+   "package": "pug",
+   "version": "3.0.2",
+   "tracegate": "61c5fbd3e351",
+   "blame": "847658b7a2e7",
+   "pickaxe_package_specific": "847658b7a2e7",
+   "pickaxe_version_line": "847658b7a2e7",
+   "correct": "61c5fbd3e351",
+   "note": "61c5fbd3e3 ('workflow: move to pnpm (#4766)') makes pug@3.0.2 appear; 847658b7a2 ('release: v3.3.0-beta.5') already had it at its parent: lock-file format rewrite"
+  },
+  {
+   "repo": "vue-core",
+   "ecosystem": "npm",
+   "manifest": "pnpm-lock.yaml",
+   "snapshot": "25595f593c94",
+   "package": "brace-expansion",
+   "version": "2.0.1",
+   "tracegate": "f2c46ed9cfb4",
+   "blame": "847658b7a2e7",
+   "pickaxe_package_specific": "847658b7a2e7",
+   "pickaxe_version_line": "847658b7a2e7",
+   "correct": "f2c46ed9cfb4",
+   "note": "f2c46ed9cf ('build(deps): upgrade rollup@2 to rollup@3 (#6990)') makes brace-expansion@2.0.1 appear; 847658b7a2 ('release: v3.3.0-beta.5') already had it at its parent: lock-file format rewrite"
+  },
+  {
+   "repo": "vue-core",
+   "ecosystem": "npm",
+   "manifest": "pnpm-lock.yaml",
+   "snapshot": "c950b4c0c4e4",
+   "package": "brace-expansion",
+   "version": "2.0.1",
+   "tracegate": "f2c46ed9cfb4",
+   "blame": "5f0c6e4a05e2",
+   "pickaxe_package_specific": "5f0c6e4a05e2",
+   "pickaxe_version_line": "5f0c6e4a05e2",
+   "correct": "f2c46ed9cfb4",
+   "note": "f2c46ed9cf ('build(deps): upgrade rollup@2 to rollup@3 (#6990)') makes brace-expansion@2.0.1 appear; 5f0c6e4a05 ('chore: Merge branch 'main' into minor') already had it at its parent: merge commit (meta-change)"
+  },
+  {
+   "repo": "vue-core",
+   "ecosystem": "npm",
+   "manifest": "pnpm-lock.yaml",
+   "snapshot": "25595f593c94",
+   "package": "tar-fs",
+   "version": "2.1.1",
+   "tracegate": "9d5e30d911b4",
+   "blame": "847658b7a2e7",
+   "pickaxe_package_specific": "847658b7a2e7",
+   "pickaxe_version_line": "847658b7a2e7",
+   "correct": "9d5e30d911b4",
+   "note": "9d5e30d911 ('build: bump jest, puppeteer and use official rollup terser plugin') makes tar-fs@2.1.1 appear; 847658b7a2 ('release: v3.3.0-beta.5') already had it at its parent: lock-file format rewrite"
+  },
+  {
+   "repo": "mastodon",
+   "ecosystem": "npm",
+   "manifest": "yarn.lock",
+   "snapshot": "b1692628de55",
+   "package": "nth-check",
+   "version": "1.0.2",
+   "tracegate": "2cbdff97cedc",
+   "blame": "757d7c73c0ca",
+   "pickaxe_package_specific": "757d7c73c0ca",
+   "pickaxe_version_line": "b1692628de55",
+   "correct": "2cbdff97cedc",
+   "note": "2cbdff97ce ('Change design of role badges in web UI (#26281)') makes nth-check@1.0.2 appear; 757d7c73c0 ('Upgrade to Yarn 4, remove support for Node 16 (#27') already had it at its parent: lock-file format rewrite; b1692628de ('fix(deps): update dependency postcss-preset-env to') already had it at its parent: unrelated update that rewrote or re-sorted the line"
+  },
+  {
+   "repo": "vue-core",
+   "ecosystem": "npm",
+   "manifest": "pnpm-lock.yaml",
+   "snapshot": "4f6ef92ad9b9",
+   "package": "extract-zip",
+   "version": "2.0.1",
+   "tracegate": "61c5fbd3e351",
+   "blame": "5f0c6e4a05e2",
+   "pickaxe_package_specific": "5f0c6e4a05e2",
+   "pickaxe_version_line": "5f0c6e4a05e2",
+   "correct": "61c5fbd3e351",
+   "note": "61c5fbd3e3 ('workflow: move to pnpm (#4766)') makes extract-zip@2.0.1 appear; 5f0c6e4a05 ('chore: Merge branch 'main' into minor') already had it at its parent: merge commit (meta-change)"
+  },
+  {
+   "repo": "mastodon",
+   "ecosystem": "npm",
+   "manifest": "yarn.lock",
+   "snapshot": "1aa3976f280e",
+   "package": "serve-static",
+   "version": "1.15.0",
+   "tracegate": "b5d2c91d4aee",
+   "blame": "757d7c73c0ca",
+   "pickaxe_package_specific": "757d7c73c0ca",
+   "pickaxe_version_line": "757d7c73c0ca",
+   "correct": "b5d2c91d4aee",
+   "note": "b5d2c91d4a ('Bump express from 4.17.3 to 4.18.0 (#18088)') makes serve-static@1.15.0 appear; 757d7c73c0 ('Upgrade to Yarn 4, remove support for Node 16 (#27') already had it at its parent: lock-file format rewrite"
+  },
+  {
+   "repo": "vue-core",
+   "ecosystem": "npm",
+   "manifest": "pnpm-lock.yaml",
+   "snapshot": "eb0c1e70255a",
+   "package": "cipher-base",
+   "version": "1.0.4",
+   "tracegate": "61c5fbd3e351",
+   "blame": "ec4531a6b3a3",
+   "pickaxe_package_specific": "61c5fbd3e351",
+   "pickaxe_version_line": "61c5fbd3e351",
+   "correct": "61c5fbd3e351",
+   "note": "61c5fbd3e3 ('workflow: move to pnpm (#4766)') makes cipher-base@1.0.4 appear; ec4531a6b3 ('chore: bump vite and esbuild') already had it at its parent: unrelated update that rewrote or re-sorted the line"
+  },
+  {
+   "repo": "mastodon",
+   "ecosystem": "npm",
+   "manifest": "yarn.lock",
+   "snapshot": "1aa3976f280e",
+   "package": "immutable",
+   "version": "3.8.2",
+   "tracegate": "8e19c44b2c45",
+   "blame": "757d7c73c0ca",
+   "pickaxe_package_specific": "757d7c73c0ca",
+   "pickaxe_version_line": "757d7c73c0ca",
+   "correct": "8e19c44b2c45",
+   "note": "8e19c44b2c ('Align typings with installed versions (#24410)') makes immutable@3.8.2 appear; 757d7c73c0 ('Upgrade to Yarn 4, remove support for Node 16 (#27') already had it at its parent: lock-file format rewrite"
+  },
+  {
+   "repo": "mastodon",
+   "ecosystem": "npm",
+   "manifest": "yarn.lock",
+   "snapshot": "24ffa00bca16",
+   "package": "ajv",
+   "version": "6.12.6",
+   "tracegate": "3547009c4259",
+   "blame": "757d7c73c0ca",
+   "pickaxe_package_specific": "c4f47adb4966",
+   "pickaxe_version_line": "757d7c73c0ca",
+   "correct": "3547009c4259",
+   "note": "3547009c42 ('Bump compression-webpack-plugin from 6.0.2 to 6.0.3 (#14979)') makes ajv@6.12.6 appear; 757d7c73c0 ('Upgrade to Yarn 4, remove support for Node 16 (#27') already had it at its parent: lock-file format rewrite; c4f47adb49 ('Convert from Webpack to Vite (#34450)') already had it at its parent: unrelated update that rewrote or re-sorted the line"
+  },
+  {
+   "repo": "vue-core",
+   "ecosystem": "npm",
+   "manifest": "pnpm-lock.yaml",
+   "snapshot": "2a0382ca7a47",
+   "package": "lodash",
+   "version": "4.17.21",
+   "tracegate": "61c5fbd3e351",
+   "blame": "5f0c6e4a05e2",
+   "pickaxe_package_specific": "5f0c6e4a05e2",
+   "pickaxe_version_line": "5f0c6e4a05e2",
+   "correct": "61c5fbd3e351",
+   "note": "61c5fbd3e3 ('workflow: move to pnpm (#4766)') makes lodash@4.17.21 appear; 5f0c6e4a05 ('chore: Merge branch 'main' into minor') already had it at its parent: merge commit (meta-change)"
+  },
+  {
+   "repo": "mastodon",
+   "ecosystem": "npm",
+   "manifest": "yarn.lock",
+   "snapshot": "1aa3976f280e",
+   "package": "uuid",
+   "version": "3.4.0",
+   "tracegate": "cc28f7d12c69",
+   "blame": "757d7c73c0ca",
+   "pickaxe_package_specific": "757d7c73c0ca",
+   "pickaxe_version_line": "757d7c73c0ca",
+   "correct": "cc28f7d12c69",
+   "note": "cc28f7d12c ('Bump uuid from 3.3.3 to 3.4.0 (#12981)') makes uuid@3.4.0 appear; 757d7c73c0 ('Upgrade to Yarn 4, remove support for Node 16 (#27') already had it at its parent: lock-file format rewrite"
+  },
+  {
+   "repo": "vue-core",
+   "ecosystem": "npm",
+   "manifest": "pnpm-lock.yaml",
+   "snapshot": "25595f593c94",
+   "package": "cross-spawn",
+   "version": "6.0.5",
+   "tracegate": "61c5fbd3e351",
+   "blame": "847658b7a2e7",
+   "pickaxe_package_specific": "847658b7a2e7",
+   "pickaxe_version_line": "847658b7a2e7",
+   "correct": "61c5fbd3e351",
+   "note": "61c5fbd3e3 ('workflow: move to pnpm (#4766)') makes cross-spawn@6.0.5 appear; 847658b7a2 ('release: v3.3.0-beta.5') already had it at its parent: lock-file format rewrite"
+  },
+  {
+   "repo": "mastodon",
+   "ecosystem": "npm",
+   "manifest": "yarn.lock",
+   "snapshot": "1aa3976f280e",
+   "package": "js-yaml",
+   "version": "3.14.1",
+   "tracegate": "bf63840612e5",
+   "blame": "757d7c73c0ca",
+   "pickaxe_package_specific": "757d7c73c0ca",
+   "pickaxe_version_line": "757d7c73c0ca",
+   "correct": "bf63840612e5",
+   "note": "bf63840612 ('Bump js-yaml from 3.14.0 to 3.14.1 (#15333)') makes js-yaml@3.14.1 appear; 757d7c73c0 ('Upgrade to Yarn 4, remove support for Node 16 (#27') already had it at its parent: lock-file format rewrite"
+  },
+  {
+   "repo": "mastodon",
+   "ecosystem": "npm",
+   "manifest": "yarn.lock",
+   "snapshot": "1aa3976f280e",
+   "package": "browserify-sign",
+   "version": "4.2.1",
+   "tracegate": "65c53f4475e5",
+   "blame": "757d7c73c0ca",
+   "pickaxe_package_specific": "757d7c73c0ca",
+   "pickaxe_version_line": "757d7c73c0ca",
+   "correct": "65c53f4475e5",
+   "note": "65c53f4475 ('Bump browserify-sign from 4.2.0 to 4.2.1 (#14636)') makes browserify-sign@4.2.1 appear; 757d7c73c0 ('Upgrade to Yarn 4, remove support for Node 16 (#27') already had it at its parent: lock-file format rewrite"
+  },
+  {
+   "repo": "vue-core",
+   "ecosystem": "npm",
+   "manifest": "pnpm-lock.yaml",
+   "snapshot": "25595f593c94",
+   "package": "minimatch",
+   "version": "3.1.2",
+   "tracegate": "f2c46ed9cfb4",
+   "blame": "847658b7a2e7",
+   "pickaxe_package_specific": "847658b7a2e7",
+   "pickaxe_version_line": "847658b7a2e7",
+   "correct": "f2c46ed9cfb4",
+   "note": "f2c46ed9cf ('build(deps): upgrade rollup@2 to rollup@3 (#6990)') makes minimatch@3.1.2 appear; 847658b7a2 ('release: v3.3.0-beta.5') already had it at its parent: lock-file format rewrite"
+  },
+  {
+   "repo": "vue-core",
+   "ecosystem": "npm",
+   "manifest": "pnpm-lock.yaml",
+   "snapshot": "536d6001994c",
+   "package": "shell-quote",
+   "version": "1.8.1",
+   "tracegate": "6021d0253e36",
+   "blame": "5f0c6e4a05e2",
+   "pickaxe_package_specific": "5f0c6e4a05e2",
+   "pickaxe_version_line": "5f0c6e4a05e2",
+   "correct": "6021d0253e36",
+   "note": "6021d0253e ('chore: upgrade deps (#9443)') makes shell-quote@1.8.1 appear; 5f0c6e4a05 ('chore: Merge branch 'main' into minor') already had it at its parent: merge commit (meta-change)"
+  },
+  {
+   "repo": "vue-core",
+   "ecosystem": "npm",
+   "manifest": "pnpm-lock.yaml",
+   "snapshot": "785a5a3dae54",
+   "package": "shell-quote",
+   "version": "1.8.1",
+   "tracegate": "6021d0253e36",
+   "blame": "5f0c6e4a05e2",
+   "pickaxe_package_specific": "5f0c6e4a05e2",
+   "pickaxe_version_line": "5f0c6e4a05e2",
+   "correct": "6021d0253e36",
+   "note": "6021d0253e ('chore: upgrade deps (#9443)') makes shell-quote@1.8.1 appear; 5f0c6e4a05 ('chore: Merge branch 'main' into minor') already had it at its parent: merge commit (meta-change)"
+  },
+  {
+   "repo": "mastodon",
+   "ecosystem": "npm",
+   "manifest": "yarn.lock",
+   "snapshot": "1aa3976f280e",
+   "package": "js-yaml",
+   "version": "4.1.0",
+   "tracegate": "969c8cbcfe0a",
+   "blame": "757d7c73c0ca",
+   "pickaxe_package_specific": "757d7c73c0ca",
+   "pickaxe_version_line": "24e67c4394bc",
+   "correct": "969c8cbcfe0a",
+   "note": "969c8cbcfe ('Bump js-yaml from 4.0.0 to 4.1.0 (#16067)') makes js-yaml@4.1.0 appear; 24e67c4394 ('Update dependency postcss-preset-env to v9.5.8 (#3') already had it at its parent: unrelated update that rewrote or re-sorted the line; 757d7c73c0 ('Upgrade to Yarn 4, remove support for Node 16 (#27') already had it at its parent: lock-file format rewrite"
+  },
+  {
+   "repo": "vue-core",
+   "ecosystem": "npm",
+   "manifest": "pnpm-lock.yaml",
+   "snapshot": "25595f593c94",
+   "package": "serialize-javascript",
+   "version": "6.0.1",
+   "tracegate": "703f8c22e5e3",
+   "blame": "847658b7a2e7",
+   "pickaxe_package_specific": "847658b7a2e7",
+   "pickaxe_version_line": "847658b7a2e7",
+   "correct": "703f8c22e5e3",
+   "note": "703f8c22e5 ('chore(deps): upgrade rollup & magic-string (#7326)') makes serialize-javascript@6.0.1 appear; 847658b7a2 ('release: v3.3.0-beta.5') already had it at its parent: lock-file format rewrite"
+  },
+  {
+   "repo": "vue-core",
+   "ecosystem": "npm",
+   "manifest": "pnpm-lock.yaml",
+   "snapshot": "31deff4c32fc",
+   "package": "nanoid",
+   "version": "3.3.7",
+   "tracegate": "e12b10ac3ea3",
+   "blame": "5f0c6e4a05e2",
+   "pickaxe_package_specific": "5f0c6e4a05e2",
+   "pickaxe_version_line": "5f0c6e4a05e2",
+   "correct": "e12b10ac3ea3",
+   "note": "e12b10ac3e ('chore: Merge branch 'main' into minor') makes nanoid@3.3.7 appear; 5f0c6e4a05 ('chore: Merge branch 'main' into minor') already had it at its parent: merge commit (meta-change)"
+  },
+  {
+   "repo": "vue-core",
+   "ecosystem": "npm",
+   "manifest": "pnpm-lock.yaml",
+   "snapshot": "25595f593c94",
+   "package": "flatted",
+   "version": "3.2.7",
+   "tracegate": "53e3533b75ad",
+   "blame": "847658b7a2e7",
+   "pickaxe_package_specific": "847658b7a2e7",
+   "pickaxe_version_line": "847658b7a2e7",
+   "correct": "53e3533b75ad",
+   "note": "53e3533b75 ('chore: bump deps') makes flatted@3.2.7 appear; 847658b7a2 ('release: v3.3.0-beta.5') already had it at its parent: lock-file format rewrite"
+  },
+  {
+   "repo": "mastodon",
+   "ecosystem": "npm",
+   "manifest": "yarn.lock",
+   "snapshot": "b1692628de55",
+   "package": "js-yaml",
+   "version": "3.14.1",
+   "tracegate": "bf63840612e5",
+   "blame": "757d7c73c0ca",
+   "pickaxe_package_specific": "757d7c73c0ca",
+   "pickaxe_version_line": "757d7c73c0ca",
+   "correct": "bf63840612e5",
+   "note": "bf63840612 ('Bump js-yaml from 3.14.0 to 3.14.1 (#15333)') makes js-yaml@3.14.1 appear; 757d7c73c0 ('Upgrade to Yarn 4, remove support for Node 16 (#27') already had it at its parent: lock-file format rewrite"
+  },
+  {
+   "repo": "vue-core",
+   "ecosystem": "npm",
+   "manifest": "pnpm-lock.yaml",
+   "snapshot": "785a5a3dae54",
+   "package": "handlebars",
+   "version": "4.7.8",
+   "tracegate": "6021d0253e36",
+   "blame": "5f0c6e4a05e2",
+   "pickaxe_package_specific": "5f0c6e4a05e2",
+   "pickaxe_version_line": "5f0c6e4a05e2",
+   "correct": "6021d0253e36",
+   "note": "6021d0253e ('chore: upgrade deps (#9443)') makes handlebars@4.7.8 appear; 5f0c6e4a05 ('chore: Merge branch 'main' into minor') already had it at its parent: merge commit (meta-change)"
+  },
+  {
+   "repo": "vue-core",
+   "ecosystem": "npm",
+   "manifest": "pnpm-lock.yaml",
+   "snapshot": "31deff4c32fc",
+   "package": "shell-quote",
+   "version": "1.8.1",
+   "tracegate": "6021d0253e36",
+   "blame": "5f0c6e4a05e2",
+   "pickaxe_package_specific": "5f0c6e4a05e2",
+   "pickaxe_version_line": "5f0c6e4a05e2",
+   "correct": "6021d0253e36",
+   "note": "6021d0253e ('chore: upgrade deps (#9443)') makes shell-quote@1.8.1 appear; 5f0c6e4a05 ('chore: Merge branch 'main' into minor') already had it at its parent: merge commit (meta-change)"
+  },
+  {
+   "repo": "vue-core",
+   "ecosystem": "npm",
+   "manifest": "pnpm-lock.yaml",
+   "snapshot": "2a0382ca7a47",
+   "package": "ajv",
+   "version": "6.12.6",
+   "tracegate": "61c5fbd3e351",
+   "blame": "5f0c6e4a05e2",
+   "pickaxe_package_specific": "5f0c6e4a05e2",
+   "pickaxe_version_line": "5f0c6e4a05e2",
+   "correct": "61c5fbd3e351",
+   "note": "61c5fbd3e3 ('workflow: move to pnpm (#4766)') makes ajv@6.12.6 appear; 5f0c6e4a05 ('chore: Merge branch 'main' into minor') already had it at its parent: merge commit (meta-change)"
+  },
+  {
+   "repo": "mastodon",
+   "ecosystem": "npm",
+   "manifest": "yarn.lock",
+   "snapshot": "24ffa00bca16",
+   "package": "minimatch",
+   "version": "5.1.6",
+   "tracegate": "8b2048d0c848",
+   "blame": "757d7c73c0ca",
+   "pickaxe_package_specific": "757d7c73c0ca",
+   "pickaxe_version_line": "c4f47adb4966",
+   "correct": "8b2048d0c848",
+   "note": "8b2048d0c8 ('Lock file maintenance (#25434)') makes minimatch@5.1.6 appear; 757d7c73c0 ('Upgrade to Yarn 4, remove support for Node 16 (#27') already had it at its parent: lock-file format rewrite; c4f47adb49 ('Convert from Webpack to Vite (#34450)') already had it at its parent: unrelated update that rewrote or re-sorted the line"
+  },
+  {
+   "repo": "mastodon",
+   "ecosystem": "npm",
+   "manifest": "yarn.lock",
+   "snapshot": "1aa3976f280e",
+   "package": "bn.js",
+   "version": "4.12.0",
+   "tracegate": "f2ca6c7a172d",
+   "blame": "757d7c73c0ca",
+   "pickaxe_package_specific": "757d7c73c0ca",
+   "pickaxe_version_line": "757d7c73c0ca",
+   "correct": "f2ca6c7a172d",
+   "note": "f2ca6c7a17 ('Bump elliptic from 6.5.3 to 6.5.4 (#15864)') makes bn.js@4.12.0 appear; 757d7c73c0 ('Upgrade to Yarn 4, remove support for Node 16 (#27') already had it at its parent: lock-file format rewrite"
+  },
+  {
+   "repo": "vue-core",
+   "ecosystem": "npm",
+   "manifest": "pnpm-lock.yaml",
+   "snapshot": "785a5a3dae54",
+   "package": "brace-expansion",
+   "version": "2.0.1",
+   "tracegate": "f2c46ed9cfb4",
+   "blame": "5f0c6e4a05e2",
+   "pickaxe_package_specific": "5f0c6e4a05e2",
+   "pickaxe_version_line": "5f0c6e4a05e2",
+   "correct": "f2c46ed9cfb4",
+   "note": "f2c46ed9cf ('build(deps): upgrade rollup@2 to rollup@3 (#6990)') makes brace-expansion@2.0.1 appear; 5f0c6e4a05 ('chore: Merge branch 'main' into minor') already had it at its parent: merge commit (meta-change)"
+  },
+  {
+   "repo": "excalidraw",
+   "ecosystem": "npm",
+   "manifest": "yarn.lock",
+   "snapshot": "cd514d72d635",
+   "package": "js-yaml",
+   "version": "3.14.1",
+   "tracegate": "58a7568c9f6c",
+   "blame": "8104068bd5b9",
+   "pickaxe_package_specific": "58a7568c9f6c",
+   "pickaxe_version_line": "5b7596582f44",
+   "correct": "58a7568c9f6c",
+   "note": "58a7568c9f ('chore(deps): bump nanoid from 3.1.21 to 3.1.22 (#3350)') makes js-yaml@3.14.1 appear; 5b7596582f ('feat: color picker redesign (#6216)') already had it at its parent: unrelated update that rewrote or re-sorted the line; 8104068bd5 ('revert: \"build: Migrate to Vite \ud83d\ude80\" (#6814)') already had it at its parent: unrelated update that rewrote or re-sorted the line"
+  },
+  {
+   "repo": "mastodon",
+   "ecosystem": "npm",
+   "manifest": "yarn.lock",
+   "snapshot": "1aa3976f280e",
+   "package": "http-proxy-middleware",
+   "version": "0.19.1",
+   "tracegate": "8347479f5d80",
+   "blame": "757d7c73c0ca",
+   "pickaxe_package_specific": "757d7c73c0ca",
+   "pickaxe_version_line": "757d7c73c0ca",
+   "correct": "8347479f5d80",
+   "note": "8347479f5d ('Bump webpacker from 3.5.5 to 4.0.2 (#10277)') makes http-proxy-middleware@0.19.1 appear; 757d7c73c0 ('Upgrade to Yarn 4, remove support for Node 16 (#27') already had it at its parent: lock-file format rewrite"
+  },
+  {
+   "repo": "vue-core",
+   "ecosystem": "npm",
+   "manifest": "pnpm-lock.yaml",
+   "snapshot": "4331af909338",
+   "package": "on-headers",
+   "version": "1.0.2",
+   "tracegate": "61c5fbd3e351",
+   "blame": "847658b7a2e7",
+   "pickaxe_package_specific": "847658b7a2e7",
+   "pickaxe_version_line": "847658b7a2e7",
+   "correct": "61c5fbd3e351",
+   "note": "61c5fbd3e3 ('workflow: move to pnpm (#4766)') makes on-headers@1.0.2 appear; 847658b7a2 ('release: v3.3.0-beta.5') already had it at its parent: lock-file format rewrite"
+  },
+  {
+   "repo": "ripgrep",
+   "ecosystem": "cargo",
+   "manifest": "Cargo.lock",
+   "snapshot": "e940bc956dcb",
+   "package": "term_size",
+   "version": "0.2.1",
+   "tracegate": "495e13cc615b",
+   "blame": "883d8fc72f0b",
+   "pickaxe_package_specific": "495e13cc615b",
+   "pickaxe_version_line": "aed315e80a34",
+   "correct": "495e13cc615b",
+   "note": "495e13cc61 ('Merge pull request #233 from BurntSushi/clap') makes term_size@0.2.1 appear; 883d8fc72f ('Merge pull request #240 from BurntSushi/color') already had it at its parent: merge commit (meta-change); aed315e80a ('bump deps') already had it at its parent: unrelated update that rewrote or re-sorted the line"
+  },
+  {
+   "repo": "vue-core",
+   "ecosystem": "npm",
+   "manifest": "pnpm-lock.yaml",
+   "snapshot": "c950b4c0c4e4",
+   "package": "on-headers",
+   "version": "1.0.2",
+   "tracegate": "61c5fbd3e351",
+   "blame": "5f0c6e4a05e2",
+   "pickaxe_package_specific": "5f0c6e4a05e2",
+   "pickaxe_version_line": "5f0c6e4a05e2",
+   "correct": "61c5fbd3e351",
+   "note": "61c5fbd3e3 ('workflow: move to pnpm (#4766)') makes on-headers@1.0.2 appear; 5f0c6e4a05 ('chore: Merge branch 'main' into minor') already had it at its parent: merge commit (meta-change)"
+  },
+  {
+   "repo": "vue-core",
+   "ecosystem": "npm",
+   "manifest": "pnpm-lock.yaml",
+   "snapshot": "25595f593c94",
+   "package": "minimatch",
+   "version": "5.1.6",
+   "tracegate": "53e3533b75ad",
+   "blame": "847658b7a2e7",
+   "pickaxe_package_specific": "847658b7a2e7",
+   "pickaxe_version_line": "847658b7a2e7",
+   "correct": "53e3533b75ad",
+   "note": "53e3533b75 ('chore: bump deps') makes minimatch@5.1.6 appear; 847658b7a2 ('release: v3.3.0-beta.5') already had it at its parent: lock-file format rewrite"
+  },
+  {
+   "repo": "mastodon",
+   "ecosystem": "npm",
+   "manifest": "yarn.lock",
+   "snapshot": "b1692628de55",
+   "package": "webpack-dev-middleware",
+   "version": "3.7.3",
+   "tracegate": "8b2048d0c848",
+   "blame": "757d7c73c0ca",
+   "pickaxe_package_specific": "757d7c73c0ca",
+   "pickaxe_version_line": "757d7c73c0ca",
+   "correct": "8b2048d0c848",
+   "note": "8b2048d0c8 ('Lock file maintenance (#25434)') makes webpack-dev-middleware@3.7.3 appear; 757d7c73c0 ('Upgrade to Yarn 4, remove support for Node 16 (#27') already had it at its parent: lock-file format rewrite"
+  },
+  {
+   "repo": "vue-core",
+   "ecosystem": "npm",
+   "manifest": "pnpm-lock.yaml",
+   "snapshot": "25595f593c94",
+   "package": "js-yaml",
+   "version": "4.1.0",
+   "tracegate": "53e3533b75ad",
+   "blame": "847658b7a2e7",
+   "pickaxe_package_specific": "847658b7a2e7",
+   "pickaxe_version_line": "847658b7a2e7",
+   "correct": "53e3533b75ad",
+   "note": "53e3533b75 ('chore: bump deps') makes js-yaml@4.1.0 appear; 847658b7a2 ('release: v3.3.0-beta.5') already had it at its parent: lock-file format rewrite"
+  },
+  {
+   "repo": "mastodon",
+   "ecosystem": "npm",
+   "manifest": "yarn.lock",
+   "snapshot": "1aa3976f280e",
+   "package": "bn.js",
+   "version": "5.2.1",
+   "tracegate": "8b2048d0c848",
+   "blame": "757d7c73c0ca",
+   "pickaxe_package_specific": "757d7c73c0ca",
+   "pickaxe_version_line": "373aa95dddd7",
+   "correct": "8b2048d0c848",
+   "note": "8b2048d0c8 ('Lock file maintenance (#25434)') makes bn.js@5.2.1 appear; 373aa95ddd ('Update formatjs monorepo (#27849)') already had it at its parent: unrelated update that rewrote or re-sorted the line; 757d7c73c0 ('Upgrade to Yarn 4, remove support for Node 16 (#27') already had it at its parent: lock-file format rewrite"
+  },
+  {
+   "repo": "mastodon",
+   "ecosystem": "npm",
+   "manifest": "yarn.lock",
+   "snapshot": "b1692628de55",
+   "package": "cross-spawn",
+   "version": "7.0.3",
+   "tracegate": "795f61d66b80",
+   "blame": "757d7c73c0ca",
+   "pickaxe_package_specific": "757d7c73c0ca",
+   "pickaxe_version_line": "60b0ad07714e",
+   "correct": "795f61d66b80",
+   "note": "795f61d66b ('Bump jest-cli from 25.4.0 to 25.5.4 (#13977)') makes cross-spawn@7.0.3 appear; 60b0ad0771 ('Update dependency postcss-preset-env to v10.0.8 (#') already had it at its parent: unrelated update that rewrote or re-sorted the line; 757d7c73c0 ('Upgrade to Yarn 4, remove support for Node 16 (#27') already had it at its parent: lock-file format rewrite"
+  },
+  {
+   "repo": "vue-core",
+   "ecosystem": "npm",
+   "manifest": "pnpm-lock.yaml",
+   "snapshot": "6e2bf14df303",
+   "package": "picomatch",
+   "version": "2.3.1",
+   "tracegate": "f2c46ed9cfb4",
+   "blame": "5f0c6e4a05e2",
+   "pickaxe_package_specific": "5f0c6e4a05e2",
+   "pickaxe_version_line": "5f0c6e4a05e2",
+   "correct": "f2c46ed9cfb4",
+   "note": "f2c46ed9cf ('build(deps): upgrade rollup@2 to rollup@3 (#6990)') makes picomatch@2.3.1 appear; 5f0c6e4a05 ('chore: Merge branch 'main' into minor') already had it at its parent: merge commit (meta-change)"
+  },
+  {
+   "repo": "mastodon",
+   "ecosystem": "npm",
+   "manifest": "yarn.lock",
+   "snapshot": "b1692628de55",
+   "package": "path-to-regexp",
+   "version": "1.8.0",
+   "tracegate": "8b2048d0c848",
+   "blame": "757d7c73c0ca",
+   "pickaxe_package_specific": "757d7c73c0ca",
+   "pickaxe_version_line": "11786f1114f9",
+   "correct": "8b2048d0c848",
+   "note": "8b2048d0c8 ('Lock file maintenance (#25434)') makes path-to-regexp@1.8.0 appear; 11786f1114 ('Change design of edit media modal in web UI (#3351') already had it at its parent: unrelated update that rewrote or re-sorted the line; 757d7c73c0 ('Upgrade to Yarn 4, remove support for Node 16 (#27') already had it at its parent: lock-file format rewrite"
+  },
+  {
+   "repo": "mastodon",
+   "ecosystem": "npm",
+   "manifest": "yarn.lock",
+   "snapshot": "b1692628de55",
+   "package": "uuid",
+   "version": "3.4.0",
+   "tracegate": "cc28f7d12c69",
+   "blame": "757d7c73c0ca",
+   "pickaxe_package_specific": "757d7c73c0ca",
+   "pickaxe_version_line": "757d7c73c0ca",
+   "correct": "cc28f7d12c69",
+   "note": "cc28f7d12c ('Bump uuid from 3.3.3 to 3.4.0 (#12981)') makes uuid@3.4.0 appear; 757d7c73c0 ('Upgrade to Yarn 4, remove support for Node 16 (#27') already had it at its parent: lock-file format rewrite"
+  },
+  {
+   "repo": "mastodon",
+   "ecosystem": "npm",
+   "manifest": "yarn.lock",
+   "snapshot": "1aa3976f280e",
+   "package": "sha.js",
+   "version": "2.4.11",
+   "tracegate": "e9b322d0a6be",
+   "blame": "757d7c73c0ca",
+   "pickaxe_package_specific": "757d7c73c0ca",
+   "pickaxe_version_line": "757d7c73c0ca",
+   "correct": "e9b322d0a6be",
+   "note": "e9b322d0a6 ('Upgrade webpack to version v4.x (#6655)') makes sha.js@2.4.11 appear; 757d7c73c0 ('Upgrade to Yarn 4, remove support for Node 16 (#27') already had it at its parent: lock-file format rewrite"
+  },
+  {
+   "repo": "vue-core",
+   "ecosystem": "npm",
+   "manifest": "pnpm-lock.yaml",
+   "snapshot": "785a5a3dae54",
+   "package": "ajv",
+   "version": "6.12.6",
+   "tracegate": "61c5fbd3e351",
+   "blame": "5f0c6e4a05e2",
+   "pickaxe_package_specific": "5f0c6e4a05e2",
+   "pickaxe_version_line": "5f0c6e4a05e2",
+   "correct": "61c5fbd3e351",
+   "note": "61c5fbd3e3 ('workflow: move to pnpm (#4766)') makes ajv@6.12.6 appear; 5f0c6e4a05 ('chore: Merge branch 'main' into minor') already had it at its parent: merge commit (meta-change)"
+  }
+ ],
+ "adjudicated_accuracy": {
+  "pypi+golang": {
+   "tracegate": {
+    "correct": 9,
+    "total": 9,
+    "accuracy": 1.0,
+    "wilson95": [
+     0.7008,
+     1.0
+    ],
+    "clopper_pearson95": [
+     0.6637,
+     1.0
+    ],
+    "cp_lower95_one_sided": 0.7169
+   },
+   "blame": {
+    "correct": 0,
+    "total": 9,
+    "accuracy": 0.0,
+    "wilson95": [
+     0.0,
+     0.2992
+    ],
+    "clopper_pearson95": [
+     0.0,
+     0.3363
+    ],
+    "cp_lower95_one_sided": 0.0
+   },
+   "pickaxe_package_specific": {
+    "correct": 0,
+    "total": 9,
+    "accuracy": 0.0,
+    "wilson95": [
+     0.0,
+     0.2992
+    ],
+    "clopper_pearson95": [
+     0.0,
+     0.3363
+    ],
+    "cp_lower95_one_sided": 0.0
+   },
+   "pickaxe_version_line": {
+    "correct": 0,
+    "total": 9,
+    "accuracy": 0.0,
+    "wilson95": [
+     0.0,
+     0.2992
+    ],
+    "clopper_pearson95": [
+     0.0,
+     0.3363
+    ],
+    "cp_lower95_one_sided": 0.0
+   },
+   "undecided": 0
+  },
+  "cargo+npm": {
+   "tracegate": {
+    "correct": 50,
+    "total": 50,
+    "accuracy": 1.0,
+    "wilson95": [
+     0.9286,
+     1.0
+    ],
+    "clopper_pearson95": [
+     0.9289,
+     1.0
+    ],
+    "cp_lower95_one_sided": 0.9418
+   },
+   "blame": {
+    "correct": 0,
+    "total": 50,
+    "accuracy": 0.0,
+    "wilson95": [
+     0.0,
+     0.0714
+    ],
+    "clopper_pearson95": [
+     0.0,
+     0.0711
+    ],
+    "cp_lower95_one_sided": 0.0
+   },
+   "pickaxe_package_specific": {
+    "correct": 3,
+    "total": 50,
+    "accuracy": 0.06,
+    "wilson95": [
+     0.0206,
+     0.1622
+    ],
+    "clopper_pearson95": [
+     0.0125,
+     0.1655
+    ],
+    "cp_lower95_one_sided": 0.0166
+   },
+   "pickaxe_version_line": {
+    "correct": 1,
+    "total": 50,
+    "accuracy": 0.02,
+    "wilson95": [
+     0.0035,
+     0.105
+    ],
+    "clopper_pearson95": [
+     0.0005,
+     0.1065
+    ],
+    "cp_lower95_one_sided": 0.001
+   },
+   "undecided": 0
+  },
+  "all": {
+   "tracegate": {
+    "correct": 59,
+    "total": 59,
+    "accuracy": 1.0,
+    "wilson95": [
+     0.9389,
+     1.0
+    ],
+    "clopper_pearson95": [
+     0.9394,
+     1.0
+    ],
+    "cp_lower95_one_sided": 0.9505
+   },
+   "blame": {
+    "correct": 0,
+    "total": 59,
+    "accuracy": 0.0,
+    "wilson95": [
+     0.0,
+     0.0611
+    ],
+    "clopper_pearson95": [
+     0.0,
+     0.0606
+    ],
+    "cp_lower95_one_sided": 0.0
+   },
+   "pickaxe_package_specific": {
+    "correct": 3,
+    "total": 59,
+    "accuracy": 0.0508,
+    "wilson95": [
+     0.0174,
+     0.1392
+    ],
+    "clopper_pearson95": [
+     0.0106,
+     0.1415
+    ],
+    "cp_lower95_one_sided": 0.014
+   },
+   "pickaxe_version_line": {
+    "correct": 1,
+    "total": 59,
+    "accuracy": 0.0169,
+    "wilson95": [
+     0.003,
+     0.09
+    ],
+    "clopper_pearson95": [
+     0.0004,
+     0.0909
+    ],
+    "cp_lower95_one_sided": 0.0009
+   },
+   "undecided": 0
+  }
+ }
+}

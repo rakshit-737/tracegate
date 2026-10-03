@@ -1,100 +1,99 @@
 {
- "run_id": null,
- "run_url": null,
- "generated": "local",
- "command": "python benchmarks/images_eval.py (after scripts/scan_real.py images)",
- "commit": "0e74b55d157f4a54ab67ad302fece1d45765441b",
- "generated_at": "2026-09-26",
- "provenance_note": "generated on the dev laptop and committed in 0e74b55; no Actions run",
+ "run_id": 37088867445,
+ "run_url": "https://github.com/rakshit-737/tracegate/actions/runs/37088867445",
+ "commit": "90b5acf57ea0552fdde7d3c9153f6483992df65b",
+ "generated": "github-actions",
+ "generated_at": "2026-10-03T02:12:23Z",
+ "command": "python benchmarks/images_eval.py",
  "images": [
   {
    "image": "alpine:3.14.2",
-   "syft_packages": 15,
+   "syft_packages": 14,
    "layers": 1,
    "trivy_findings": 43,
    "match_naive": 43,
    "match_raw_purl": 0,
    "match_tracegate": 43,
-   "sbom_jaccard_syft_vs_trivy": 0.9333
+   "sbom_jaccard_syft_vs_trivy": 1.0
   },
   {
    "image": "httpd:2.4.49-alpine3.14",
-   "syft_packages": 36,
+   "syft_packages": 49,
    "layers": 5,
    "trivy_findings": 99,
    "match_naive": 99,
    "match_raw_purl": 0,
    "match_tracegate": 99,
-   "sbom_jaccard_syft_vs_trivy": 0.9444
+   "sbom_jaccard_syft_vs_trivy": 0.9714
   },
   {
    "image": "memcached:1.6.10-alpine3.14",
-   "syft_packages": 20,
+   "syft_packages": 33,
    "layers": 6,
    "trivy_findings": 44,
    "match_naive": 44,
    "match_raw_purl": 0,
    "match_tracegate": 44,
-   "sbom_jaccard_syft_vs_trivy": 0.9
+   "sbom_jaccard_syft_vs_trivy": 0.9474
   },
   {
    "image": "nginx:1.21.3-alpine",
-   "syft_packages": 45,
+   "syft_packages": 56,
    "layers": 6,
    "trivy_findings": 105,
    "match_naive": 105,
    "match_raw_purl": 0,
    "match_tracegate": 105,
-   "sbom_jaccard_syft_vs_trivy": 0.9333
+   "sbom_jaccard_syft_vs_trivy": 1.0
   },
   {
    "image": "node:14.17.6-alpine3.14",
-   "syft_packages": 417,
+   "syft_packages": 430,
    "layers": 4,
-   "trivy_findings": 90,
-   "match_naive": 90,
-   "match_raw_purl": 47,
-   "match_tracegate": 90,
-   "sbom_jaccard_syft_vs_trivy": 0.9952
+   "trivy_findings": 94,
+   "match_naive": 94,
+   "match_raw_purl": 51,
+   "match_tracegate": 94,
+   "sbom_jaccard_syft_vs_trivy": 0.9976
   },
   {
    "image": "python:3.9.7-alpine3.14",
-   "syft_packages": 51,
+   "syft_packages": 64,
    "layers": 5,
    "trivy_findings": 83,
    "match_naive": 83,
    "match_raw_purl": 12,
    "match_tracegate": 83,
-   "sbom_jaccard_syft_vs_trivy": 0.9512
+   "sbom_jaccard_syft_vs_trivy": 0.975
   },
   {
    "image": "redis:6.2.5-alpine3.14",
-   "syft_packages": 19,
+   "syft_packages": 32,
    "layers": 6,
    "trivy_findings": 43,
    "match_naive": 43,
    "match_raw_purl": 0,
    "match_tracegate": 43,
-   "sbom_jaccard_syft_vs_trivy": 0.8947
+   "sbom_jaccard_syft_vs_trivy": 0.9444
   }
  ],
  "identity_convergence": {
   "naive": 1.0,
-  "raw": 0.1164,
+  "raw": 0.1233,
   "canon": 1.0,
-  "trivy_rows": 507
+  "trivy_rows": 511
  },
  "graph": {
-  "nodes": 538,
-  "edges": 556,
-  "findings": 218
+  "nodes": 535,
+  "edges": 637,
+  "findings": 222
  },
- "gate_ms_median": 71.9,
+ "gate_ms_median": 7.4,
  "verdict": "block",
  "unmatched_trivy_findings": 0,
- "unique_finding_nodes": 215,
- "unique_cves": 142,
- "dedup_ratio": 2.36,
+ "unique_finding_nodes": 219,
+ "unique_cves": 146,
+ "dedup_ratio": 2.33,
  "shared_layers": [
   {
    "layer": "sha256:e2eb06d8af82",
@@ -116,7 +115,7 @@
     "svc-python",
     "svc-redis"
    ],
-   "packages_in_layer": 15,
+   "packages_in_layer": 14,
    "findings_in_layer": 43
   }
  ],

@@ -1,0 +1,85 @@
+{
+  "bin/syft_1.52.0_checksums.txt": {
+    "bytes": 2690,
+    "fetched": "2026-10-03T02:10:54Z",
+    "sha256": "21d9ee36c7c6fb43d6493718a387ecca021321791d1815c716e56c99b9c8d6b9",
+    "url": "https://github.com/anchore/syft/releases/download/v1.52.0/syft_1.52.0_checksums.txt"
+  },
+  "bin/syft_1.52.0_linux_amd64.tar.gz": {
+    "bytes": 29289629,
+    "fetched": "2026-10-03T02:10:55Z",
+    "sha256": "caeedb81fb0491615f1ebd1761e4145d41ee86dd2cc7bf80669f9f5ad9d6133d",
+    "url": "https://github.com/anchore/syft/releases/download/v1.52.0/syft_1.52.0_linux_amd64.tar.gz"
+  },
+  "bin/trivy_0.74.0_Linux-64bit.tar.gz": {
+    "bytes": 50419107,
+    "fetched": "2026-10-03T02:10:56Z",
+    "sha256": "2ae6fe3ee734b7fdf11335663e18c75ea12dccc76062f09f164a3b0f8be4371a",
+    "url": "https://github.com/aquasecurity/trivy/releases/download/v0.74.0/trivy_0.74.0_Linux-64bit.tar.gz"
+  },
+  "bin/trivy_0.74.0_checksums.txt": {
+    "bytes": 2121,
+    "fetched": "2026-10-03T02:10:55Z",
+    "sha256": "bc701c3c3ee8b9acbea2c23257e41381e3854888f51281616a6ba5dc96963821",
+    "url": "https://github.com/aquasecurity/trivy/releases/download/v0.74.0/trivy_0.74.0_checksums.txt"
+  },
+  "commit": "90b5acf57ea0552fdde7d3c9153f6483992df65b",
+  "generated": "github-actions",
+  "generated_at": "2026-10-03T02:12:24Z",
+  "osv/Alpine-all.zip": {
+    "bytes": 4034121,
+    "fetched": "2026-10-03T02:10:59Z",
+    "sha256": "c3a745816d2c9d303440b3fa684181fa554eb37b8ac824acef2e5706aac70579",
+    "url": "https://osv-vulnerabilities.storage.googleapis.com/Alpine/all.zip"
+  },
+  "osv/Go-all.zip": {
+    "bytes": 12023218,
+    "fetched": "2026-10-03T02:11:00Z",
+    "sha256": "77bb6a0cb7bc69c4db47970aebc729e34dcbbb8047319f4e809edf4029ce7b84",
+    "url": "https://osv-vulnerabilities.storage.googleapis.com/Go/all.zip"
+  },
+  "osv/NuGet-all.zip": {
+    "bytes": 2503538,
+    "fetched": "2026-10-03T02:11:00Z",
+    "sha256": "a58050f8574f35291b2fde40389fd7a632e64142b7c796526dbb162c2c43a5ae",
+    "url": "https://osv-vulnerabilities.storage.googleapis.com/NuGet/all.zip"
+  },
+  "osv/PyPI-all.zip": {
+    "bytes": 35411480,
+    "fetched": "2026-10-03T02:10:57Z",
+    "sha256": "7c3a5ff9e05d61174d7b08e0b9da5e2f299b3af2414d469cdd14d74cf32edcc7",
+    "url": "https://osv-vulnerabilities.storage.googleapis.com/PyPI/all.zip"
+  },
+  "osv/RubyGems-all.zip": {
+    "bytes": 5041744,
+    "fetched": "2026-10-03T02:11:00Z",
+    "sha256": "11454ea786ae663ced85770b886bd272184411de5c804d28ffb6bd12c6117b93",
+    "url": "https://osv-vulnerabilities.storage.googleapis.com/RubyGems/all.zip"
+  },
+  "osv/crates.io-all.zip": {
+    "bytes": 3539112,
+    "fetched": "2026-10-03T02:11:00Z",
+    "sha256": "a461c7e74e7af8e7123477fc64c1a2f7431b9cbf5f6648a025bdea4118e0c152",
+    "url": "https://osv-vulnerabilities.storage.googleapis.com/crates.io/all.zip"
+  },
+  "osv/npm-all.zip": {
+    "bytes": 217394378,
+    "fetched": "2026-10-03T02:10:59Z",
+    "sha256": "303a96ffaccee17192bce5479a19c7dfab8567032216b6257051126fe4221559",
+    "url": "https://osv-vulnerabilities.storage.googleapis.com/npm/all.zip"
+  },
+  "popular/npm-high-impact-top.js": {
+    "bytes": 404035,
+    "fetched": "2026-10-03T02:11:01Z",
+    "sha256": "bbc16e783283f23d38559a1322d93af27b8a7a884b1fa9c5a1dd84e810684f0c",
+    "url": "https://raw.githubusercontent.com/wooorm/npm-high-impact/main/lib/top.js"
+  },
+  "popular/top-pypi-packages.min.json": {
+    "bytes": 787401,
+    "fetched": "2026-10-03T02:11:01Z",
+    "sha256": "55fee05ed02b628f05350a51780ec436efae39ea0810df5d5419e15b850c7041",
+    "url": "https://hugovk.dev/top-pypi-packages/top-pypi-packages.min.json"
+  },
+  "run_id": 37088867445,
+  "run_url": "https://github.com/rakshit-737/tracegate/actions/runs/37088867445"
+}

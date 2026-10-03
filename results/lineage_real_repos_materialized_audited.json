@@ -1,9 +1,9 @@
 {
- "run_id": 37091106360,
- "run_url": "https://github.com/rakshit-737/tracegate/actions/runs/37091106360",
- "commit": "96088fd742c1927c47cb6ab726116b271a3bf64c",
+ "run_id": 37090410909,
+ "run_url": "https://github.com/rakshit-737/tracegate/actions/runs/37090410909",
+ "commit": "46bf6f378dff2602f54be5dac68fb932fd1a20ca",
  "generated": "github-actions",
- "generated_at": "2026-10-03T02:52:59Z",
+ "generated_at": "2026-10-03T02:40:33Z",
  "command": "python benchmarks/lineage_eval.py --snapshots 12 --materialize --repos healthchecks netbox warehouse",
  "summary": {
   "tracegate": {
@@ -285,21 +285,21 @@
  },
  "reachability_total": {
   "high_plus": 887,
-  "actionable": 887,
-  "downgraded": 0,
+  "actionable": 842,
+  "downgraded": 45,
   "downgraded_share": {
-   "correct": 0,
+   "correct": 45,
    "total": 887,
-   "accuracy": 0.0,
+   "accuracy": 0.0507,
    "wilson95": [
-    0.0,
-    0.0043
+    0.0381,
+    0.0672
    ],
    "clopper_pearson95": [
-    0.0,
-    0.0042
+    0.0372,
+    0.0673
    ],
-   "cp_lower95_one_sided": 0.0
+   "cp_lower95_one_sided": 0.0392
   }
  },
  "mode": "materialized per-snapshot sources",
@@ -319,8 +319,8 @@
    "manifest_commits": 237,
    "snapshots": 12,
    "history_walk_s": 0.49,
-   "gate_ms_median": 5.8,
-   "gate_ms_max": 10.7,
+   "gate_ms_median": 6.1,
+   "gate_ms_max": 11.5,
    "attribution": {
     "tracegate": {
      "correct": 20,
@@ -629,8 +629,7 @@
      "entrypoint": 1,
      "referenced": 0,
      "transitive": 0,
-     "unreached": 0,
-     "unknown": 0
+     "unreached": 0
     },
     "unreached": [],
     "direct_deps": null,
@@ -657,8 +656,8 @@
    "manifest_commits": 216,
    "snapshots": 12,
    "history_walk_s": 0.46,
-   "gate_ms_median": 13.1,
-   "gate_ms_max": 22.8,
+   "gate_ms_median": 13.8,
+   "gate_ms_max": 25.6,
    "attribution": {
     "tracegate": {
      "correct": 108,
@@ -735,7 +734,7 @@
       "findings": 59
      },
      "high_plus": 28,
-     "high_plus_actionable": 28,
+     "high_plus_actionable": 26,
      "verdict_after_reachability": "block",
      "warden_flags": []
     },
@@ -987,10 +986,16 @@
      "entrypoint": 0,
      "referenced": 2,
      "transitive": 2,
-     "unreached": 0,
-     "unknown": 6
+     "unreached": 6
     },
-    "unreached": [],
+    "unreached": [
+     "django-pgware",
+     "django-rich",
+     "mkdocs-material",
+     "mkdocstrings",
+     "mkdocstrings-python",
+     "tablib"
+    ],
     "direct_deps": null,
     "direct_deps_marked_unreached": [],
     "trivy_findings": 0,
@@ -998,9 +1003,32 @@
    },
    "reachability": {
     "high_plus_total": 324,
-    "actionable_total": 324,
-    "downgraded_total": 0,
-    "downgraded": [],
+    "actionable_total": 322,
+    "downgraded_total": 2,
+    "downgraded": [
+     {
+      "snapshot": "27b289ee3b30",
+      "date": "2016-03-01",
+      "cve": "CVE-2020-14343",
+      "pin": "pyyaml==3.11",
+      "severity": "critical",
+      "status": "unreached",
+      "evidence": "no import, entrypoint or reachable dependent found",
+      "via_at_snapshot": {},
+      "via_at_head": {}
+     },
+     {
+      "snapshot": "27b289ee3b30",
+      "date": "2016-03-01",
+      "cve": "CVE-2017-18342",
+      "pin": "pyyaml==3.11",
+      "severity": "critical",
+      "status": "unreached",
+      "evidence": "no import, entrypoint or reachable dependent found",
+      "via_at_snapshot": {},
+      "via_at_head": {}
+     }
+    ],
     "note": "each snapshot analysed against its own materialized sources"
    }
   },
@@ -1014,9 +1042,9 @@
    "osv_dump_sha256": "7c3a5ff9e05d61174d7b08e0b9da5e2f299b3af2414d469cdd14d74cf32edcc7",
    "manifest_commits": 2521,
    "snapshots": 12,
-   "history_walk_s": 9.79,
-   "gate_ms_median": 63.9,
-   "gate_ms_max": 297.1,
+   "history_walk_s": 10.44,
+   "gate_ms_median": 70.8,
+   "gate_ms_max": 331.2,
    "attribution": {
     "tracegate": {
      "correct": 226,
@@ -1222,7 +1250,7 @@
       "findings": 88
      },
      "high_plus": 40,
-     "high_plus_actionable": 40,
+     "high_plus_actionable": 32,
      "verdict_after_reachability": "block",
      "warden_flags": []
     },
@@ -1242,7 +1270,7 @@
       "findings": 85
      },
      "high_plus": 39,
-     "high_plus_actionable": 39,
+     "high_plus_actionable": 33,
      "verdict_after_reachability": "block",
      "warden_flags": []
     },
@@ -1262,7 +1290,7 @@
       "findings": 98
      },
      "high_plus": 46,
-     "high_plus_actionable": 46,
+     "high_plus_actionable": 39,
      "verdict_after_reachability": "block",
      "warden_flags": []
     },
@@ -1282,7 +1310,7 @@
       "findings": 97
      },
      "high_plus": 46,
-     "high_plus_actionable": 46,
+     "high_plus_actionable": 40,
      "verdict_after_reachability": "block",
      "warden_flags": []
     },
@@ -1302,7 +1330,7 @@
       "findings": 93
      },
      "high_plus": 43,
-     "high_plus_actionable": 43,
+     "high_plus_actionable": 37,
      "verdict_after_reachability": "block",
      "warden_flags": []
     },
@@ -1322,7 +1350,7 @@
       "findings": 100
      },
      "high_plus": 47,
-     "high_plus_actionable": 47,
+     "high_plus_actionable": 37,
      "verdict_after_reachability": "block",
      "warden_flags": []
     },
@@ -1414,8 +1442,7 @@
      "entrypoint": 2,
      "referenced": 3,
      "transitive": 98,
-     "unreached": 3,
-     "unknown": 0
+     "unreached": 3
     },
     "unreached": [
      "disposable-email-domains",
@@ -1433,9 +1460,609 @@
    },
    "reachability": {
     "high_plus_total": 424,
-    "actionable_total": 424,
-    "downgraded_total": 0,
-    "downgraded": [],
+    "actionable_total": 381,
+    "downgraded_total": 43,
+    "downgraded": [
+     {
+      "snapshot": "87b6892a165c",
+      "date": "2017-08-01",
+      "cve": "CVE-2021-21240",
+      "pin": "httplib2==0.10.3",
+      "severity": "high",
+      "status": "unreached",
+      "evidence": "no import, entrypoint or reachable dependent found",
+      "via_at_snapshot": {},
+      "via_at_head": {}
+     },
+     {
+      "snapshot": "87b6892a165c",
+      "date": "2017-08-01",
+      "cve": "CVE-2026-59939",
+      "pin": "httplib2==0.10.3",
+      "severity": "high",
+      "status": "unreached",
+      "evidence": "no import, entrypoint or reachable dependent found",
+      "via_at_snapshot": {},
+      "via_at_head": {}
+     },
+     {
+      "snapshot": "87b6892a165c",
+      "date": "2017-08-01",
+      "cve": "CVE-2026-59885",
+      "pin": "pyasn1==0.3.1",
+      "severity": "high",
+      "status": "unreached",
+      "evidence": "no import, entrypoint or reachable dependent found",
+      "via_at_snapshot": {},
+      "via_at_head": {
+       "pyasn1-modules": "unreached",
+       "pypi-attestations": null,
+       "sigstore": null,
+       "webauthn": null
+      }
+     },
+     {
+      "snapshot": "87b6892a165c",
+      "date": "2017-08-01",
+      "cve": "CVE-2026-59886",
+      "pin": "pyasn1==0.3.1",
+      "severity": "high",
+      "status": "unreached",
+      "evidence": "no import, entrypoint or reachable dependent found",
+      "via_at_snapshot": {},
+      "via_at_head": {
+       "pyasn1-modules": "unreached",
+       "pypi-attestations": null,
+       "sigstore": null,
+       "webauthn": null
+      }
+     },
+     {
+      "snapshot": "87b6892a165c",
+      "date": "2017-08-01",
+      "cve": "CVE-2026-30922",
+      "pin": "pyasn1==0.3.1",
+      "severity": "high",
+      "status": "unreached",
+      "evidence": "no import, entrypoint or reachable dependent found",
+      "via_at_snapshot": {},
+      "via_at_head": {
+       "pyasn1-modules": "unreached",
+       "pypi-attestations": null,
+       "sigstore": null,
+       "webauthn": null
+      }
+     },
+     {
+      "snapshot": "87b6892a165c",
+      "date": "2017-08-01",
+      "cve": "CVE-2026-59884",
+      "pin": "pyasn1==0.3.1",
+      "severity": "high",
+      "status": "unreached",
+      "evidence": "no import, entrypoint or reachable dependent found",
+      "via_at_snapshot": {},
+      "via_at_head": {
+       "pyasn1-modules": "unreached",
+       "pypi-attestations": null,
+       "sigstore": null,
+       "webauthn": null
+      }
+     },
+     {
+      "snapshot": "87b6892a165c",
+      "date": "2017-08-01",
+      "cve": "CVE-2020-13757",
+      "pin": "rsa==3.4.2",
+      "severity": "high",
+      "status": "unreached",
+      "evidence": "no import, entrypoint or reachable dependent found",
+      "via_at_snapshot": {},
+      "via_at_head": {}
+     },
+     {
+      "snapshot": "87b6892a165c",
+      "date": "2017-08-01",
+      "cve": "CVE-2020-25658",
+      "pin": "rsa==3.4.2",
+      "severity": "high",
+      "status": "unreached",
+      "evidence": "no import, entrypoint or reachable dependent found",
+      "via_at_snapshot": {},
+      "via_at_head": {}
+     },
+     {
+      "snapshot": "c41d6bc5e601",
+      "date": "2018-02-08",
+      "cve": "CVE-2026-59885",
+      "pin": "pyasn1==0.4.2",
+      "severity": "high",
+      "status": "unreached",
+      "evidence": "no import, entrypoint or reachable dependent found",
+      "via_at_snapshot": {},
+      "via_at_head": {
+       "pyasn1-modules": "unreached",
+       "pypi-attestations": null,
+       "sigstore": null,
+       "webauthn": null
+      }
+     },
+     {
+      "snapshot": "c41d6bc5e601",
+      "date": "2018-02-08",
+      "cve": "CVE-2026-59886",
+      "pin": "pyasn1==0.4.2",
+      "severity": "high",
+      "status": "unreached",
+      "evidence": "no import, entrypoint or reachable dependent found",
+      "via_at_snapshot": {},
+      "via_at_head": {
+       "pyasn1-modules": "unreached",
+       "pypi-attestations": null,
+       "sigstore": null,
+       "webauthn": null
+      }
+     },
+     {
+      "snapshot": "c41d6bc5e601",
+      "date": "2018-02-08",
+      "cve": "CVE-2026-30922",
+      "pin": "pyasn1==0.4.2",
+      "severity": "high",
+      "status": "unreached",
+      "evidence": "no import, entrypoint or reachable dependent found",
+      "via_at_snapshot": {},
+      "via_at_head": {
+       "pyasn1-modules": "unreached",
+       "pypi-attestations": null,
+       "sigstore": null,
+       "webauthn": null
+      }
+     },
+     {
+      "snapshot": "c41d6bc5e601",
+      "date": "2018-02-08",
+      "cve": "CVE-2026-59884",
+      "pin": "pyasn1==0.4.2",
+      "severity": "high",
+      "status": "unreached",
+      "evidence": "no import, entrypoint or reachable dependent found",
+      "via_at_snapshot": {},
+      "via_at_head": {
+       "pyasn1-modules": "unreached",
+       "pypi-attestations": null,
+       "sigstore": null,
+       "webauthn": null
+      }
+     },
+     {
+      "snapshot": "c41d6bc5e601",
+      "date": "2018-02-08",
+      "cve": "CVE-2020-13757",
+      "pin": "rsa==3.4.2",
+      "severity": "high",
+      "status": "unreached",
+      "evidence": "no import, entrypoint or reachable dependent found",
+      "via_at_snapshot": {},
+      "via_at_head": {}
+     },
+     {
+      "snapshot": "c41d6bc5e601",
+      "date": "2018-02-08",
+      "cve": "CVE-2020-25658",
+      "pin": "rsa==3.4.2",
+      "severity": "high",
+      "status": "unreached",
+      "evidence": "no import, entrypoint or reachable dependent found",
+      "via_at_snapshot": {},
+      "via_at_head": {}
+     },
+     {
+      "snapshot": "f281980bb7ee",
+      "date": "2018-06-29",
+      "cve": "CVE-2022-40899",
+      "pin": "future==0.16.0",
+      "severity": "high",
+      "status": "unreached",
+      "evidence": "no import, entrypoint or reachable dependent found",
+      "via_at_snapshot": {},
+      "via_at_head": {}
+     },
+     {
+      "snapshot": "f281980bb7ee",
+      "date": "2018-06-29",
+      "cve": "CVE-2026-59885",
+      "pin": "pyasn1==0.4.3",
+      "severity": "high",
+      "status": "unreached",
+      "evidence": "no import, entrypoint or reachable dependent found",
+      "via_at_snapshot": {},
+      "via_at_head": {
+       "pyasn1-modules": "unreached",
+       "pypi-attestations": null,
+       "sigstore": null,
+       "webauthn": null
+      }
+     },
+     {
+      "snapshot": "f281980bb7ee",
+      "date": "2018-06-29",
+      "cve": "CVE-2026-59886",
+      "pin": "pyasn1==0.4.3",
+      "severity": "high",
+      "status": "unreached",
+      "evidence": "no import, entrypoint or reachable dependent found",
+      "via_at_snapshot": {},
+      "via_at_head": {
+       "pyasn1-modules": "unreached",
+       "pypi-attestations": null,
+       "sigstore": null,
+       "webauthn": null
+      }
+     },
+     {
+      "snapshot": "f281980bb7ee",
+      "date": "2018-06-29",
+      "cve": "CVE-2026-30922",
+      "pin": "pyasn1==0.4.3",
+      "severity": "high",
+      "status": "unreached",
+      "evidence": "no import, entrypoint or reachable dependent found",
+      "via_at_snapshot": {},
+      "via_at_head": {
+       "pyasn1-modules": "unreached",
+       "pypi-attestations": null,
+       "sigstore": null,
+       "webauthn": null
+      }
+     },
+     {
+      "snapshot": "f281980bb7ee",
+      "date": "2018-06-29",
+      "cve": "CVE-2026-59884",
+      "pin": "pyasn1==0.4.3",
+      "severity": "high",
+      "status": "unreached",
+      "evidence": "no import, entrypoint or reachable dependent found",
+      "via_at_snapshot": {},
+      "via_at_head": {
+       "pyasn1-modules": "unreached",
+       "pypi-attestations": null,
+       "sigstore": null,
+       "webauthn": null
+      }
+     },
+     {
+      "snapshot": "f281980bb7ee",
+      "date": "2018-06-29",
+      "cve": "CVE-2020-13757",
+      "pin": "rsa==3.4.2",
+      "severity": "high",
+      "status": "unreached",
+      "evidence": "no import, entrypoint or reachable dependent found",
+      "via_at_snapshot": {},
+      "via_at_head": {}
+     },
+     {
+      "snapshot": "f281980bb7ee",
+      "date": "2018-06-29",
+      "cve": "CVE-2020-25658",
+      "pin": "rsa==3.4.2",
+      "severity": "high",
+      "status": "unreached",
+      "evidence": "no import, entrypoint or reachable dependent found",
+      "via_at_snapshot": {},
+      "via_at_head": {}
+     },
+     {
+      "snapshot": "4dbf0b4b7510",
+      "date": "2018-11-21",
+      "cve": "CVE-2026-59885",
+      "pin": "pyasn1==0.4.4",
+      "severity": "high",
+      "status": "unreached",
+      "evidence": "no import, entrypoint or reachable dependent found",
+      "via_at_snapshot": {},
+      "via_at_head": {
+       "pyasn1-modules": "unreached",
+       "pypi-attestations": null,
+       "sigstore": null,
+       "webauthn": null
+      }
+     },
+     {
+      "snapshot": "4dbf0b4b7510",
+      "date": "2018-11-21",
+      "cve": "CVE-2026-59886",
+      "pin": "pyasn1==0.4.4",
+      "severity": "high",
+      "status": "unreached",
+      "evidence": "no import, entrypoint or reachable dependent found",
+      "via_at_snapshot": {},
+      "via_at_head": {
+       "pyasn1-modules": "unreached",
+       "pypi-attestations": null,
+       "sigstore": null,
+       "webauthn": null
+      }
+     },
+     {
+      "snapshot": "4dbf0b4b7510",
+      "date": "2018-11-21",
+      "cve": "CVE-2026-30922",
+      "pin": "pyasn1==0.4.4",
+      "severity": "high",
+      "status": "unreached",
+      "evidence": "no import, entrypoint or reachable dependent found",
+      "via_at_snapshot": {},
+      "via_at_head": {
+       "pyasn1-modules": "unreached",
+       "pypi-attestations": null,
+       "sigstore": null,
+       "webauthn": null
+      }
+     },
+     {
+      "snapshot": "4dbf0b4b7510",
+      "date": "2018-11-21",
+      "cve": "CVE-2026-59884",
+      "pin": "pyasn1==0.4.4",
+      "severity": "high",
+      "status": "unreached",
+      "evidence": "no import, entrypoint or reachable dependent found",
+      "via_at_snapshot": {},
+      "via_at_head": {
+       "pyasn1-modules": "unreached",
+       "pypi-attestations": null,
+       "sigstore": null,
+       "webauthn": null
+      }
+     },
+     {
+      "snapshot": "4dbf0b4b7510",
+      "date": "2018-11-21",
+      "cve": "CVE-2020-13757",
+      "pin": "rsa==4.0",
+      "severity": "high",
+      "status": "unreached",
+      "evidence": "no import, entrypoint or reachable dependent found",
+      "via_at_snapshot": {},
+      "via_at_head": {}
+     },
+     {
+      "snapshot": "4dbf0b4b7510",
+      "date": "2018-11-21",
+      "cve": "CVE-2020-25658",
+      "pin": "rsa==4.0",
+      "severity": "high",
+      "status": "unreached",
+      "evidence": "no import, entrypoint or reachable dependent found",
+      "via_at_snapshot": {},
+      "via_at_head": {}
+     },
+     {
+      "snapshot": "6bddefe98031",
+      "date": "2019-06-05",
+      "cve": "CVE-2026-59885",
+      "pin": "pyasn1==0.4.5",
+      "severity": "high",
+      "status": "unreached",
+      "evidence": "no import, entrypoint or reachable dependent found",
+      "via_at_snapshot": {},
+      "via_at_head": {
+       "pyasn1-modules": "unreached",
+       "pypi-attestations": null,
+       "sigstore": null,
+       "webauthn": null
+      }
+     },
+     {
+      "snapshot": "6bddefe98031",
+      "date": "2019-06-05",
+      "cve": "CVE-2026-59886",
+      "pin": "pyasn1==0.4.5",
+      "severity": "high",
+      "status": "unreached",
+      "evidence": "no import, entrypoint or reachable dependent found",
+      "via_at_snapshot": {},
+      "via_at_head": {
+       "pyasn1-modules": "unreached",
+       "pypi-attestations": null,
+       "sigstore": null,
+       "webauthn": null
+      }
+     },
+     {
+      "snapshot": "6bddefe98031",
+      "date": "2019-06-05",
+      "cve": "CVE-2026-30922",
+      "pin": "pyasn1==0.4.5",
+      "severity": "high",
+      "status": "unreached",
+      "evidence": "no import, entrypoint or reachable dependent found",
+      "via_at_snapshot": {},
+      "via_at_head": {
+       "pyasn1-modules": "unreached",
+       "pypi-attestations": null,
+       "sigstore": null,
+       "webauthn": null
+      }
+     },
+     {
+      "snapshot": "6bddefe98031",
+      "date": "2019-06-05",
+      "cve": "CVE-2026-59884",
+      "pin": "pyasn1==0.4.5",
+      "severity": "high",
+      "status": "unreached",
+      "evidence": "no import, entrypoint or reachable dependent found",
+      "via_at_snapshot": {},
+      "via_at_head": {
+       "pyasn1-modules": "unreached",
+       "pypi-attestations": null,
+       "sigstore": null,
+       "webauthn": null
+      }
+     },
+     {
+      "snapshot": "6bddefe98031",
+      "date": "2019-06-05",
+      "cve": "CVE-2020-13757",
+      "pin": "rsa==4.0",
+      "severity": "high",
+      "status": "unreached",
+      "evidence": "no import, entrypoint or reachable dependent found",
+      "via_at_snapshot": {},
+      "via_at_head": {}
+     },
+     {
+      "snapshot": "6bddefe98031",
+      "date": "2019-06-05",
+      "cve": "CVE-2020-25658",
+      "pin": "rsa==4.0",
+      "severity": "high",
+      "status": "unreached",
+      "evidence": "no import, entrypoint or reachable dependent found",
+      "via_at_snapshot": {},
+      "via_at_head": {}
+     },
+     {
+      "snapshot": "c62ea2626350",
+      "date": "2020-03-16",
+      "cve": "CVE-2026-26209",
+      "pin": "cbor2==5.0.1",
+      "severity": "high",
+      "status": "unreached",
+      "evidence": "no import, entrypoint or reachable dependent found",
+      "via_at_snapshot": {},
+      "via_at_head": {
+       "webauthn": "imported"
+      }
+     },
+     {
+      "snapshot": "c62ea2626350",
+      "date": "2020-03-16",
+      "cve": "CVE-2025-64076",
+      "pin": "cbor2==5.0.1",
+      "severity": "high",
+      "status": "unreached",
+      "evidence": "no import, entrypoint or reachable dependent found",
+      "via_at_snapshot": {},
+      "via_at_head": {
+       "webauthn": "imported"
+      }
+     },
+     {
+      "snapshot": "c62ea2626350",
+      "date": "2020-03-16",
+      "cve": "CVE-2024-26134",
+      "pin": "cbor2==5.0.1",
+      "severity": "high",
+      "status": "unreached",
+      "evidence": "no import, entrypoint or reachable dependent found",
+      "via_at_snapshot": {},
+      "via_at_head": {
+       "webauthn": "imported"
+      }
+     },
+     {
+      "snapshot": "c62ea2626350",
+      "date": "2020-03-16",
+      "cve": "CVE-2022-40899",
+      "pin": "future==0.18.2",
+      "severity": "high",
+      "status": "unreached",
+      "evidence": "no import, entrypoint or reachable dependent found",
+      "via_at_snapshot": {},
+      "via_at_head": {}
+     },
+     {
+      "snapshot": "c62ea2626350",
+      "date": "2020-03-16",
+      "cve": "CVE-2026-59885",
+      "pin": "pyasn1==0.4.8",
+      "severity": "high",
+      "status": "unreached",
+      "evidence": "no import, entrypoint or reachable dependent found",
+      "via_at_snapshot": {},
+      "via_at_head": {
+       "pyasn1-modules": "unreached",
+       "pypi-attestations": null,
+       "sigstore": null,
+       "webauthn": "imported"
+      }
+     },
+     {
+      "snapshot": "c62ea2626350",
+      "date": "2020-03-16",
+      "cve": "CVE-2026-59886",
+      "pin": "pyasn1==0.4.8",
+      "severity": "high",
+      "status": "unreached",
+      "evidence": "no import, entrypoint or reachable dependent found",
+      "via_at_snapshot": {},
+      "via_at_head": {
+       "pyasn1-modules": "unreached",
+       "pypi-attestations": null,
+       "sigstore": null,
+       "webauthn": "imported"
+      }
+     },
+     {
+      "snapshot": "c62ea2626350",
+      "date": "2020-03-16",
+      "cve": "CVE-2026-30922",
+      "pin": "pyasn1==0.4.8",
+      "severity": "high",
+      "status": "unreached",
+      "evidence": "no import, entrypoint or reachable dependent found",
+      "via_at_snapshot": {},
+      "via_at_head": {
+       "pyasn1-modules": "unreached",
+       "pypi-attestations": null,
+       "sigstore": null,
+       "webauthn": "imported"
+      }
+     },
+     {
+      "snapshot": "c62ea2626350",
+      "date": "2020-03-16",
+      "cve": "CVE-2026-59884",
+      "pin": "pyasn1==0.4.8",
+      "severity": "high",
+      "status": "unreached",
+      "evidence": "no import, entrypoint or reachable dependent found",
+      "via_at_snapshot": {},
+      "via_at_head": {
+       "pyasn1-modules": "unreached",
+       "pypi-attestations": null,
+       "sigstore": null,
+       "webauthn": "imported"
+      }
+     },
+     {
+      "snapshot": "c62ea2626350",
+      "date": "2020-03-16",
+      "cve": "CVE-2020-13757",
+      "pin": "rsa==4.0",
+      "severity": "high",
+      "status": "unreached",
+      "evidence": "no import, entrypoint or reachable dependent found",
+      "via_at_snapshot": {},
+      "via_at_head": {}
+     },
+     {
+      "snapshot": "c62ea2626350",
+      "date": "2020-03-16",
+      "cve": "CVE-2020-25658",
+      "pin": "rsa==4.0",
+      "severity": "high",
+      "status": "unreached",
+      "evidence": "no import, entrypoint or reachable dependent found",
+      "via_at_snapshot": {},
+      "via_at_head": {}
+     }
+    ],
     "note": "each snapshot analysed against its own materialized sources"
    }
   }

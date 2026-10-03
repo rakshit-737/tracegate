@@ -1,38 +1,48 @@
-[
- {
-  "services": 10,
-  "deps": 50,
-  "events": 41,
-  "nodes": 104,
-  "edges": 562,
-  "findings": 6,
-  "gate_s_median": 0.014
- },
- {
-  "services": 50,
-  "deps": 100,
-  "events": 201,
-  "nodes": 354,
-  "edges": 5302,
-  "findings": 11,
-  "gate_s_median": 0.17
- },
- {
-  "services": 100,
-  "deps": 200,
-  "events": 401,
-  "nodes": 704,
-  "edges": 20602,
-  "findings": 25,
-  "gate_s_median": 0.547
- },
- {
-  "services": 200,
-  "deps": 400,
-  "events": 801,
-  "nodes": 1404,
-  "edges": 81202,
-  "findings": 42,
-  "gate_s_median": 1.627
- }
-]
+{
+ "run_id": 37088867445,
+ "run_url": "https://github.com/rakshit-737/tracegate/actions/runs/37088867445",
+ "commit": "90b5acf57ea0552fdde7d3c9153f6483992df65b",
+ "generated": "github-actions",
+ "generated_at": "2026-10-03T02:10:54Z",
+ "command": "python benchmarks/scale_eval.py",
+ "data": "synthetic (tracegate.synth.random_scenario, seed 0); graph growth only",
+ "latency": "median of 3 cold-cache runs of verify + graph + enrich + policy",
+ "rows": [
+  {
+   "services": 10,
+   "deps": 50,
+   "events": 41,
+   "nodes": 104,
+   "edges": 562,
+   "findings": 6,
+   "gate_s_median": 0.004
+  },
+  {
+   "services": 50,
+   "deps": 100,
+   "events": 201,
+   "nodes": 354,
+   "edges": 5302,
+   "findings": 11,
+   "gate_s_median": 0.038
+  },
+  {
+   "services": 100,
+   "deps": 200,
+   "events": 401,
+   "nodes": 704,
+   "edges": 20602,
+   "findings": 25,
+   "gate_s_median": 0.132
+  },
+  {
+   "services": 200,
+   "deps": 400,
+   "events": 801,
+   "nodes": 1404,
+   "edges": 81202,
+   "findings": 42,
+   "gate_s_median": 0.622
+  }
+ ]
+}

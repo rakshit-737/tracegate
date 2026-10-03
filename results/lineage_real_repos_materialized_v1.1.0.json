@@ -1,10 +1,7 @@
 {
- "run_id": 37091106360,
- "run_url": "https://github.com/rakshit-737/tracegate/actions/runs/37091106360",
- "commit": "96088fd742c1927c47cb6ab726116b271a3bf64c",
- "generated": "github-actions",
- "generated_at": "2026-10-03T02:52:59Z",
- "command": "python benchmarks/lineage_eval.py --snapshots 12 --materialize --repos healthchecks netbox warehouse",
+ "run_id": 37003433022,
+ "run_url": "https://github.com/rakshit-737/tracegate/actions/runs/37003433022",
+ "commit": "8ae96e6481d61b99c1e367382faddc9c7f113582",
  "summary": {
   "tracegate": {
    "correct": 354,
@@ -14,17 +11,8 @@
     0.957,
     0.9888
    ],
-   "clopper_pearson95": [
-    0.9569,
-    0.9904
-   ],
-   "cp_lower95_one_sided": 0.9605,
    "repo_cluster_bootstrap95": [
     0.9658,
-    1.0
-   ],
-   "per_repo_range": [
-    0.9658119658119658,
     1.0
    ]
   },
@@ -36,17 +24,8 @@
     0.1434,
     0.2224
    ],
-   "clopper_pearson95": [
-    0.1414,
-    0.2231
-   ],
-   "cp_lower95_one_sided": 0.147,
    "repo_cluster_bootstrap95": [
     0.0598,
-    0.4
-   ],
-   "per_repo_range": [
-    0.05982905982905983,
     0.4
    ]
   },
@@ -58,21 +37,12 @@
     0.061,
     0.119
    ],
-   "clopper_pearson95": [
-    0.0589,
-    0.1194
-   ],
-   "cp_lower95_one_sided": 0.0627,
    "repo_cluster_bootstrap95": [
     0.047,
     0.2
-   ],
-   "per_repo_range": [
-    0.04700854700854701,
-    0.2
    ]
   },
-  "pickaxe-package-specific": {
+  "pickaxe-exact-pin": {
    "correct": 362,
    "total": 362,
    "accuracy": 1.0,
@@ -80,67 +50,10 @@
     0.9895,
     1.0
    ],
-   "clopper_pearson95": [
-    0.9899,
-    1.0
-   ],
-   "cp_lower95_one_sided": 0.9918,
    "repo_cluster_bootstrap95": [
     1.0,
     1.0
-   ],
-   "per_repo_range": [
-    1.0,
-    1.0
    ]
-  },
-  "pickaxe-version-line": {
-   "correct": 362,
-   "total": 362,
-   "accuracy": 1.0,
-   "wilson95": [
-    0.9895,
-    1.0
-   ],
-   "clopper_pearson95": [
-    0.9899,
-    1.0
-   ],
-   "cp_lower95_one_sided": 0.9918,
-   "repo_cluster_bootstrap95": [
-    1.0,
-    1.0
-   ],
-   "per_repo_range": [
-    1.0,
-    1.0
-   ]
-  },
-  "tracegate_vs": {
-   "pickaxe-package-specific": {
-    "both": 354,
-    "only_a": 0,
-    "only_b": 8,
-    "neither": 0,
-    "mcnemar_exact_p": 0.00781,
-    "accuracy_difference": -0.0221,
-    "accuracy_difference_repo_cluster_bootstrap95": [
-     -0.0342,
-     0.0
-    ]
-   },
-   "pickaxe-version-line": {
-    "both": 354,
-    "only_a": 0,
-    "only_b": 8,
-    "neither": 0,
-    "mcnemar_exact_p": 0.00781,
-    "accuracy_difference": -0.0221,
-    "accuracy_difference_repo_cluster_bootstrap95": [
-     -0.0342,
-     0.0
-    ]
-   }
   }
  },
  "summary_by_ecosystem": {
@@ -148,179 +61,37 @@
    "tracegate": {
     "correct": 354,
     "total": 362,
-    "accuracy": 0.9779,
-    "wilson95": [
-     0.957,
-     0.9888
-    ],
-    "clopper_pearson95": [
-     0.9569,
-     0.9904
-    ],
-    "cp_lower95_one_sided": 0.9605,
-    "repo_cluster_bootstrap95": [
-     0.9658,
-     1.0
-    ],
-    "per_repo_range": [
-     0.9658119658119658,
-     1.0
-    ]
+    "accuracy": 0.9779
    },
    "last-manifest-commit": {
     "correct": 65,
     "total": 362,
-    "accuracy": 0.1796,
-    "wilson95": [
-     0.1434,
-     0.2224
-    ],
-    "clopper_pearson95": [
-     0.1414,
-     0.2231
-    ],
-    "cp_lower95_one_sided": 0.147,
-    "repo_cluster_bootstrap95": [
-     0.0598,
-     0.4
-    ],
-    "per_repo_range": [
-     0.05982905982905983,
-     0.4
-    ]
+    "accuracy": 0.1796
    },
    "pickaxe-first": {
     "correct": 31,
     "total": 362,
-    "accuracy": 0.0856,
-    "wilson95": [
-     0.061,
-     0.119
-    ],
-    "clopper_pearson95": [
-     0.0589,
-     0.1194
-    ],
-    "cp_lower95_one_sided": 0.0627,
-    "repo_cluster_bootstrap95": [
-     0.047,
-     0.2
-    ],
-    "per_repo_range": [
-     0.04700854700854701,
-     0.2
-    ]
+    "accuracy": 0.0856
    },
-   "pickaxe-package-specific": {
+   "pickaxe-exact-pin": {
     "correct": 362,
     "total": 362,
-    "accuracy": 1.0,
-    "wilson95": [
-     0.9895,
-     1.0
-    ],
-    "clopper_pearson95": [
-     0.9899,
-     1.0
-    ],
-    "cp_lower95_one_sided": 0.9918,
-    "repo_cluster_bootstrap95": [
-     1.0,
-     1.0
-    ],
-    "per_repo_range": [
-     1.0,
-     1.0
-    ]
-   },
-   "pickaxe-version-line": {
-    "correct": 362,
-    "total": 362,
-    "accuracy": 1.0,
-    "wilson95": [
-     0.9895,
-     1.0
-    ],
-    "clopper_pearson95": [
-     0.9899,
-     1.0
-    ],
-    "cp_lower95_one_sided": 0.9918,
-    "repo_cluster_bootstrap95": [
-     1.0,
-     1.0
-    ],
-    "per_repo_range": [
-     1.0,
-     1.0
-    ]
-   },
-   "tracegate_vs": {
-    "pickaxe-package-specific": {
-     "both": 354,
-     "only_a": 0,
-     "only_b": 8,
-     "neither": 0,
-     "mcnemar_exact_p": 0.00781,
-     "accuracy_difference": -0.0221,
-     "accuracy_difference_repo_cluster_bootstrap95": [
-      -0.0342,
-      0.0
-     ]
-    },
-    "pickaxe-version-line": {
-     "both": 354,
-     "only_a": 0,
-     "only_b": 8,
-     "neither": 0,
-     "mcnemar_exact_p": 0.00781,
-     "accuracy_difference": -0.0221,
-     "accuracy_difference_repo_cluster_bootstrap95": [
-      -0.0342,
-      0.0
-     ]
-    }
+    "accuracy": 1.0
    }
-  }
- },
- "reachability_total": {
-  "high_plus": 887,
-  "actionable": 887,
-  "downgraded": 0,
-  "downgraded_share": {
-   "correct": 0,
-   "total": 887,
-   "accuracy": 0.0,
-   "wilson95": [
-    0.0,
-    0.0043
-   ],
-   "clopper_pearson95": [
-    0.0,
-    0.0042
-   ],
-   "cp_lower95_one_sided": 0.0
   }
  },
  "mode": "materialized per-snapshot sources",
  "materialize": true,
- "multi_version": true,
- "unit": "(snapshot, vulnerable (name, version) pin) pairs",
- "reference": "git blame --first-parent on the pin's version line (shares the lock-file reader)",
  "repos": [
   {
    "repo": "healthchecks",
    "manifest": "requirements.txt",
    "ecosystem": "pypi",
-   "multi_version": true,
-   "repo_head": "e566e1c40099c86a207e5a9fee0cd991f0aa33bc",
-   "osv_dump": "osv/PyPI-all.zip",
-   "osv_dump_sha256": "7c3a5ff9e05d61174d7b08e0b9da5e2f299b3af2414d469cdd14d74cf32edcc7",
    "manifest_commits": 237,
    "snapshots": 12,
-   "history_walk_s": 0.49,
-   "gate_ms_median": 5.8,
-   "gate_ms_max": 10.7,
+   "history_walk_s": 0.36,
+   "gate_ms_median": 4.3,
+   "gate_ms_max": 7.6,
    "attribution": {
     "tracegate": {
      "correct": 20,
@@ -337,12 +108,7 @@
      "total": 20,
      "accuracy": 0.2
     },
-    "pickaxe-package-specific": {
-     "correct": 20,
-     "total": 20,
-     "accuracy": 1.0
-    },
-    "pickaxe-version-line": {
+    "pickaxe-exact-pin": {
      "correct": 20,
      "total": 20,
      "accuracy": 1.0
@@ -354,39 +120,13 @@
      "note": "n/a: scanner output carries no commit"
     }
    },
-   "tracegate_vs": {
-    "pickaxe-package-specific": {
-     "both": 20,
-     "only_a": 0,
-     "only_b": 0,
-     "neither": 0,
-     "mcnemar_exact_p": null
-    },
-    "pickaxe-version-line": {
-     "both": 20,
-     "only_a": 0,
-     "only_b": 0,
-     "neither": 0,
-     "mcnemar_exact_p": null
-    }
-   },
-   "multi_version_at_head": {
-    "entries": 15,
-    "names": 15,
-    "entries_dropped_by_single_version": 0,
-    "share_dropped": 0.0,
-    "entries_of_multi_version_names": 0,
-    "share_of_multi_version_names": 0.0
-   },
    "disagreements": [],
-   "disagreements_total": 0,
    "per_snapshot": [
     {
      "sha": "00cdc313ec",
      "date": "2015-06-11",
      "pins": 2,
-     "names": 2,
-     "vulnerable_pins": 1,
+     "vulnerable_pkgs": 1,
      "findings": 32,
      "backtrack_correct": 1,
      "verdict": "block",
@@ -405,8 +145,7 @@
      "sha": "ccf8aa55f0",
      "date": "2018-08-03",
      "pins": 5,
-     "names": 5,
-     "vulnerable_pins": 2,
+     "vulnerable_pkgs": 2,
      "findings": 33,
      "backtrack_correct": 2,
      "verdict": "block",
@@ -425,8 +164,7 @@
      "sha": "87b232074c",
      "date": "2019-12-02",
      "pins": 6,
-     "names": 6,
-     "vulnerable_pins": 2,
+     "vulnerable_pkgs": 2,
      "findings": 39,
      "backtrack_correct": 2,
      "verdict": "block",
@@ -445,8 +183,7 @@
      "sha": "a5ea8a03c6",
      "date": "2021-02-01",
      "pins": 8,
-     "names": 8,
-     "vulnerable_pins": 2,
+     "vulnerable_pkgs": 2,
      "findings": 25,
      "backtrack_correct": 2,
      "verdict": "block",
@@ -465,8 +202,7 @@
      "sha": "543deb5a30",
      "date": "2021-12-13",
      "pins": 12,
-     "names": 12,
-     "vulnerable_pins": 2,
+     "vulnerable_pkgs": 2,
      "findings": 36,
      "backtrack_correct": 2,
      "verdict": "block",
@@ -485,8 +221,7 @@
      "sha": "948912bfe3",
      "date": "2022-10-04",
      "pins": 11,
-     "names": 11,
-     "vulnerable_pins": 1,
+     "vulnerable_pkgs": 1,
      "findings": 20,
      "backtrack_correct": 1,
      "verdict": "block",
@@ -505,8 +240,7 @@
      "sha": "e065871056",
      "date": "2023-10-04",
      "pins": 12,
-     "names": 12,
-     "vulnerable_pins": 2,
+     "vulnerable_pkgs": 2,
      "findings": 50,
      "backtrack_correct": 2,
      "verdict": "block",
@@ -525,8 +259,7 @@
      "sha": "e1344e10b3",
      "date": "2024-04-03",
      "pins": 14,
-     "names": 14,
-     "vulnerable_pins": 2,
+     "vulnerable_pkgs": 2,
      "findings": 28,
      "backtrack_correct": 2,
      "verdict": "block",
@@ -545,8 +278,7 @@
      "sha": "a88a6daf38",
      "date": "2025-03-07",
      "pins": 15,
-     "names": 15,
-     "vulnerable_pins": 2,
+     "vulnerable_pkgs": 2,
      "findings": 33,
      "backtrack_correct": 2,
      "verdict": "block",
@@ -565,8 +297,7 @@
      "sha": "a9ba906ee7",
      "date": "2025-10-14",
      "pins": 15,
-     "names": 15,
-     "vulnerable_pins": 2,
+     "vulnerable_pkgs": 2,
      "findings": 45,
      "backtrack_correct": 2,
      "verdict": "block",
@@ -585,8 +316,7 @@
      "sha": "89c248a0c4",
      "date": "2026-04-09",
      "pins": 15,
-     "names": 15,
-     "vulnerable_pins": 2,
+     "vulnerable_pkgs": 2,
      "findings": 27,
      "backtrack_correct": 2,
      "verdict": "block",
@@ -605,8 +335,7 @@
      "sha": "e566e1c400",
      "date": "2026-10-02",
      "pins": 15,
-     "names": 15,
-     "vulnerable_pins": 0,
+     "vulnerable_pkgs": 0,
      "findings": 0,
      "backtrack_correct": 0,
      "verdict": "pass",
@@ -623,14 +352,14 @@
     }
    ],
    "head": {
+    "sha": "e566e1c40099",
     "pins": 15,
     "reach_status_counts": {
      "imported": 14,
      "entrypoint": 1,
      "referenced": 0,
      "transitive": 0,
-     "unreached": 0,
-     "unknown": 0
+     "unreached": 0
     },
     "unreached": [],
     "direct_deps": null,
@@ -641,8 +370,7 @@
    "reachability": {
     "high_plus_total": 139,
     "actionable_total": 139,
-    "downgraded_total": 0,
-    "downgraded": [],
+    "downgraded_examples": [],
     "note": "each snapshot analysed against its own materialized sources"
    }
   },
@@ -650,15 +378,11 @@
    "repo": "netbox",
    "manifest": "requirements.txt",
    "ecosystem": "pypi",
-   "multi_version": true,
-   "repo_head": "251458b89a5eb2f5fe0d20ecd1140ba08f141a9c",
-   "osv_dump": "osv/PyPI-all.zip",
-   "osv_dump_sha256": "7c3a5ff9e05d61174d7b08e0b9da5e2f299b3af2414d469cdd14d74cf32edcc7",
    "manifest_commits": 216,
    "snapshots": 12,
-   "history_walk_s": 0.46,
-   "gate_ms_median": 13.1,
-   "gate_ms_max": 22.8,
+   "history_walk_s": 0.32,
+   "gate_ms_median": 10.4,
+   "gate_ms_max": 117.6,
    "attribution": {
     "tracegate": {
      "correct": 108,
@@ -675,12 +399,7 @@
      "total": 108,
      "accuracy": 0.1481
     },
-    "pickaxe-package-specific": {
-     "correct": 108,
-     "total": 108,
-     "accuracy": 1.0
-    },
-    "pickaxe-version-line": {
+    "pickaxe-exact-pin": {
      "correct": 108,
      "total": 108,
      "accuracy": 1.0
@@ -692,39 +411,13 @@
      "note": "n/a: scanner output carries no commit"
     }
    },
-   "tracegate_vs": {
-    "pickaxe-package-specific": {
-     "both": 108,
-     "only_a": 0,
-     "only_b": 0,
-     "neither": 0,
-     "mcnemar_exact_p": null
-    },
-    "pickaxe-version-line": {
-     "both": 108,
-     "only_a": 0,
-     "only_b": 0,
-     "neither": 0,
-     "mcnemar_exact_p": null
-    }
-   },
-   "multi_version_at_head": {
-    "entries": 45,
-    "names": 45,
-    "entries_dropped_by_single_version": 0,
-    "share_dropped": 0.0,
-    "entries_of_multi_version_names": 0,
-    "share_of_multi_version_names": 0.0
-   },
    "disagreements": [],
-   "disagreements_total": 0,
    "per_snapshot": [
     {
      "sha": "27b289ee3b",
      "date": "2016-03-01",
      "pins": 25,
-     "names": 25,
-     "vulnerable_pins": 11,
+     "vulnerable_pkgs": 11,
      "findings": 59,
      "backtrack_correct": 11,
      "verdict": "block",
@@ -735,7 +428,7 @@
       "findings": 59
      },
      "high_plus": 28,
-     "high_plus_actionable": 28,
+     "high_plus_actionable": 26,
      "verdict_after_reachability": "block",
      "warden_flags": []
     },
@@ -743,8 +436,7 @@
      "sha": "8863a3126d",
      "date": "2018-12-10",
      "pins": 18,
-     "names": 18,
-     "vulnerable_pins": 7,
+     "vulnerable_pkgs": 7,
      "findings": 91,
      "backtrack_correct": 7,
      "verdict": "block",
@@ -763,8 +455,7 @@
      "sha": "b493d739bd",
      "date": "2021-04-12",
      "pins": 23,
-     "names": 23,
-     "vulnerable_pins": 8,
+     "vulnerable_pkgs": 8,
      "findings": 60,
      "backtrack_correct": 8,
      "verdict": "block",
@@ -785,8 +476,7 @@
      "sha": "b29a5511df",
      "date": "2021-11-12",
      "pins": 28,
-     "names": 28,
-     "vulnerable_pins": 8,
+     "vulnerable_pkgs": 8,
      "findings": 72,
      "backtrack_correct": 8,
      "verdict": "block",
@@ -807,8 +497,7 @@
      "sha": "7c09259b7d",
      "date": "2022-06-20",
      "pins": 34,
-     "names": 34,
-     "vulnerable_pins": 12,
+     "vulnerable_pkgs": 12,
      "findings": 66,
      "backtrack_correct": 12,
      "verdict": "block",
@@ -829,8 +518,7 @@
      "sha": "4eaba7993f",
      "date": "2023-03-28",
      "pins": 34,
-     "names": 34,
-     "vulnerable_pins": 12,
+     "vulnerable_pkgs": 12,
      "findings": 60,
      "backtrack_correct": 12,
      "verdict": "block",
@@ -851,8 +539,7 @@
      "sha": "28080e9b14",
      "date": "2023-11-30",
      "pins": 36,
-     "names": 36,
-     "vulnerable_pins": 13,
+     "vulnerable_pkgs": 13,
      "findings": 88,
      "backtrack_correct": 13,
      "verdict": "block",
@@ -873,8 +560,7 @@
      "sha": "09d6b9c62f",
      "date": "2024-08-14",
      "pins": 37,
-     "names": 37,
-     "vulnerable_pins": 11,
+     "vulnerable_pkgs": 11,
      "findings": 58,
      "backtrack_correct": 11,
      "verdict": "block",
@@ -895,8 +581,7 @@
      "sha": "c4304d059c",
      "date": "2025-02-21",
      "pins": 38,
-     "names": 38,
-     "vulnerable_pins": 11,
+     "vulnerable_pkgs": 11,
      "findings": 54,
      "backtrack_correct": 11,
      "verdict": "block",
@@ -917,8 +602,7 @@
      "sha": "a69bbcf651",
      "date": "2025-10-14",
      "pins": 43,
-     "names": 43,
-     "vulnerable_pins": 8,
+     "vulnerable_pkgs": 8,
      "findings": 62,
      "backtrack_correct": 8,
      "verdict": "block",
@@ -939,8 +623,7 @@
      "sha": "8fbb6f74d3",
      "date": "2026-04-28",
      "pins": 44,
-     "names": 44,
-     "vulnerable_pins": 7,
+     "vulnerable_pkgs": 7,
      "findings": 38,
      "backtrack_correct": 7,
      "verdict": "block",
@@ -961,8 +644,7 @@
      "sha": "251458b89a",
      "date": "2026-09-29",
      "pins": 45,
-     "names": 45,
-     "vulnerable_pins": 0,
+     "vulnerable_pkgs": 0,
      "findings": 0,
      "backtrack_correct": 0,
      "verdict": "warn",
@@ -981,16 +663,23 @@
     }
    ],
    "head": {
+    "sha": "251458b89a5e",
     "pins": 45,
     "reach_status_counts": {
      "imported": 35,
      "entrypoint": 0,
      "referenced": 2,
      "transitive": 2,
-     "unreached": 0,
-     "unknown": 6
+     "unreached": 6
     },
-    "unreached": [],
+    "unreached": [
+     "django-pgware",
+     "django-rich",
+     "mkdocs-material",
+     "mkdocstrings",
+     "mkdocstrings-python",
+     "tablib"
+    ],
     "direct_deps": null,
     "direct_deps_marked_unreached": [],
     "trivy_findings": 0,
@@ -998,9 +687,11 @@
    },
    "reachability": {
     "high_plus_total": 324,
-    "actionable_total": 324,
-    "downgraded_total": 0,
-    "downgraded": [],
+    "actionable_total": 322,
+    "downgraded_examples": [
+     "CVE-2017-18342 pyyaml==3.11",
+     "CVE-2020-14343 pyyaml==3.11"
+    ],
     "note": "each snapshot analysed against its own materialized sources"
    }
   },
@@ -1008,15 +699,11 @@
    "repo": "warehouse",
    "manifest": "requirements/main.txt",
    "ecosystem": "pypi",
-   "multi_version": true,
-   "repo_head": "81b91d6b819997cbcb0592691f71295ec895389e",
-   "osv_dump": "osv/PyPI-all.zip",
-   "osv_dump_sha256": "7c3a5ff9e05d61174d7b08e0b9da5e2f299b3af2414d469cdd14d74cf32edcc7",
    "manifest_commits": 2521,
    "snapshots": 12,
-   "history_walk_s": 9.79,
-   "gate_ms_median": 63.9,
-   "gate_ms_max": 297.1,
+   "history_walk_s": 7.73,
+   "gate_ms_median": 50.7,
+   "gate_ms_max": 239.5,
    "attribution": {
     "tracegate": {
      "correct": 226,
@@ -1033,12 +720,7 @@
      "total": 234,
      "accuracy": 0.047
     },
-    "pickaxe-package-specific": {
-     "correct": 234,
-     "total": 234,
-     "accuracy": 1.0
-    },
-    "pickaxe-version-line": {
+    "pickaxe-exact-pin": {
      "correct": 234,
      "total": 234,
      "accuracy": 1.0
@@ -1050,128 +732,70 @@
      "note": "n/a: scanner output carries no commit"
     }
    },
-   "tracegate_vs": {
-    "pickaxe-package-specific": {
-     "both": 226,
-     "only_a": 0,
-     "only_b": 8,
-     "neither": 0,
-     "mcnemar_exact_p": 0.00781
-    },
-    "pickaxe-version-line": {
-     "both": 226,
-     "only_a": 0,
-     "only_b": 8,
-     "neither": 0,
-     "mcnemar_exact_p": 0.00781
-    }
-   },
-   "multi_version_at_head": {
-    "entries": 182,
-    "names": 182,
-    "entries_dropped_by_single_version": 0,
-    "share_dropped": 0.0,
-    "entries_of_multi_version_names": 0,
-    "share_of_multi_version_names": 0.0
-   },
    "disagreements": [
     {
-     "snapshot": "2fd1fb6b26c1",
+     "snapshot": "2fd1fb6b26",
      "package": "html5lib",
-     "version": "0.9999999",
-     "blame": "3932163e87fa",
-     "tracegate": "d20db4e0e567",
-     "pickaxe_package_specific": "3932163e87fa",
-     "pickaxe_version_line": "3932163e87fa",
-     "blame_subject": "Merge pull request #1044 from dstufft/hashes",
-     "tracegate_subject": "Merge pull request #674 from alex/bump-html5lib"
+     "tracegate": "d20db4e0e5",
+     "blame": "3932163e87",
+     "blame_subject": "Merge pull request #1044 from dstufft/hashes"
     },
     {
-     "snapshot": "2fd1fb6b26c1",
+     "snapshot": "2fd1fb6b26",
      "package": "pygments",
-     "version": "2.1.3",
-     "blame": "3932163e87fa",
-     "tracegate": "d92a5bae5cd3",
-     "pickaxe_package_specific": "3932163e87fa",
-     "pickaxe_version_line": "3932163e87fa",
-     "blame_subject": "Merge pull request #1044 from dstufft/hashes",
-     "tracegate_subject": "Merge pull request #995 from dstufft/upgrade"
+     "tracegate": "d92a5bae5c",
+     "blame": "3932163e87",
+     "blame_subject": "Merge pull request #1044 from dstufft/hashes"
     },
     {
-     "snapshot": "4dbf0b4b7510",
+     "snapshot": "4dbf0b4b75",
      "package": "babel",
-     "version": "2.6.0",
-     "blame": "d8bb63bf22ac",
-     "tracegate": "3ba9bb9c6f41",
-     "pickaxe_package_specific": "d8bb63bf22ac",
-     "pickaxe_version_line": "d8bb63bf22ac",
-     "blame_subject": "Bump boto3 from 1.9.31 to 1.9.32 (#4934)",
-     "tracegate_subject": "Update babel to 2.6.0 (#4092)"
+     "tracegate": "3ba9bb9c6f",
+     "blame": "d8bb63bf22",
+     "blame_subject": "Bump boto3 from 1.9.31 to 1.9.32 (#4934)"
     },
     {
-     "snapshot": "4dbf0b4b7510",
+     "snapshot": "4dbf0b4b75",
      "package": "celery",
-     "version": "4.2.1",
-     "blame": "d8bb63bf22ac",
-     "tracegate": "373abd48861b",
-     "pickaxe_package_specific": "d8bb63bf22ac",
-     "pickaxe_version_line": "d8bb63bf22ac",
-     "blame_subject": "Bump boto3 from 1.9.31 to 1.9.32 (#4934)",
-     "tracegate_subject": "Update celery from 4.2.0 to 4.2.1 (#4312)"
+     "tracegate": "373abd4886",
+     "blame": "d8bb63bf22",
+     "blame_subject": "Bump boto3 from 1.9.31 to 1.9.32 (#4934)"
     },
     {
-     "snapshot": "4dbf0b4b7510",
+     "snapshot": "4dbf0b4b75",
      "package": "jinja2",
-     "version": "2.10",
-     "blame": "d8bb63bf22ac",
-     "tracegate": "75ed5f880909",
-     "pickaxe_package_specific": "d8bb63bf22ac",
-     "pickaxe_version_line": "d8bb63bf22ac",
-     "blame_subject": "Bump boto3 from 1.9.31 to 1.9.32 (#4934)",
-     "tracegate_subject": "Update jinja2 to 2.10 (#2567)"
+     "tracegate": "75ed5f8809",
+     "blame": "d8bb63bf22",
+     "blame_subject": "Bump boto3 from 1.9.31 to 1.9.32 (#4934)"
     },
     {
-     "snapshot": "4dbf0b4b7510",
+     "snapshot": "4dbf0b4b75",
      "package": "mako",
-     "version": "1.0.7",
-     "blame": "d8bb63bf22ac",
-     "tracegate": "49df5fda3781",
-     "pickaxe_package_specific": "d8bb63bf22ac",
-     "pickaxe_version_line": "d8bb63bf22ac",
-     "blame_subject": "Bump boto3 from 1.9.31 to 1.9.32 (#4934)",
-     "tracegate_subject": "Update mako from 1.0.6 to 1.0.7 (#2189)"
+     "tracegate": "49df5fda37",
+     "blame": "d8bb63bf22",
+     "blame_subject": "Bump boto3 from 1.9.31 to 1.9.32 (#4934)"
     },
     {
-     "snapshot": "4dbf0b4b7510",
+     "snapshot": "4dbf0b4b75",
      "package": "pygments",
-     "version": "2.2.0",
-     "blame": "d8bb63bf22ac",
-     "tracegate": "6e1554f23cb0",
-     "pickaxe_package_specific": "d8bb63bf22ac",
-     "pickaxe_version_line": "d8bb63bf22ac",
-     "blame_subject": "Bump boto3 from 1.9.31 to 1.9.32 (#4934)",
-     "tracegate_subject": "Update pygments to 2.2.0 (#1687)"
+     "tracegate": "6e1554f23c",
+     "blame": "d8bb63bf22",
+     "blame_subject": "Bump boto3 from 1.9.31 to 1.9.32 (#4934)"
     },
     {
-     "snapshot": "66d1d2636841",
+     "snapshot": "66d1d26368",
      "package": "celery",
-     "version": "4.4.7",
-     "blame": "502a42b536bb",
-     "tracegate": "93deda17e67b",
-     "pickaxe_package_specific": "502a42b536bb",
-     "pickaxe_version_line": "502a42b536bb",
-     "blame_subject": "Remove [sqs] extra from celery dependency (#9032)",
-     "tracegate_subject": "Bump celery[sqs] from 4.4.6 to 4.4.7 (#8362)"
+     "tracegate": "93deda17e6",
+     "blame": "502a42b536",
+     "blame_subject": "Remove [sqs] extra from celery dependency (#9032)"
     }
    ],
-   "disagreements_total": 8,
    "per_snapshot": [
     {
      "sha": "8caa04ecf6",
      "date": "2015-07-02",
      "pins": 51,
-     "names": 51,
-     "vulnerable_pins": 9,
+     "vulnerable_pkgs": 9,
      "findings": 25,
      "backtrack_correct": 9,
      "verdict": "block",
@@ -1182,7 +806,7 @@
       "findings": 25
      },
      "high_plus": 16,
-     "high_plus_actionable": 16,
+     "high_plus_actionable": 10,
      "verdict_after_reachability": "block",
      "warden_flags": []
     },
@@ -1190,8 +814,7 @@
      "sha": "2fd1fb6b26",
      "date": "2017-01-08",
      "pins": 76,
-     "names": 76,
-     "vulnerable_pins": 16,
+     "vulnerable_pkgs": 16,
      "findings": 73,
      "backtrack_correct": 14,
      "verdict": "block",
@@ -1210,8 +833,7 @@
      "sha": "87b6892a16",
      "date": "2017-08-01",
      "pins": 94,
-     "names": 94,
-     "vulnerable_pins": 20,
+     "vulnerable_pkgs": 20,
      "findings": 88,
      "backtrack_correct": 20,
      "verdict": "block",
@@ -1222,7 +844,7 @@
       "findings": 88
      },
      "high_plus": 40,
-     "high_plus_actionable": 40,
+     "high_plus_actionable": 32,
      "verdict_after_reachability": "block",
      "warden_flags": []
     },
@@ -1230,8 +852,7 @@
      "sha": "c41d6bc5e6",
      "date": "2018-02-08",
      "pins": 94,
-     "names": 94,
-     "vulnerable_pins": 20,
+     "vulnerable_pkgs": 20,
      "findings": 85,
      "backtrack_correct": 20,
      "verdict": "block",
@@ -1242,7 +863,7 @@
       "findings": 85
      },
      "high_plus": 39,
-     "high_plus_actionable": 39,
+     "high_plus_actionable": 33,
      "verdict_after_reachability": "block",
      "warden_flags": []
     },
@@ -1250,8 +871,7 @@
      "sha": "f281980bb7",
      "date": "2018-06-29",
      "pins": 104,
-     "names": 104,
-     "vulnerable_pins": 22,
+     "vulnerable_pkgs": 22,
      "findings": 98,
      "backtrack_correct": 22,
      "verdict": "block",
@@ -1262,7 +882,7 @@
       "findings": 98
      },
      "high_plus": 46,
-     "high_plus_actionable": 46,
+     "high_plus_actionable": 39,
      "verdict_after_reachability": "block",
      "warden_flags": []
     },
@@ -1270,8 +890,7 @@
      "sha": "4dbf0b4b75",
      "date": "2018-11-21",
      "pins": 107,
-     "names": 107,
-     "vulnerable_pins": 21,
+     "vulnerable_pkgs": 21,
      "findings": 97,
      "backtrack_correct": 16,
      "verdict": "block",
@@ -1282,7 +901,7 @@
       "findings": 97
      },
      "high_plus": 46,
-     "high_plus_actionable": 46,
+     "high_plus_actionable": 40,
      "verdict_after_reachability": "block",
      "warden_flags": []
     },
@@ -1290,8 +909,7 @@
      "sha": "6bddefe980",
      "date": "2019-06-05",
      "pins": 108,
-     "names": 108,
-     "vulnerable_pins": 20,
+     "vulnerable_pkgs": 20,
      "findings": 93,
      "backtrack_correct": 20,
      "verdict": "block",
@@ -1302,7 +920,7 @@
       "findings": 93
      },
      "high_plus": 43,
-     "high_plus_actionable": 43,
+     "high_plus_actionable": 37,
      "verdict_after_reachability": "block",
      "warden_flags": []
     },
@@ -1310,8 +928,7 @@
      "sha": "c62ea26263",
      "date": "2020-03-16",
      "pins": 118,
-     "names": 118,
-     "vulnerable_pins": 25,
+     "vulnerable_pkgs": 25,
      "findings": 100,
      "backtrack_correct": 25,
      "verdict": "block",
@@ -1322,7 +939,7 @@
       "findings": 100
      },
      "high_plus": 47,
-     "high_plus_actionable": 47,
+     "high_plus_actionable": 37,
      "verdict_after_reachability": "block",
      "warden_flags": []
     },
@@ -1330,8 +947,7 @@
      "sha": "66d1d26368",
      "date": "2021-05-20",
      "pins": 122,
-     "names": 122,
-     "vulnerable_pins": 26,
+     "vulnerable_pkgs": 26,
      "findings": 90,
      "backtrack_correct": 25,
      "verdict": "block",
@@ -1350,8 +966,7 @@
      "sha": "d878f1b8f2",
      "date": "2022-12-15",
      "pins": 141,
-     "names": 141,
-     "vulnerable_pins": 29,
+     "vulnerable_pkgs": 29,
      "findings": 110,
      "backtrack_correct": 29,
      "verdict": "block",
@@ -1370,8 +985,7 @@
      "sha": "6b5f6bf005",
      "date": "2024-09-12",
      "pins": 187,
-     "names": 187,
-     "vulnerable_pins": 25,
+     "vulnerable_pkgs": 25,
      "findings": 72,
      "backtrack_correct": 25,
      "verdict": "block",
@@ -1390,8 +1004,7 @@
      "sha": "457504b02c",
      "date": "2026-10-01",
      "pins": 182,
-     "names": 182,
-     "vulnerable_pins": 1,
+     "vulnerable_pkgs": 1,
      "findings": 1,
      "backtrack_correct": 1,
      "verdict": "warn",
@@ -1408,14 +1021,14 @@
     }
    ],
    "head": {
+    "sha": "457504b02c02",
     "pins": 182,
     "reach_status_counts": {
      "imported": 76,
      "entrypoint": 2,
      "referenced": 3,
      "transitive": 98,
-     "unreached": 3,
-     "unknown": 0
+     "unreached": 3
     },
     "unreached": [
      "disposable-email-domains",
@@ -1433,9 +1046,29 @@
    },
    "reachability": {
     "high_plus_total": 424,
-    "actionable_total": 424,
-    "downgraded_total": 0,
-    "downgraded": [],
+    "actionable_total": 375,
+    "downgraded_examples": [
+     "CVE-2015-8557 pygments==2.0.2",
+     "CVE-2017-18342 pyyaml==3.11",
+     "CVE-2020-13757 rsa==3.4.2",
+     "CVE-2020-13757 rsa==4.0",
+     "CVE-2020-14343 pyyaml==3.11",
+     "CVE-2020-25658 rsa==3.4.2",
+     "CVE-2020-25658 rsa==4.0",
+     "CVE-2020-6817 bleach==1.4.1",
+     "CVE-2021-20270 pygments==2.0.2",
+     "CVE-2021-21240 httplib2==0.10.3",
+     "CVE-2021-27291 pygments==2.0.2",
+     "CVE-2022-40899 future==0.16.0",
+     "CVE-2022-40899 future==0.18.2",
+     "CVE-2024-26134 cbor2==5.0.1",
+     "CVE-2025-64076 cbor2==5.0.1",
+     "CVE-2026-26209 cbor2==5.0.1",
+     "CVE-2026-30922 pyasn1==0.3.1",
+     "CVE-2026-30922 pyasn1==0.4.2",
+     "CVE-2026-30922 pyasn1==0.4.3",
+     "CVE-2026-30922 pyasn1==0.4.4"
+    ],
     "note": "each snapshot analysed against its own materialized sources"
    }
   }

@@ -6,6 +6,7 @@ Usage: python scripts/rekor_evidence.py DIST_DIR OUT.json
 """
 from __future__ import annotations
 
+import argparse
 import base64
 import hashlib
 import json
@@ -17,7 +18,11 @@ REKOR = "https://rekor.sigstore.dev/api/v1/log/entries?logIndex={}"
 
 
 def main() -> int:
-    dist, out = Path(sys.argv[1]), Path(sys.argv[2])
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("dist", help="directory holding the artefacts and their <artefact>.sigstore.json bundles")
+    ap.add_argument("out", help="evidence JSON to write")
+    a = ap.parse_args()
+    dist, out = Path(a.dist), Path(a.out)
     rows = []
     for b in sorted(dist.glob("*.sigstore.json")):
         art = b.with_name(b.name[: -len(".sigstore.json")])

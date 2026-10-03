@@ -14,10 +14,12 @@
 | Misconfigured gate with no trust root | The CLI exits 2 and the API answers 503. The public demo key is trusted only with `--demo` / `TRACEGATE_DEMO=1`, and a warning is printed |
 | Stolen or long-lived signing key | Keyless mode: CI generates a one-run Ed25519 key and signs its public key with cosign (GitHub OIDC -> Fulcio certificate -> Rekor entry). The gate trusts the key only after `cosign verify-blob` checks the workflow identity and the transparency-log entry |
 | Stripping a stage to hide findings | Required stages (`commit`, `build`, `scan`) must all be present, otherwise the gate blocks (fail closed) |
+| Hiding a finding by leaving its package out of the SBOM (or spelling its version differently) | A scanner finding that matches no SBOM node is kept as a policy input: rule `unattributed_finding` blocks on HIGH/CRITICAL and warns on the rest, and the PR comment, CLI JSON and API summary list it. Rows without a PURL are matched by (ecosystem from the Trivy result type, name, version) |
+| Malformed or wrongly typed envelopes | Non-string fields or a non-hex signature are rejected (`envelope[i]: malformed`), never a crash: the API answers 422 and the CLI gate blocks with the reason |
 | Deploying an unsigned image | `kind-admission` CI job: an image is applied to the cluster only if `cosign verify` succeeds against the workflow identity and `tracegate gate` passes on its signed events |
 | Using reachability to hide a vuln | Static analysis can mark a package `unreached`, which downgrades a block to a warn; it never suppresses the finding. Runtime facts, when present, override static results. Static analysis is evadable (computed imports such as `importlib.import_module("ya" + "ml")` look unreached), and the sources it reads are written by the PR under review, so do not rely on static downgrades for untrusted PRs. Known false-`unreached` cases are listed in ADR 0004 and the results JSON |
 | Graph poisoning via cycles | The DAG rejects cycle-creating edges |
-| Oversized API requests | Bodies over 10 MB (configurable) get 413, more than 5,000 envelopes get 413; an optional bearer token protects `/v1/gate` and `/v1/runs*` |
+| Oversized or unauthenticated API requests | Bodies over 10 MB (configurable) get 413, more than 5,000 envelopes get 413. With `TRACEGATE_API_TOKEN` set, every `/v1` route (gate, runs, `runs/{rid}/*`, demo) requires the bearer token, compared in constant time; demo runs have their own store, so they cannot evict gate runs |
 | Crafted repository trees during benchmarking | `materialize()` refuses tree paths with `..`, `.git`, absolute or drive components and checks that each target stays under the destination |
 
 ## Trust boundaries
@@ -31,3 +33,5 @@
 - Runtime `loaded_modules` facts are self-reported by the signer. An attacker who controls the runtime key could use them to suppress findings.
 - Only the stages in `REQUIRED_STAGES` are enforced. `deploy` and `runtime` are optional.
 - The kind admission demo is a CI gate step in front of `kubectl apply`, not an in-cluster validating webhook.
+- A scanner that omits a finding altogether is out of scope: the gate can only judge what the signed scan reports. A row without a PURL whose (ecosystem, name, version) matches several SBOM nodes is treated as unattributed (and blocks if HIGH/CRITICAL) rather than guessed.
+- With no `TRACEGATE_API_TOKEN` the API is open to anyone who can reach it; it binds to 127.0.0.1 by default and run ids are 48-bit random, but set a token before exposing it.

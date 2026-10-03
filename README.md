@@ -18,7 +18,7 @@
 2. **From source** (v1.1.0 or later; do not `pip install tracegate`: that PyPI name belongs to an unrelated project):
 
    ```bash
-   python -m venv .venv && . .venv/bin/activate
+   python -m venv .venv && . .venv/bin/activate        # Windows: .venv\Scripts\activate (Git Bash: . .venv/Scripts/activate)
    pip install "git+https://github.com/rakshit-737/tracegate@v1.1.0"
    tracegate demo                                      # six scenarios, about 2 seconds
    tracegate synth cve-origin ev.json
@@ -150,7 +150,7 @@ Reachability tiers: `imported` (AST imports and dotted strings), `entrypoint` (n
 ```bash
 git clone https://github.com/rakshit-737/tracegate && cd tracegate
 pip install -e ".[dev]"            # the core gate is stdlib-only; extras add crypto/osv/api
-python -m pytest -q                # about 70 tests; real-data tests skip without datasets
+python -m pytest -q                # about 100 tests; real-data tests skip without datasets
 python -m tracegate.cli demo       # the six spec scenarios
 ```
 
@@ -170,7 +170,7 @@ tracegate export events.json --format intoto > provenance.intoto.json
 tracegate export events.json --format cypher | cypher-shell -u neo4j -p ...
 ```
 
-Service and UI: run `tracegate serve` (FastAPI on :8080, lineage explorer at `/`), or `docker compose up --build` for the API plus Neo4j (localhost-only ports).
+Service and UI: `tracegate --demo serve` starts the API with the lineage explorer at http://127.0.0.1:8080 and the built-in scenarios (public demo key). For a real gate give it a trust root, for example `TRACEGATE_KEYID=ci TRACEGATE_PUBKEY=~/.tracegate/ci.pub tracegate serve`; with no trust root it refuses to start (exit 2). Set `TRACEGATE_API_TOKEN` before exposing it beyond localhost. `NEO4J_PASSWORD=... TRACEGATE_PUBKEY_FILE=~/.tracegate/ci.pub docker compose up --build` adds Neo4j (localhost-only ports); compose refuses to start without `NEO4J_PASSWORD`.
 
 Demo scenarios (these follow the spec):
 

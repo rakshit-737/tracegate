@@ -14,7 +14,11 @@ Supersedes v1.0.0, whose wheel and image trust the demo key implicitly (fail-ope
 - Independent backtracking oracle from single-package Dependabot/Renovate bumps (`results/lineage_bot_bump_oracle.json`): TRACEGATE 231/231 at later snapshots, `git blame` 219/231, exact-pin pickaxe 197/231; repo-clustered bootstrap intervals for all lineage figures.
 - The original TypoGard script and the original typomania binary run on the same typosquat splits in the benchmarks workflow (`results/typosquat_originals.json`); our typomania port agrees on 99.97-100% of names.
 - kind admission demo adds a cosign-valid image with incomplete signed provenance, denied by the TRACEGATE gate itself.
-- Sigstore CI builds use a `.post0.devN+g<sha>` version; every results JSON records the Actions run that produced it.
+- Sigstore CI builds use a `.post0.devN+g<sha>` version; the benchmark result JSONs written by the benchmarks, kind-admission and sigstore workflows record the Actions run that produced them (`data_manifest.json`, `images_real.json` and `scale_synthetic.json` did not; corrected after the release).
+- Lock-file lineage for yarn.lock, pnpm-lock.yaml, go.mod/go.sum and Cargo.lock.
+- CI: Sigstore keyless signing with Rekor checks, a kind cluster admission job, signed-pipeline e2e, wheel/sdist/Docker jobs, Python 3.10-3.14 plus Windows.
+- Typosquat comparison with re-implementations of typomania/TypoGard and pypi-scan, a time split, more ecosystems and precision at realistic prevalence.
+- Exact-pin pickaxe baseline and Wilson intervals in the lineage benchmark.
 
 ### Security
 - The gate fails closed when no trust root is configured (CLI exit 2, API 503); the public demo key needs `--demo` / `TRACEGATE_DEMO=1`.
@@ -22,15 +26,9 @@ Supersedes v1.0.0, whose wheel and image trust the demo key implicitly (fail-ope
 - Keyless trust: an Ed25519 key is trusted only through a verified Sigstore bundle bound to a workflow identity.
 - ReDoS-free pin regexes; `materialize()` refuses path-traversal tree entries; MAL range matching fails closed and uses SemVer outside PyPI.
 
-### Added
-- Lock-file lineage for yarn.lock, pnpm-lock.yaml, go.mod/go.sum and Cargo.lock.
-- CI: Sigstore keyless signing with Rekor checks, a kind cluster admission job, signed-pipeline e2e, wheel/sdist/Docker jobs, Python 3.10-3.14 plus Windows.
-- Typosquat comparison with re-implementations of typomania/TypoGard and pypi-scan, a time split, more ecosystems and precision at realistic prevalence.
-- Exact-pin pickaxe baseline and Wilson intervals in the lineage benchmark.
-
 ### Changed (published numbers, several worse)
 - Backtracking evaluated on 11 repos and 4 ecosystems: 88.8% agreement with blame (was 97.5% on 3 pip repos). A new exact-pin `git log -S` baseline reaches 100% on pip and Go, so the old 17.3% "best baseline" understated the competition; TRACEGATE leads only on Cargo and npm lock files.
-- Reachability reduction after the false-unreached audit: -10.2% (HEAD sources) and -5.7% (own sources), down from -15.1% / -25.8%.
+- Reachability reduction after the false-unreached audit: -10.3% (HEAD sources) and -5.7% (own sources), down from -15.1% / -25.8%.
 - Typosquat tables now include typomania/TypoGard and pypi-scan re-implementations, five ecosystems, a time split and precision at 1% prevalence.
 
 ### Fixed

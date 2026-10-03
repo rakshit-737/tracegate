@@ -42,7 +42,8 @@ python -m pytest -q -m realdata
 
 ```bash
 pip install -r docs/requirements.txt -e .
-python scripts/build_static_demo.py   # writes docs/demo/data/*.json (git-ignored)
-python scripts/build_static_demo.py   # generates docs/demo/data first
-mkdocs serve
+python scripts/build_static_demo.py   # step 1: writes docs/demo/data/*.json (git-ignored)
+mkdocs build --strict                 # step 2: the site docs.yml publishes (or `mkdocs serve`)
 ```
+
+Without step 1 the static demo ships without data.

@@ -9,6 +9,8 @@ Nothing here is committed to git. Everything lands in $TRACEGATE_DATA
   python scripts/download_data.py popular      # top-PyPI + npm-high-impact popularity lists
   python scripts/download_data.py tools        # Syft + Trivy release binaries (checksum-verified)
   python scripts/download_data.py repos        # git clones of real OSS repos with pinned manifests
+  python scripts/download_data.py repos --pin-from results/data_manifest.json
+                                               # check out the commits a committed run used
 
 Mutable feeds (OSV, popularity lists) cannot be pinned by hash in advance, so
 their sha256 is recorded in MANIFEST.json at download time and re-verified by
@@ -201,11 +203,15 @@ def fetch_paged(rel: str, force: bool) -> None:
     print(f"  wrote   {rel} ({len(ranked)} names)")
 
 
-def cmd_popular(force: bool) -> None:
+def cmd_popular(force: bool, only: list[str] | None = None) -> None:
+    def want(rel: str) -> bool:
+        return not only or any(o in rel for o in only)
     for rel, url in POPULAR.items():
-        fetch(url, rel, force)
+        if want(rel):
+            fetch(url, rel, force)
     for rel in PAGED:
-        fetch_paged(rel, force)
+        if want(rel):
+            fetch_paged(rel, force)
 
 
 def _platform() -> tuple[str, str, str, str, str]:
@@ -281,13 +287,37 @@ def prefetch_manifest_blobs(repo: Path, manifest: str) -> None:
             time.sleep(5 * attempt)
 
 
-def cmd_repos(force: bool) -> None:
+def _pins(pin_from: str | None) -> dict[str, str]:
+    """{repo name: head sha} from a results/data_manifest.json of an earlier run."""
+    if not pin_from:
+        return {}
+    m = json.loads(Path(pin_from).read_text())
+    return {k.split("/", 1)[1]: v["head"] for k, v in m.items() if k.startswith("repos/") and v.get("head")}
+
+
+def _checkout(dst: Path, sha: str) -> None:
+    g = ["git", "-C", str(dst)]
+    if subprocess.run([*g, "cat-file", "-e", f"{sha}^{{commit}}"], capture_output=True).returncode != 0:
+        subprocess.run([*g, "fetch", "--quiet", "--filter=blob:none", "origin", sha], check=True)
+    for attempt in range(1, 6):
+        if subprocess.run([*g, "checkout", "--quiet", "--detach", sha]).returncode == 0:
+            return
+        time.sleep(5 * attempt)
+    sys.exit(f"could not check out {sha} in {dst}")
+
+
+def cmd_repos(force: bool, pin_from: str | None = None, only: list[str] | None = None) -> None:
     rdir = ROOT / "repos"
     rdir.mkdir(parents=True, exist_ok=True)
+    pins = _pins(pin_from)
     for name, url, manifest, srcs in REPOS:
+        if only and name not in only:
+            continue
         dst = rdir / name
         if dst.exists():
             print(f"  cached  repos/{name}")
+            if name in pins:
+                _checkout(dst, pins[name])
             prefetch_manifest_blobs(dst, manifest)
             continue
         print(f"  clone   {url}")
@@ -312,11 +342,13 @@ def cmd_repos(force: bool) -> None:
             if subprocess.run([*g, "checkout", "--quiet"]).returncode == 0:
                 break
             time.sleep(5 * attempt)
+        if name in pins:  # reproduce a committed run: same history as that run used
+            _checkout(dst, pins[name])
         head = subprocess.run(["git", "-C", str(dst), "rev-parse", "HEAD"], check=True,
                               capture_output=True, text=True).stdout.strip()
         prefetch_manifest_blobs(dst, manifest)
         m = _load_manifest()
-        m[f"repos/{name}"] = {"url": url, "head": head,
+        m[f"repos/{name}"] = {"url": url, "head": head, "pinned_from": pin_from if name in pins else None,
                               "fetched": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
         _save_manifest(m)
 
@@ -337,11 +369,15 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("what", choices=["all", "osv", "popular", "tools", "repos", "verify"])
     ap.add_argument("--force", action="store_true", help="re-download even if cached")
+    ap.add_argument("--pin-from", help="repos: check out the heads recorded in this data_manifest.json")
+    ap.add_argument("--only", nargs="*",
+                    help="repos: clone only these repository names; popular: only lists whose path contains "
+                         "one of these words (pypi, npm, crates, rubygems, nuget)")
     a = ap.parse_args()
     ROOT.mkdir(parents=True, exist_ok=True)
     print(f"data root: {ROOT}")
-    steps = {"osv": cmd_osv, "popular": cmd_popular, "tools": cmd_tools, "repos": cmd_repos,
-             "verify": cmd_verify}
+    steps = {"osv": cmd_osv, "popular": lambda f: cmd_popular(f, a.only), "tools": cmd_tools,
+             "repos": lambda f: cmd_repos(f, a.pin_from, a.only), "verify": cmd_verify}
     for name in (["popular", "osv", "tools", "repos"] if a.what == "all" else [a.what]):
         print(f"[{name}]")
         steps[name](a.force)

@@ -28,6 +28,7 @@ import time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from tracegate.backtrack import blast_radius, origin_story  # noqa: E402
 from tracegate.collector import Collector  # noqa: E402
@@ -134,7 +135,9 @@ def main() -> None:
     widest = sorted(((len(blast_radius(g, f.node_id)["images"]), f.cve, g.nodes[f.node_id].label)
                      for f in scan_f), reverse=True)[:5]
     example = origin_story(g, widest[0][1])[0] if widest else None
+    from stats import run_meta
     out = {
+        **run_meta(),
         "images": per_image,
         "identity_convergence": {k: round(tot[k] / tot["rows"], 4) if tot["rows"] else None
                                  for k in ("naive", "raw", "canon")} | {"trivy_rows": tot["rows"]},

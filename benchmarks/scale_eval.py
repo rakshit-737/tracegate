@@ -9,6 +9,9 @@ import time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+from stats import run_meta  # noqa: E402
 
 from tracegate import ids, synth  # noqa: E402
 from tracegate.pipeline import run  # noqa: E402
@@ -37,7 +40,9 @@ def main() -> None:
         print(rows[-1])
     out = Path(a.out)
     out.mkdir(exist_ok=True)
-    (out / "scale_synthetic.json").write_text(json.dumps(rows, indent=1))
+    (out / "scale_synthetic.json").write_text(json.dumps({
+        **run_meta(), "data": "synthetic (tracegate.synth.random_scenario, seed 0); graph growth only",
+        "latency": "median of 3 cold-cache runs of verify + graph + enrich + policy", "rows": rows}, indent=1))
 
 
 if __name__ == "__main__":

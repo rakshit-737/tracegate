@@ -102,7 +102,8 @@ def bootstrap_ci(flags: dict[str, dict[str, bool]], pos: set[str], neg: set[str]
         return [round(xs[int(0.025 * len(xs))], 4), round(xs[int(0.975 * len(xs)) - 1], 4)]
     return {"n_boot": n_boot, "seed": seed, "method": "stratified percentile bootstrap, 95%",
             "ci": {m: {k: ci(v) for k, v in d.items()} for m, d in samples.items()},
-            "f1_diff_vs_" + ref: {m: {"ci": ci(v), "p_le_0": round(sum(x <= 0 for x in v) / len(v), 4)}
+            # one-sided Monte Carlo p-value with the +1 correction, so it is never reported as 0
+            "f1_diff_vs_" + ref: {m: {"ci": ci(v), "p_le_0": round((sum(x <= 0 for x in v) + 1) / (len(v) + 1), 4)}
                                   for m, v in diffs.items()}}
 
 
@@ -270,6 +271,10 @@ def plot(reports: list[dict], out: Path) -> None:
     ax.set_xlim(0, min(1.0, max(0.05, top * 1.2)))
     ax.set_ylim(0, 1.02)
     ax.legend(fontsize=7, loc="lower left")
+    runs = sorted({str(r.get("run_id")) for r in reports if r.get("run_id")})
+    if runs:
+        fig.text(0.99, 0.01, "source: benchmarks run " + ", ".join(runs), ha="right", va="bottom", fontsize=6,
+                 color="#555555")
     fig.tight_layout()
     fig.savefig(out / "typosquat_pr.png")
 
@@ -284,8 +289,13 @@ def main() -> None:
     ap.add_argument("--cutoff", default="2025-01-01")
     ap.add_argument("--no-plot", action="store_true")
     ap.add_argument("--dump", default=None, help="write test inputs + port flags here for originals_eval.py")
+    ap.add_argument("--plot-only", action="store_true",
+                    help="redraw typosquat_pr.png from the committed typosquat_pypi.json / typosquat_npm.json")
     a = ap.parse_args()
     out = Path(a.out)
+    if a.plot_only:
+        plot([json.loads((out / f"typosquat_{e}.json").read_text()) for e in ("pypi", "npm")], out)
+        return
     reps = []
     for eco in a.eco:
         need = f"osv/{eco}-all.zip"

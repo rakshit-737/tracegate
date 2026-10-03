@@ -51,8 +51,14 @@ def binom_sf(x: int, n: int, p: float) -> float:
 
 
 def binom_cdf(x: int, n: int, p: float) -> float:
-    """P(X <= x) for X ~ Binomial(n, p)."""
-    return 1.0 - binom_sf(x + 1, n, p) if x < n else 1.0
+    """P(X <= x) for X ~ Binomial(n, p), summed directly (no 1 - sf cancellation for tiny tails)."""
+    if x >= n:
+        return 1.0
+    if x < 0:
+        return 0.0
+    logs = [_log_pmf(k, n, p) for k in range(0, x + 1)]
+    m = max(logs)
+    return 0.0 if m == -math.inf else min(1.0, math.exp(m) * sum(math.exp(v - m) for v in logs))
 
 
 def _bisect(f, target: float, increasing: bool) -> float:

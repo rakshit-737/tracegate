@@ -90,7 +90,8 @@ def test_lineage_over_package_lock(tmp_path):
         git("commit", "-q", "-m", f"bump deps (#{i + 10})")
     hist = manifest_history(tmp_path, "package-lock.json")
     assert [h.pr for h in hist] == [10, 11]
-    assert hist[1].added == {"lodash": "4.17.21", "chalk": "5.3.0"}
+    assert hist[1].added == [("chalk", "5.3.0"), ("lodash", "4.17.21")]
+    assert hist[1].removed == [("lodash", "4.17.20")]
     ev = commit_events(hist, "package-lock.json")[1]
     assert {d["ecosystem"] for d in ev.payload["deps_added"]} == {"npm"}
 

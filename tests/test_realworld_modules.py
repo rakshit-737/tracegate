@@ -183,7 +183,7 @@ def repo(tmp_path):
 def test_manifest_history_and_backtrack_matches_blame(repo, osv):
     hist = manifest_history(repo, "requirements.txt")
     assert [h.pr for h in hist] == [1, 2, 4, 5]  # comment-only commit changes no pin
-    assert hist[2].added == {"pyyaml": "5.3"} and hist[2].removed == {"pyyaml": "5.4"}
+    assert hist[2].added == [("pyyaml", "5.3")] and hist[2].removed == [("pyyaml", "5.4")]
     s = HmacSigner("k", KEY["k"])
     evs = commit_events(hist, "requirements.txt")
     evs.append(StageEvent("build", "ci", {"build_id": "b", "commit": hist[-1].sha, "sbom": {"artifacts": [

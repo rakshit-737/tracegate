@@ -3,12 +3,16 @@
 Walks the first-parent history of a pinned dependency manifest
 (requirements.txt / pip-compile output, package-lock.json, yarn.lock, pnpm-lock.yaml, go.mod,
 go.sum, Cargo.lock, poetry.lock, uv.lock) and emits one `commit` stage event
-per commit that changed a pin: which dependency versions it introduced and
+per commit that changed a pin: which (package, version) pairs it introduced and
 which it removed. This is the "commit -> dependency" half of the lineage,
 derived from the repository itself rather than from CI metadata.
 
-`blame_introducers` is an *independent* ground truth used by the benchmark:
-`git blame --first-parent` on the manifest line of each pinned package.
+Pins are (name, version) pairs, so a lock file that ships two versions of one package
+(debug 2.6.9 and debug 4.3.4) tracks both; `multi_version=False` reproduces the older
+one-version-per-name behaviour (first entry wins) for before/after comparisons.
+
+`blame_entry_introducers` is the line-based reference the benchmark compares against:
+`git blame --first-parent` on the manifest line of each pinned (package, version).
 """
 from __future__ import annotations
 
@@ -20,7 +24,7 @@ from fnmatch import fnmatch
 from pathlib import Path
 
 from .ids import normalize_name
-from .lockfiles import ecosystem_for, parse_manifest, pin_lines
+from .lockfiles import ecosystem_for, parse_manifest, parse_manifest_entries, pin_entries, pin_lines
 from .models import StageEvent
 
 _PIN = re.compile(r"^\s*([A-Za-z0-9][A-Za-z0-9._-]*)\s*(?:\[[^\]]*\])?\s*===?\s*([^\s;#\\,]+)")
@@ -63,17 +67,28 @@ def _git(repo: Path, *args: str) -> str:
                           text=True, encoding="utf-8", errors="replace").stdout
 
 
+Pair = tuple[str, str]  # (normalised name, version)
+
+
 @dataclass
 class ManifestCommit:
-    """One first-parent commit that changed a manifest, with the pins after it."""
+    """One first-parent commit that changed a manifest, with the pins after it.
+
+    Attributes:
+        pins: One version per name (first entry in file order), for callers that need names only.
+        entries: Every pinned (name, version) after this commit.
+        added: Pairs present after this commit and not before it, sorted.
+        removed: Pairs present before this commit and not after it, sorted.
+    """
     sha: str
     author: str
     timestamp: int
     subject: str
     pins: dict[str, str]
-    added: dict[str, str] = field(default_factory=dict)    # name -> new version
-    removed: dict[str, str] = field(default_factory=dict)  # name -> old version
+    added: list[Pair] = field(default_factory=list)
+    removed: list[Pair] = field(default_factory=list)
     path: str = ""  # manifest path at this commit (differs from the current one before a rename)
+    entries: frozenset[Pair] = frozenset()
 
     @property
     def pr(self) -> int | None:
@@ -97,35 +112,58 @@ def follow_log(repo: str | Path, manifest: str, rev: str = "HEAD") -> list[tuple
     return rows[::-1]
 
 
+def manifest_pairs(path: str, text: str, multi_version: bool = True) -> list[Pair]:
+    """Pinned (name, version) pairs of a manifest; one per name when ``multi_version`` is False."""
+    if multi_version:
+        return parse_manifest_entries(path, text)
+    return list(parse_manifest(path, text).items())
+
+
 def manifest_history(repo: str | Path, manifest: str, rev: str = "HEAD",
-                     limit: int | None = None) -> list[ManifestCommit]:
-    """Oldest-first list of first-parent commits that changed a pin in `manifest` (renames followed)."""
+                     limit: int | None = None, multi_version: bool = True) -> list[ManifestCommit]:
+    """Oldest-first list of first-parent commits that changed a pin in `manifest` (renames followed).
+
+    Args:
+        repo: Repository path.
+        manifest: Manifest path at ``rev``.
+        rev: Revision to walk back from.
+        limit: Keep only the newest ``limit`` manifest commits.
+        multi_version: Track every version of a name (default). False keeps one version per
+            name (the first entry), the behaviour before the multi-version fix.
+
+    Returns:
+        Commits that added or removed at least one (name, version) pin.
+    """
     repo = Path(repo)
     rows = follow_log(repo, manifest, rev)
     if limit:
         rows = rows[-limit:]
     out: list[ManifestCommit] = []
-    prev: dict[str, str] = {}
+    prev: set[Pair] = set()
     if limit and rows:  # seed the state from the parent of the first kept commit
         try:
-            prev = parse_manifest(rows[0][4], _git(repo, "show", f"{rows[0][0]}^:{rows[0][4]}"))
-        except subprocess.CalledProcessError:
-            prev = {}
+            prev = set(manifest_pairs(rows[0][4], _git(repo, "show", f"{rows[0][0]}^:{rows[0][4]}"),
+                                      multi_version))
+        except (subprocess.CalledProcessError, ValueError):
+            prev = set()
     for sha, author, ts, subject, path in rows:
         try:
             text = _git(repo, "show", f"{sha}:{path}")
         except subprocess.CalledProcessError:
             text = ""  # file deleted in this commit
         try:
-            pins = parse_manifest(path, text)
+            pairs = manifest_pairs(path, text, multi_version)
         except ValueError:  # malformed lock file at this commit
-            pins = {}
-        mc = ManifestCommit(sha, author, ts, subject, pins, path=path)
-        mc.added = {n: v for n, v in pins.items() if prev.get(n) != v}
-        mc.removed = {n: v for n, v in prev.items() if pins.get(n) != v}
+            pairs = []
+        cur = set(pairs)
+        pins: dict[str, str] = {}
+        for n, v in pairs:
+            pins.setdefault(n, v)
+        mc = ManifestCommit(sha, author, ts, subject, pins, path=path, entries=frozenset(cur),
+                            added=sorted(cur - prev), removed=sorted(prev - cur))
         if mc.added or mc.removed:
             out.append(mc)
-        prev = pins
+        prev = cur
     return out
 
 
@@ -146,18 +184,13 @@ def commit_events(history: list[ManifestCommit], manifest: str, run_prefix: str 
         evs.append(StageEvent("commit", f"{run_prefix}-{mc.sha[:8]}", {
             "sha": mc.sha, "author": mc.author, "pr": mc.pr, "message": mc.subject,
             "seq": i, "timestamp": mc.timestamp, "files": [manifest],
-            "deps_added": [{"name": n, "version": v, "ecosystem": eco} for n, v in sorted(mc.added.items())],
-            "deps_removed": [{"name": n, "version": v} for n, v in sorted(mc.removed.items())],
+            "deps_added": [{"name": n, "version": v, "ecosystem": eco} for n, v in sorted(mc.added)],
+            "deps_removed": [{"name": n, "version": v} for n, v in sorted(mc.removed)],
         }))
     return evs
 
 
-def blame_introducers(repo: str | Path, manifest: str, rev: str = "HEAD") -> dict[str, str]:
-    """{normalised package: sha of the first-parent commit that last wrote its pin line}.
-
-    The pin line comes from `lockfiles.pin_lines`, so every supported format (requirements,
-    package-lock v2/v3, yarn, pnpm, go.mod, go.sum, Cargo/poetry/uv locks) gets the same
-    ground truth: the commit that last wrote the line holding the chosen version."""
+def _blame(repo: str | Path, manifest: str, rev: str) -> tuple[list[str], list[str]]:
     shas: list[str] = []
     lines: list[str] = []
     cur_sha = None
@@ -167,10 +200,50 @@ def blame_introducers(repo: str | Path, manifest: str, rev: str = "HEAD") -> dic
         elif ln.startswith(_TAB) and cur_sha:
             shas.append(cur_sha)
             lines.append(ln[1:])
+    return shas, lines
+
+
+def blame_introducers(repo: str | Path, manifest: str, rev: str = "HEAD") -> dict[str, str]:
+    """{normalised package: sha of the first-parent commit that last wrote its pin line}.
+
+    One version per name (the first entry of a lock file); see `blame_entry_introducers` for
+    every (name, version)."""
+    shas, lines = _blame(repo, manifest, rev)
     pins = pin_lines(manifest, _NL.join(lines))
     if pins is None:
         return {}
     return {n: shas[i] for n, (_, i) in pins.items() if i < len(shas)}
+
+
+def blame_entry_introducers(repo: str | Path, manifest: str, rev: str = "HEAD",
+                            multi_version: bool = True) -> dict[Pair, str]:
+    """{(normalised package, version): sha of the first-parent commit that last wrote its pin line}.
+
+    The pin line comes from `lockfiles.pin_entries`, so every supported format (requirements,
+    package-lock v2/v3, yarn, pnpm, go.mod, go.sum, Cargo/poetry/uv locks) gets the same
+    reference: the commit that last wrote the line holding that version. With
+    ``multi_version=False`` only the first entry per name is kept (the older behaviour)."""
+    shas, lines = _blame(repo, manifest, rev)
+    text = _NL.join(lines)
+    if multi_version:
+        ents = pin_entries(manifest, text)
+        if ents is None:
+            return {}
+        return {(e.name, e.version): shas[e.line] for e in ents if e.line < len(shas)}
+    pins = pin_lines(manifest, text)
+    if pins is None:
+        return {}
+    return {(n, v): shas[i] for n, (v, i) in pins.items() if i < len(shas)}
+
+
+def pickaxe_exact(repo: str | Path, manifest: str, token: str, rev: str = "HEAD") -> str | None:
+    """Newest first-parent commit up to ``rev`` that changed how often ``token`` occurs in the manifest.
+
+    ``git log --first-parent -1 -S<token>``; ``token`` may span several lines."""
+    if not token:
+        return None
+    out = _git(Path(repo), "log", "--first-parent", "-1", "--format=%H", f"-S{token}", rev, "--", manifest).strip()
+    return out or None
 
 
 def pickaxe_first_mention(repo: str | Path, manifest: str, name: str, rev: str = "HEAD") -> str | None:

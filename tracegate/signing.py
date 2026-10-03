@@ -23,6 +23,7 @@ import base64
 import hashlib
 import hmac
 import json
+import re
 from dataclasses import asdict
 from typing import Any, Union
 
@@ -31,6 +32,8 @@ from .models import Envelope, StageEvent
 
 PAYLOAD_TYPE = "application/vnd.tracegate.stage+json"
 INTOTO_PAYLOAD_TYPE = "application/vnd.in-toto+json"
+MALFORMED_TYPE = "application/vnd.tracegate.malformed"  # placeholder for an entry that failed to parse
+_HEX = re.compile(r"[0-9a-f]+")
 
 try:  # optional asymmetric signing
     from cryptography.exceptions import InvalidSignature
@@ -133,7 +136,18 @@ class Verifier:
         self._trusted = trusted
 
     def verify(self, env: Envelope) -> StageEvent:
-        """Fail closed: raise on unknown key, wrong type, or bad signature."""
+        """Fail closed: raise SignatureError on unknown key, wrong type, bad signature or malformed fields."""
+        try:
+            return self._verify(env)
+        except SignatureError:
+            raise
+        except (TypeError, ValueError, AttributeError, UnicodeError) as e:  # wrongly typed fields
+            raise SignatureError(f"malformed envelope ({type(e).__name__})") from e
+
+    def _verify(self, env: Envelope) -> StageEvent:
+        if env.payload_type == MALFORMED_TYPE:
+            raise SignatureError(f"malformed envelope: {env.payload}")
+        _check_fields(env)
         if env.payload_type != PAYLOAD_TYPE:
             raise SignatureError(f"unexpected payload type {env.payload_type!r}")
         key = self._trusted.get(env.keyid)
@@ -159,14 +173,35 @@ class Verifier:
             raise SignatureError(f"malformed payload: {e}") from e
 
 
+def _check_fields(env: Envelope) -> None:
+    for name in ("payload_type", "payload", "keyid", "sig"):
+        if not isinstance(getattr(env, name), str):
+            raise SignatureError(f"malformed envelope: {name} is {type(getattr(env, name)).__name__}, not a string")
+    if env.sig and not _HEX.fullmatch(env.sig):
+        raise SignatureError("malformed envelope: sig is not lowercase hex")
+
+
 def envelope_from_dict(d: dict) -> Envelope:
-    """Parse an envelope from TRACEGATE or standard DSSE JSON."""
+    """Parse an envelope from TRACEGATE or standard DSSE JSON.
+
+    Raises:
+        SignatureError: The entry is not an object with string fields and a hex signature.
+    """
+    if not isinstance(d, dict):
+        raise SignatureError(f"malformed envelope: expected an object, got {type(d).__name__}")
     if "payloadType" in d:  # standard DSSE JSON
         return from_dsse_json(d)
     try:
-        return Envelope(d["payload_type"], d["payload"], d["keyid"], d["sig"])
+        env = Envelope(d["payload_type"], d["payload"], d["keyid"], d["sig"])
     except (KeyError, TypeError) as e:
-        raise SignatureError(f"malformed envelope: {e}") from e
+        raise SignatureError(f"malformed envelope: missing {e}") from e
+    _check_fields(env)
+    return env
+
+
+def malformed(reason: str) -> Envelope:
+    """Placeholder for an entry that could not be parsed; the collector rejects it (fail closed)."""
+    return Envelope(MALFORMED_TYPE, reason[:200], "", "")
 
 
 def to_dsse_json(env: Envelope) -> dict[str, Any]:
@@ -184,10 +219,12 @@ def from_dsse_json(d: dict) -> Envelope:
     """
     try:
         sig = d["signatures"][0]
-        return Envelope(d["payloadType"], base64.b64decode(d["payload"]).decode(), sig.get("keyid", ""),
-                        base64.b64decode(sig["sig"]).hex())
-    except (KeyError, IndexError, TypeError, ValueError) as e:
-        raise SignatureError(f"malformed DSSE envelope: {e}") from e
+        env = Envelope(d["payloadType"], base64.b64decode(d["payload"], validate=True).decode(), sig.get("keyid", ""),
+                       base64.b64decode(sig["sig"], validate=True).hex())
+    except (KeyError, IndexError, TypeError, ValueError, AttributeError) as e:
+        raise SignatureError(f"malformed DSSE envelope: {type(e).__name__}") from e
+    _check_fields(env)
+    return env
 
 
 def intoto_statement(build: dict[str, Any], builder_id: str = "https://github.com/rakshit-737/tracegate",

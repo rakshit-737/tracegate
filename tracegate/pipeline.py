@@ -9,7 +9,7 @@ from .collector import Collector, CollectResult
 from .enrich import enrich
 from .models import Decision, Envelope
 from .policy import evaluate
-from .signing import Verifier, envelope_from_dict
+from .signing import SignatureError, Verifier, envelope_from_dict, malformed
 from .warden import HeuristicWarden, WardenClient
 
 
@@ -40,16 +40,29 @@ def save_envelopes(envs: list[Envelope], path: str | Path) -> None:
     Path(path).write_text(json.dumps([asdict(e) for e in envs], indent=1))
 
 
-def load_envelopes(path: str | Path) -> list[Envelope]:
+def load_envelopes(path: str | Path, lenient: bool = False) -> list[Envelope]:
     """Read envelopes from a JSON file (TRACEGATE or standard DSSE layout).
 
     Args:
         path: Input path.
+        lenient: Turn a malformed entry into a placeholder the collector rejects (so the gate
+            blocks with a reason) instead of raising.
 
     Returns:
         The envelopes, not yet verified.
 
     Raises:
-        SignatureError: An entry is not a well-formed envelope.
+        SignatureError: An entry is not a well-formed envelope (strict mode), or the file is not a list.
     """
-    return [envelope_from_dict(d) for d in json.loads(Path(path).read_text())]
+    doc = json.loads(Path(path).read_text())
+    if not isinstance(doc, list):
+        raise SignatureError("malformed events file: expected a JSON list of envelopes")
+    out = []
+    for i, d in enumerate(doc):
+        try:
+            out.append(envelope_from_dict(d))
+        except SignatureError as e:
+            if not lenient:
+                raise
+            out.append(malformed(f"entry {i}: {e}"))
+    return out

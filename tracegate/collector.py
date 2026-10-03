@@ -80,6 +80,8 @@ class Collector:
                 events.append(self.verifier.verify(env))
             except SignatureError as e:
                 res.rejected.append(f"envelope[{i}]: {e}")
+            except Exception as e:  # noqa: BLE001 - any other failure on one envelope also fails closed
+                res.rejected.append(f"envelope[{i}]: malformed ({type(e).__name__})")
         order = ["commit", "sast", "build", "scan", "deploy", "runtime"]
         events.sort(key=lambda ev: order.index(ev.stage) if ev.stage in order else 99)
         for ev in events:

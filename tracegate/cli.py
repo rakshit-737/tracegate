@@ -80,7 +80,7 @@ def _warden(a):
 
 
 def _gate(a):
-    res = Collector(Verifier(_trusted())).collect(load_envelopes(a.events))
+    res = Collector(Verifier(_trusted())).collect(load_envelopes(a.events, lenient=True))
     enrich(res, _warden(a))
     if getattr(a, "reach_repo", None):
         from .gitlineage import parse_requirements
@@ -181,14 +181,14 @@ def _main(argv: list[str] | None = None) -> int:
         _report_rejected(res)
         return 1 if d.verdict.value == "block" else 0
     if a.cmd == "backtrack":
-        res, _ = run(load_envelopes(a.events), _trusted())
+        res, _ = run(load_envelopes(a.events, lenient=True), _trusted())
         stories = origin_story(res.graph, a.query)
         print(json.dumps(stories, indent=2))
         if not stories:
             print(f"tracegate: no match for {a.query}", file=sys.stderr)
         return _report_rejected(res)
     if a.cmd == "blast":
-        res, _ = run(load_envelopes(a.events), _trusted())
+        res, _ = run(load_envelopes(a.events, lenient=True), _trusted())
         print(json.dumps(layer_blast_radius(res.graph, a.layer), indent=2))
         return _report_rejected(res)
     if a.cmd == "keygen":
@@ -237,7 +237,7 @@ def _main(argv: list[str] | None = None) -> int:
         return 0
     if a.cmd == "export":
         from .export import opa_input, to_cypher, to_json
-        envs = load_envelopes(a.events)
+        envs = load_envelopes(a.events, lenient=True)
         res, _ = run(envs, _trusted())
         if res.rejected and a.format == "intoto":
             return _report_rejected(res)
@@ -249,7 +249,7 @@ def _main(argv: list[str] | None = None) -> int:
             print(json.dumps(opa_input(res), indent=1))
         else:
             v = Verifier(_trusted())
-            builds = [ev.payload for ev in (v.verify(e) for e in envs) if ev.stage == "build"]
+            builds = [ev.payload for ev in (v.verify(e) for e in envs) if ev.stage == "build"]  # all verified above
             print(json.dumps([intoto_statement(bp) for bp in builds], indent=1))
         return _report_rejected(res)
     if a.cmd == "serve":

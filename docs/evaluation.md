@@ -1,17 +1,17 @@
 # Evaluation
 
-Every number on this page is read from a committed JSON file in [`results/`](https://github.com/rakshit-737/tracegate/tree/main/results); the tables between generated markers are rendered from those files by `scripts/render_results.py`, and CI fails if a table and its file disagree. Each file records the GitHub Actions run that produced it:
+Every number on this page is read from a committed JSON file in [`results/`](https://github.com/rakshit-737/tracegate-cicd-security-gate/tree/main/results); the tables between generated markers are rendered from those files by `scripts/render_results.py`, and CI fails if a table and its file disagree. Each file records the GitHub Actions run that produced it:
 
 | Results | Files | Run |
 | --- | --- | --- |
-| Backtracking (multi-version and old readers on the same data), adjudication evidence, dataset manifest | `lineage_real_repos.json`, `lineage_real_repos_single_version.json`, `lineage_adjudication*.json`, `data_manifest.json` | [37091106360](https://github.com/rakshit-737/tracegate/actions/runs/37091106360) |
-| Bot-bump oracle | `lineage_bot_bump_oracle.json` | [37091106360](https://github.com/rakshit-737/tracegate/actions/runs/37091106360) |
-| Reachability, each snapshot against its own sources | `lineage_real_repos_materialized.json` (current), `..._audited.json` (the audited run), `..._v1.1.0.json` | [37091106360](https://github.com/rakshit-737/tracegate/actions/runs/37091106360), [37090410909](https://github.com/rakshit-737/tracegate/actions/runs/37090410909), [37003433022](https://github.com/rakshit-737/tracegate/actions/runs/37003433022) |
-| Reachability audit (evidence and verdicts, written locally from the audited run) | `reachability_audit.json` | generated locally from [37090410909](https://github.com/rakshit-737/tracegate/actions/runs/37090410909) |
-| Real images, synthetic scale | `images_real.json`, `scale_synthetic.json`, `data_manifest_images.json` | [37088867445](https://github.com/rakshit-737/tracegate/actions/runs/37088867445) |
-| Typosquat, original TypoGard / typomania, PR figure | `typosquat_*.json`, `typosquat_originals.json`, `data_manifest_typosquat.json`, `typosquat_pr.png` | [37003433022](https://github.com/rakshit-737/tracegate/actions/runs/37003433022) |
-| v1.1.0 backtracking and oracle, kept for the before/after comparison | `lineage_real_repos_v1.1.0.json`, `lineage_bot_bump_oracle_v1.1.0.json` | [37003433022](https://github.com/rakshit-737/tracegate/actions/runs/37003433022) |
-| kind admission, Sigstore evidence | `kind_admission.json`, `sigstore_evidence.json` | [37003568257](https://github.com/rakshit-737/tracegate/actions/runs/37003568257), [37003568357](https://github.com/rakshit-737/tracegate/actions/runs/37003568357) |
+| Backtracking (multi-version and old readers on the same data), adjudication evidence, dataset manifest | `lineage_real_repos.json`, `lineage_real_repos_single_version.json`, `lineage_adjudication*.json`, `data_manifest.json` | [37091106360](https://github.com/rakshit-737/tracegate-cicd-security-gate/actions/runs/37091106360) |
+| Bot-bump oracle | `lineage_bot_bump_oracle.json` | [37091106360](https://github.com/rakshit-737/tracegate-cicd-security-gate/actions/runs/37091106360) |
+| Reachability, each snapshot against its own sources | `lineage_real_repos_materialized.json` (current), `..._audited.json` (the audited run), `..._v1.1.0.json` | [37091106360](https://github.com/rakshit-737/tracegate-cicd-security-gate/actions/runs/37091106360), [37090410909](https://github.com/rakshit-737/tracegate-cicd-security-gate/actions/runs/37090410909), [37003433022](https://github.com/rakshit-737/tracegate-cicd-security-gate/actions/runs/37003433022) |
+| Reachability audit (evidence and verdicts, written locally from the audited run) | `reachability_audit.json` | generated locally from [37090410909](https://github.com/rakshit-737/tracegate-cicd-security-gate/actions/runs/37090410909) |
+| Real images, synthetic scale | `images_real.json`, `scale_synthetic.json`, `data_manifest_images.json` | [37088867445](https://github.com/rakshit-737/tracegate-cicd-security-gate/actions/runs/37088867445) |
+| Typosquat, original TypoGard / typomania, PR figure | `typosquat_*.json`, `typosquat_originals.json`, `data_manifest_typosquat.json`, `typosquat_pr.png` | [37003433022](https://github.com/rakshit-737/tracegate-cicd-security-gate/actions/runs/37003433022) |
+| v1.1.0 backtracking and oracle, kept for the before/after comparison | `lineage_real_repos_v1.1.0.json`, `lineage_bot_bump_oracle_v1.1.0.json` | [37003433022](https://github.com/rakshit-737/tracegate-cicd-security-gate/actions/runs/37003433022) |
+| kind admission, Sigstore evidence | `kind_admission.json`, `sigstore_evidence.json` | [37003568257](https://github.com/rakshit-737/tracegate-cicd-security-gate/actions/runs/37003568257), [37003568357](https://github.com/rakshit-737/tracegate-cicd-security-gate/actions/runs/37003568357) |
 
 How to re-run each: [Reproduce](reproduce.md).
 
@@ -42,7 +42,7 @@ How to re-run each: [Reproduce](reproduce.md).
 | vue-core | `pnpm-lock.yaml` | 492 | 68.1% | 97.2% | 97.2% | 14.0% | 20.5% | 147 / 780 |
 | **all** | 11 repos | 3969 | **92.4%** [Wilson 91.5-93.2; repo-clustered 82.7-99.5] | 89.6% [clustered 82.2-99.4] | 72.2% | 13.8% | 13.1% | |
 
-Source: `results/lineage_real_repos.json`, run [37091106360](https://github.com/rakshit-737/tracegate/actions/runs/37091106360).
+Source: `results/lineage_real_repos.json`, run [37091106360](https://github.com/rakshit-737/tracegate-cicd-security-gate/actions/runs/37091106360).
 <!-- /results:lineage-repos -->
 
 Per ecosystem, with the paired comparison against the package-specific pickaxe:
@@ -116,7 +116,7 @@ Labels come from commit messages only: a Dependabot or Renovate subject that nam
 | **all**, at the labelled commit | 4532 / 458 | 458/458 | 404/458 | 418/458 | 458/458 | 458/458 | 457/458 |
 | **all**, last later snapshot | 4532 / 436 | 436/436 | 381/436 | 402/436 | 419/436 | 403/436 | 371/436 |
 
-Source: `results/lineage_bot_bump_oracle.json`, run [37091106360](https://github.com/rakshit-737/tracegate/actions/runs/37091106360).
+Source: `results/lineage_bot_bump_oracle.json`, run [37091106360](https://github.com/rakshit-737/tracegate-cicd-security-gate/actions/runs/37091106360).
 <!-- /results:oracle-strata -->
 
 Pooled over all strata, with exact one-sided lower bounds (Clopper-Pearson; they treat the cases as independent, and clustering by repository would widen them):
@@ -155,9 +155,9 @@ The v1.1.0 oracle (`results/lineage_bot_bump_oracle_v1.1.0.json`, 243 bumps) cou
 <!-- results:reachability -->
 | Run | Static rule | high+ findings | actionable | downgraded [exact 95%] |
 | --- | --- | ---: | ---: | ---: |
-| [37003433022](https://github.com/rakshit-737/tracegate/actions/runs/37003433022) | v1.1.0: static tiers; `# via` read only below the pin | 887 | 836 | 51 (5.7%) [4.3-7.5] |
-| [37090410909](https://github.com/rakshit-737/tracegate/actions/runs/37090410909) | + inline `# via` (older pip-compile layout) | 887 | 842 | 45 (5.1%) [3.7-6.7] |
-| [37091106360](https://github.com/rakshit-737/tracegate/actions/runs/37091106360) | + no downgrade when the manifest records no dependency edges | 887 | 887 | 0 (0.0%) [0.0-0.4] |
+| [37003433022](https://github.com/rakshit-737/tracegate-cicd-security-gate/actions/runs/37003433022) | v1.1.0: static tiers; `# via` read only below the pin | 887 | 836 | 51 (5.7%) [4.3-7.5] |
+| [37090410909](https://github.com/rakshit-737/tracegate-cicd-security-gate/actions/runs/37090410909) | + inline `# via` (older pip-compile layout) | 887 | 842 | 45 (5.1%) [3.7-6.7] |
+| [37091106360](https://github.com/rakshit-737/tracegate-cicd-security-gate/actions/runs/37091106360) | + no downgrade when the manifest records no dependency edges | 887 | 887 | 0 (0.0%) [0.0-0.4] |
 
 Current run per repository (36 snapshots, each against its own sources): healthchecks 139 -> 139, netbox 324 -> 324, warehouse 424 -> 424. Files: `results/lineage_real_repos_materialized*.json`.
 <!-- /results:reachability -->
@@ -173,20 +173,20 @@ Current run per repository (36 snapshots, each against its own sources): healthc
 | not loaded | 0 | 0 |
 | undetermined | 0 | 0 |
 
-False-`unreached` rate among decided pins: 17/17 = 100.0% (exact 95% 80.5-100.0). Audited run: [37090410909](https://github.com/rakshit-737/tracegate/actions/runs/37090410909); verdicts and evidence: `results/reachability_audit.json`.
+False-`unreached` rate among decided pins: 17/17 = 100.0% (exact 95% 80.5-100.0). Audited run: [37090410909](https://github.com/rakshit-737/tracegate-cicd-security-gate/actions/runs/37090410909); verdicts and evidence: `results/reachability_audit.json`.
 <!-- /results:audit -->
 
 Every one of the 17 downgraded pins (45 findings) is loaded: warehouse imports `google.cloud.bigquery`, which requires google-auth, which requires rsa and pyasn1; webauthn requires cbor2 and future; readme-renderer 21.0 requires future; netbox lists `rest_framework_swagger` in `INSTALLED_APPS`, and the pinned django-rest-swagger 0.3.4 imports `yaml`. The requirement files at those snapshots record no dependency edges, so the gate could not tell a transitive dependency of an imported package from an unused pin. The earlier reductions (-5.7% in v1.1.0, -5.1% after the inline-`# via` fix) were therefore not useful triage, and static reachability now marks such pins `unknown` and downgrades nothing on these 36 snapshots. This is a result where TRACEGATE does worse than it claimed. A published reference point with a different method and ecosystem: Pashchenko et al. found about 20% of the vulnerable dependencies of Java libraries "not deployed" (ESEM 2018; arXiv 1808.09753v1, abstract and Sec. 6 RQ1, p. 7), where "not deployed" means test- or development-scope dependencies, a different notion from import reachability.
 
 ## Typosquat detection
 
-Source: run [37003433022](https://github.com/rakshit-737/tracegate/actions/runs/37003433022) (`results/typosquat_*.json`; inputs in `results/data_manifest_typosquat.json`).
+Source: run [37003433022](https://github.com/rakshit-737/tracegate-cicd-security-gate/actions/runs/37003433022) (`results/typosquat_*.json`; inputs in `results/data_manifest_typosquat.json`).
 
 Detectors: TRACEGATE (multi-technique, threshold tuned on dev), Damerau-1 (TRACEGATE's own `typo1` technique alone, top-5k reference), re-implementations of **typomania / TypoGard** (Rust Foundation port of Taylor et al., *Defending Against Package Typosquatting*, NSS 2020) and **pypi-scan** (IQT Labs), and the original 14-name difflib heuristic. The re-implementations live in `tracegate/baselines.py`; the typomania/TypoGard port is validated against the original code (below); the pypi-scan rows remain *our port of* that tool. The TypoGard paper states that its signals "detected approximately 60% of known past attacks reported by the npm security team as typosquatting" (Taylor et al., NSS 2020; arXiv 2003.03471v1, where the tool is named SpellBound, Sec. 4.3 "Signal Detection Rates", p. 9); on the OSV labels here, where most names are not look-alikes, every detector's recall is far lower.
 
 ### Original TypoGard and typomania on the same splits
 
-The benchmarks workflow fetches the original `typogard_npm.py` (mt3443/typogard at `9c10636`) and builds the original typomania `registry` example (rustfoundation/typomania at `10e27e8`) with cargo, then runs both unchanged on exactly the test positives, negatives and reference list of every ecosystem and split ([`results/typosquat_originals.json`](https://github.com/rakshit-737/tracegate/blob/main/results/typosquat_originals.json), run 37003433022). TypoGard's detection function is called directly with its two globals set to our reference list; its npm dependency walk is not used.
+The benchmarks workflow fetches the original `typogard_npm.py` (mt3443/typogard at `9c10636`) and builds the original typomania `registry` example (rustfoundation/typomania at `10e27e8`) with cargo, then runs both unchanged on exactly the test positives, negatives and reference list of every ecosystem and split ([`results/typosquat_originals.json`](https://github.com/rakshit-737/tracegate-cicd-security-gate/blob/main/results/typosquat_originals.json), run 37003433022). TypoGard's detection function is called directly with its two globals set to our reference list; its npm dependency walk is not used.
 
 | Ecosystem | Split | F1, our port | F1, original typomania | F1, original TypoGard | flag agreement port vs typomania | port vs TypoGard |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
@@ -366,8 +366,8 @@ Edit distance 1 (`typo1`) carries almost all of the signal; the other techniques
 
 ## Signing and admission
 
-- [`results/sigstore_evidence.json`](https://github.com/rakshit-737/tracegate/blob/main/results/sigstore_evidence.json): the wheel and sdist of dev build `cfd215e` (`1.0.0.post0.dev11+gcfd215e`), signed keylessly with the `sigstore` workflow's GitHub OIDC identity; each Rekor entry fetched by logIndex and checked to record the artefact's sha256. The v1.1.0 release artefacts carry their own `*.sigstore.json` bundles on the [release page](https://github.com/rakshit-737/tracegate/releases/tag/v1.1.0); how to verify them is in [Security](security.md).
-- [`results/kind_admission.json`](https://github.com/rakshit-737/tracegate/blob/main/results/kind_admission.json): in a kind cluster the signed image is admitted and Running; the unsigned one is denied by cosign (`no signatures found`); a third image with a valid keyless signature but signed provenance missing the build and scan stages passes cosign and is denied by `tracegate gate` (`missing signed provenance for stages ['build', 'scan']`).
+- [`results/sigstore_evidence.json`](https://github.com/rakshit-737/tracegate-cicd-security-gate/blob/main/results/sigstore_evidence.json): the wheel and sdist of dev build `cfd215e` (`1.0.0.post0.dev11+gcfd215e`), signed keylessly with the `sigstore` workflow's GitHub OIDC identity; each Rekor entry fetched by logIndex and checked to record the artefact's sha256. The v1.1.0 release artefacts carry their own `*.sigstore.json` bundles on the [release page](https://github.com/rakshit-737/tracegate-cicd-security-gate/releases/tag/v1.1.0); how to verify them is in [Security](security.md).
+- [`results/kind_admission.json`](https://github.com/rakshit-737/tracegate-cicd-security-gate/blob/main/results/kind_admission.json): in a kind cluster the signed image is admitted and Running; the unsigned one is denied by cosign (`no signatures found`); a third image with a valid keyless signature but signed provenance missing the build and scan stages passes cosign and is denied by `tracegate gate` (`missing signed provenance for stages ['build', 'scan']`).
 
 ## Real images: what the gate sees
 
@@ -384,7 +384,7 @@ Seven pinned official images are pulled as data (sha256-verified, never run) and
 | python:3.9.7-alpine3.14 | 64 | 5 | 83 | 83 | 12 | 83 | 0.97 |
 | redis:6.2.5-alpine3.14 | 32 | 6 | 43 | 43 | 0 | 43 | 0.94 |
 
-All 511 Trivy rows: naive 100.0%, raw purl 12.3%, canonical 100.0%. Merged graph: 535 nodes, 637 edges; 219 unique finding nodes (146 CVEs), a 2.33x de-duplication; verdict `block`; 0 unattributed findings. Source: `results/images_real.json`, run [37088867445](https://github.com/rakshit-737/tracegate/actions/runs/37088867445).
+All 511 Trivy rows: naive 100.0%, raw purl 12.3%, canonical 100.0%. Merged graph: 535 nodes, 637 edges; 219 unique finding nodes (146 CVEs), a 2.33x de-duplication; verdict `block`; 0 unattributed findings. Source: `results/images_real.json`, run [37088867445](https://github.com/rakshit-737/tracegate-cicd-security-gate/actions/runs/37088867445).
 <!-- /results:images -->
 
 Warden (dependency-risk) scoring of the 401 language packages flags 3. One is `npm-cli-docs`: OSV has an all-versions MAL record for that public name, and npm bundles an internal package with the same name. The other two are typosquat-heuristic false positives on legitimate packages (`ansistyles`, `uid-number`). An earlier name-only MAL lookup flagged 13 more clean packages (`chalk 2.4.1`, `debug 3.1.0`, ...). The cause was the Sept-2025 npm hijack records, which list only the trojanised versions. The fix is covered in [ADR 0006](adr/0006-version-aware-malicious-package-matching.md).
@@ -399,5 +399,5 @@ Warden (dependency-risk) scoring of the 401 language packages flags 3. One is `n
 | 100 | 200 | 401 | 704 | 20,602 | 0.132 s |
 | 200 | 400 | 801 | 1,404 | 81,202 | 0.622 s |
 
-Synthetic data; source `results/scale_synthetic.json`, run [37088867445](https://github.com/rakshit-737/tracegate/actions/runs/37088867445).
+Synthetic data; source `results/scale_synthetic.json`, run [37088867445](https://github.com/rakshit-737/tracegate-cicd-security-gate/actions/runs/37088867445).
 <!-- /results:scale -->

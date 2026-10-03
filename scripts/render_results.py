@@ -55,7 +55,7 @@ def pval(p: float | None) -> str:
 
 
 def run_link(rid: int | None) -> str:
-    return f"[{rid}](https://github.com/rakshit-737/tracegate/actions/runs/{rid})" if rid else "local"
+    return f"[{rid}](https://github.com/rakshit-737/tracegate-cicd-security-gate/actions/runs/{rid})" if rid else "local"
 
 
 # ---- lineage -------------------------------------------------------------------------------

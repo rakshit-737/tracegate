@@ -1,10 +1,10 @@
 # Reproduce
 
 Every published number comes from a script in `benchmarks/` and a JSON file in
-[`results/`](https://github.com/rakshit-737/tracegate/tree/main/results); each file records the
+[`results/`](https://github.com/rakshit-737/tracegate-cicd-security-gate/tree/main/results); each file records the
 GitHub Actions run (or, for local files, the command and commit) that produced it, and the
 [Evaluation](evaluation.md) page lists them. The full-data runs execute in the
-[`benchmarks` workflow](https://github.com/rakshit-737/tracegate/actions/workflows/benchmarks.yml)
+[`benchmarks` workflow](https://github.com/rakshit-737/tracegate-cicd-security-gate/actions/workflows/benchmarks.yml)
 on GitHub-hosted `ubuntu-latest` runners (4 vCPU, 16 GB RAM). Its inputs choose the legs, which
 run in parallel; each leg downloads its own data and uploads `results/` plus its log:
 
@@ -45,8 +45,8 @@ python scripts/download_data.py repos --pin-from results/data_manifest.json   # 
 | Result tables in README and docs | `python scripts/render_results.py --write` (CI runs `--check`) | marked blocks in `README.md`, `docs/*.md` | `rendered result blocks in ...` | seconds |
 | Docs site | `python scripts/build_static_demo.py && mkdocs build --strict` | `site/` | the demo needs the first step (it writes `docs/demo/data/`, git-ignored) | about 1 min |
 
-Cloning the 11 repositories at their pinned commits takes about 2.5 minutes per leg. Runtimes are wall-clock step times in run [37091106360](https://github.com/rakshit-737/tracegate/actions/runs/37091106360) (lineage, oracle and reachability legs), run
-[37088867445](https://github.com/rakshit-737/tracegate/actions/runs/37088867445) (images and scale) and run 37003433022 (typosquat). The longest step is the
+Cloning the 11 repositories at their pinned commits takes about 2.5 minutes per leg. Runtimes are wall-clock step times in run [37091106360](https://github.com/rakshit-737/tracegate-cicd-security-gate/actions/runs/37091106360) (lineage, oracle and reachability legs), run
+[37088867445](https://github.com/rakshit-737/tracegate-cicd-security-gate/actions/runs/37088867445) (images and scale) and run 37003433022 (typosquat). The longest step is the
 multi-version backtracking leg: mastodon's yarn.lock history makes thousands of `git log -S`
 pickaxe calls over a 15,000-line file.
 

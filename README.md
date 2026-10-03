@@ -2,13 +2,13 @@
 
 **Which commit, and which PR, put this CVE in production?** TRACEGATE answers from the lock-file history, inside a signed, fail-closed CI gate.
 
-[![CI](https://github.com/rakshit-737/tracegate/actions/workflows/ci.yml/badge.svg)](https://github.com/rakshit-737/tracegate/actions/workflows/ci.yml)
+[![CI](https://github.com/rakshit-737/tracegate-cicd-security-gate/actions/workflows/ci.yml/badge.svg)](https://github.com/rakshit-737/tracegate-cicd-security-gate/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/python-3.10%E2%80%933.14-blue)
-[![Docs](https://github.com/rakshit-737/tracegate/actions/workflows/docs.yml/badge.svg)](https://rakshit-737.github.io/tracegate/)
+[![Docs](https://github.com/rakshit-737/tracegate-cicd-security-gate/actions/workflows/docs.yml/badge.svg)](https://rakshit-737.github.io/tracegate-cicd-security-gate/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 ![Core deps](https://img.shields.io/badge/core%20deps-stdlib%20only-lightgrey)
 
-**Contribution.** TRACEGATE applies version-aware attribution to lock-file history: it credits each scanner finding to the commit whose diff introduced that exact (package, version) pair, not to whoever last rewrote the line, and it does this inside a fail-closed gate that verifies signed provenance for every pipeline stage. ([How it works](https://rakshit-737.github.io/tracegate/how-it-works/#7-version-diff-vs-line-blame) · [Evaluation](https://rakshit-737.github.io/tracegate/evaluation/))
+**Contribution.** TRACEGATE applies version-aware attribution to lock-file history: it credits each scanner finding to the commit whose diff introduced that exact (package, version) pair, not to whoever last rewrote the line, and it does this inside a fail-closed gate that verifies signed provenance for every pipeline stage. ([How it works](https://rakshit-737.github.io/tracegate-cicd-security-gate/how-it-works/#7-version-diff-vs-line-blame) · [Evaluation](https://rakshit-737.github.io/tracegate-cicd-security-gate/evaluation/))
 
 <!-- results:hero -->
 | | |
@@ -17,21 +17,21 @@
 | **Commit-message oracle** | At the labelled commit TRACEGATE is right on 458/458 by construction, as is `git blame` (458/458). At the last later snapshot still pinning the version: TRACEGATE 436/436 (one-sided 95% exact lower bound 99.3%), `git blame` 419/436 (96.1%). The oracle tests version tracking under line rewrites, not attribution independent of the lock-file reader. |
 | **Typosquat (PyPI, supporting signal)** | F1 0.133 at the dev-tuned threshold, 0.153 FPR-matched, vs Damerau-1 0.147; recall is low for every detector. |
 
-Backtracking: run [37091106360](https://github.com/rakshit-737/tracegate/actions/runs/37091106360); oracle: run [37091106360](https://github.com/rakshit-737/tracegate/actions/runs/37091106360); typosquat: run [37003433022](https://github.com/rakshit-737/tracegate/actions/runs/37003433022).
+Backtracking: run [37091106360](https://github.com/rakshit-737/tracegate-cicd-security-gate/actions/runs/37091106360); oracle: run [37091106360](https://github.com/rakshit-737/tracegate-cicd-security-gate/actions/runs/37091106360); typosquat: run [37003433022](https://github.com/rakshit-737/tracegate-cicd-security-gate/actions/runs/37003433022).
 <!-- /results:hero -->
 
-[![Lineage explorer: cve-origin scenario after backtracking CVE-2020-14343](docs/img/demo.png)](https://rakshit-737.github.io/tracegate/demo/)
+[![Lineage explorer: cve-origin scenario after backtracking CVE-2020-14343](docs/img/demo.png)](https://rakshit-737.github.io/tracegate-cicd-security-gate/demo/)
 
-**Docs:** https://rakshit-737.github.io/tracegate/ · [live demo](https://rakshit-737.github.io/tracegate/demo/) · [how it works](https://rakshit-737.github.io/tracegate/how-it-works/)
+**Docs:** https://rakshit-737.github.io/tracegate-cicd-security-gate/ · [live demo](https://rakshit-737.github.io/tracegate-cicd-security-gate/demo/) · [how it works](https://rakshit-737.github.io/tracegate-cicd-security-gate/how-it-works/)
 
 ## Try it in 60 seconds
 
-1. **Zero install:** open the [live demo](https://rakshit-737.github.io/tracegate/demo/). The `cve-origin` scenario loads with a BLOCK verdict; type `CVE-2020-14343` and press Enter to see the origin story (PR #42) and the blast radius.
+1. **Zero install:** open the [live demo](https://rakshit-737.github.io/tracegate-cicd-security-gate/demo/). The `cve-origin` scenario loads with a BLOCK verdict; type `CVE-2020-14343` and press Enter to see the origin story (PR #42) and the blast radius.
 2. **From source** (v1.1.0 or later; do not `pip install tracegate`: that PyPI name belongs to an unrelated project):
 
    ```bash
    python -m venv .venv && . .venv/bin/activate        # Windows: .venv\Scripts\activate (Git Bash: . .venv/Scripts/activate)
-   pip install "git+https://github.com/rakshit-737/tracegate@v1.1.1"
+   pip install "git+https://github.com/rakshit-737/tracegate-cicd-security-gate@v1.1.1"
    tracegate demo                                      # six scenarios, about 2 seconds
    tracegate synth cve-origin ev.json
    tracegate --demo backtrack ev.json CVE-2020-14343   # "introduced_by": {"pr": 42, ...}
@@ -39,7 +39,7 @@ Backtracking: run [37091106360](https://github.com/rakshit-737/tracegate/actions
    ```
 
    `--demo` (accepted before or after the subcommand) trusts the public demo key. Without a configured key the gate refuses to run (exit 2). The v1.0.0 release (wheel and `:1.0.0` image) predates both: it trusts the demo key implicitly (fail-open) and is superseded by v1.1.0.
-3. **Container (build from source):** `docker build -t tracegate . && docker run --rm -p 127.0.0.1:8080:8080 tracegate`, then open http://127.0.0.1:8080 and run a scenario. Or pull `ghcr.io/rakshit-737/tracegate:1.1.1` (verify it as shown in [SECURITY.md](SECURITY.md)); the `:1.0.0` image is the superseded fail-open build.
+3. **Container (build from source):** `docker build -t tracegate . && docker run --rm -p 127.0.0.1:8080:8080 tracegate`, then open http://127.0.0.1:8080 and run a scenario. Or pull `ghcr.io/rakshit-737/tracegate-cicd-security-gate:1.1.1` (verify it as shown in [SECURITY.md](SECURITY.md)); the `:1.0.0` image is the superseded fail-open build.
 
 **TRACEGATE is a provenance-aware CI/CD security gate.** It merges real Syft SBOMs, Trivy scans, git history and OSV data into one signed, content-addressed provenance graph, then answers the question most scanners leave open: *which commit, and which PR, put this CVE in production, and what else inherits it?*
 
@@ -53,7 +53,7 @@ Backtracking: run [37091106360](https://github.com/rakshit-737/tracegate/actions
 
 ## Headline results (real public data)
 
-Every number below is rendered from the committed JSON in [`results/`](results/) by `scripts/render_results.py`, and CI fails if a table and its file disagree. Each file names the Actions run that produced it; the [Evaluation](https://rakshit-737.github.io/tracegate/evaluation/) page lists which run produced which file, with the methodology, every table and interval. Commands: [Reproduce](https://rakshit-737.github.io/tracegate/reproduce/).
+Every number below is rendered from the committed JSON in [`results/`](results/) by `scripts/render_results.py`, and CI fails if a table and its file disagree. Each file names the Actions run that produced it; the [Evaluation](https://rakshit-737.github.io/tracegate-cicd-security-gate/evaluation/) page lists which run produced which file, with the methodology, every table and interval. Commands: [Reproduce](https://rakshit-737.github.io/tracegate-cicd-security-gate/reproduce/).
 
 <!-- results:headline -->
 | Question | Data | TRACEGATE | Baselines and ablations |
@@ -90,7 +90,7 @@ What the numbers mean, stated plainly:
 | python:3.9.7-alpine3.14 | 64 | 5 | 83 | 83 | 12 | 83 | 0.97 |
 | redis:6.2.5-alpine3.14 | 32 | 6 | 43 | 43 | 0 | 43 | 0.94 |
 
-All 511 Trivy rows: naive 100.0%, raw purl 12.3%, canonical 100.0%. Merged graph: 535 nodes, 637 edges; 219 unique finding nodes (146 CVEs), a 2.33x de-duplication; verdict `block`; 0 unattributed findings. Source: `results/images_real.json`, run [37088867445](https://github.com/rakshit-737/tracegate/actions/runs/37088867445).
+All 511 Trivy rows: naive 100.0%, raw purl 12.3%, canonical 100.0%. Merged graph: 535 nodes, 637 edges; 219 unique finding nodes (146 CVEs), a 2.33x de-duplication; verdict `block`; 0 unattributed findings. Source: `results/images_real.json`, run [37088867445](https://github.com/rakshit-737/tracegate-cicd-security-gate/actions/runs/37088867445).
 <!-- /results:images -->
 
 Warden (dependency-risk) scoring of the 401 language packages in these images flags 3. One is `npm-cli-docs`: OSV has an all-versions MAL record for that public name, and npm bundles an internal package with the same name. The other two are typosquat-heuristic false positives on legitimate packages (`ansistyles`, `uid-number`). The cause of an earlier batch of 13 false MAL flags (Sept-2025 npm hijack records that list only the trojanised versions) is covered in [ADR 0006](docs/adr/0006-version-aware-malicious-package-matching.md).
@@ -105,7 +105,7 @@ Warden (dependency-risk) scoring of the 401 language packages in these images fl
 | 100 | 200 | 401 | 704 | 20,602 | 0.132 s |
 | 200 | 400 | 801 | 1,404 | 81,202 | 0.622 s |
 
-Synthetic data; source `results/scale_synthetic.json`, run [37088867445](https://github.com/rakshit-737/tracegate/actions/runs/37088867445).
+Synthetic data; source `results/scale_synthetic.json`, run [37088867445](https://github.com/rakshit-737/tracegate-cicd-security-gate/actions/runs/37088867445).
 <!-- /results:scale -->
 
 ---
@@ -171,7 +171,7 @@ Reachability tiers: `imported` (AST imports and dotted strings), `entrypoint` (n
 ## Development
 
 ```bash
-git clone https://github.com/rakshit-737/tracegate && cd tracegate
+git clone https://github.com/rakshit-737/tracegate-cicd-security-gate && cd tracegate-cicd-security-gate
 pip install -e ".[dev]"            # the core gate is stdlib-only; extras add crypto/osv/api
 python -m pytest -q                # about 100 tests; real-data tests skip without datasets
 python -m tracegate.cli demo       # the six spec scenarios
@@ -253,7 +253,7 @@ Small fixtures derived from real tool output (`tests/fixtures/alpine.syft.json`,
 
 ## Reproducibility
 
-The full-data runs execute in the `benchmarks` workflow (`gh workflow run benchmarks.yml`, inputs choose the legs); the [Reproduce](https://rakshit-737.github.io/tracegate/reproduce/) page lists every command, its output file and its runtime on the runner. Locally, each step is a single command:
+The full-data runs execute in the `benchmarks` workflow (`gh workflow run benchmarks.yml`, inputs choose the legs); the [Reproduce](https://rakshit-737.github.io/tracegate-cicd-security-gate/reproduce/) page lists every command, its output file and its runtime on the runner. Locally, each step is a single command:
 
 ```bash
 python scripts/download_data.py osv && python scripts/download_data.py popular

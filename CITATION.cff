@@ -3,8 +3,8 @@ message: "If you use TRACEGATE, please cite it as below."
 title: "TRACEGATE: provenance-aware CI/CD security gate"
 authors:
   - name: Rakshit
-repository-code: "https://github.com/rakshit-737/tracegate"
-url: "https://rakshit-737.github.io/tracegate/"
+repository-code: "https://github.com/rakshit-737/tracegate-cicd-security-gate"
+url: "https://rakshit-737.github.io/tracegate-cicd-security-gate/"
 license: MIT
 version: 1.1.1
 date-released: 2026-10-03

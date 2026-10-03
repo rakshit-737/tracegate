@@ -12,7 +12,7 @@ python -m ruff check .
 ```
 
 Real-data tests are marked `@pytest.mark.realdata` and skip automatically when the datasets are
-absent. To run them, fetch the data first (see the [Reproduce](https://rakshit-737.github.io/tracegate/reproduce/) page or the README "Reproducibility" section):
+absent. To run them, fetch the data first (see the [Reproduce](https://rakshit-737.github.io/tracegate-cicd-security-gate/reproduce/) page or the README "Reproducibility" section):
 
 ```bash
 python scripts/download_data.py all

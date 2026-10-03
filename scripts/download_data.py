@@ -171,7 +171,7 @@ def fetch_paged(rel: str, force: bool) -> None:
         url = tmpl.format(page=i + 1, skip=i * 1000)
         for attempt in range(1, 8):
             try:
-                req = urllib.request.Request(url, headers={"User-Agent": "tracegate-data/1.1 (github.com/rakshit-737/tracegate)",
+                req = urllib.request.Request(url, headers={"User-Agent": "tracegate-data/1.1 (github.com/rakshit-737/tracegate-cicd-security-gate)",
                                                            "Accept-Encoding": "gzip"})
                 with urllib.request.urlopen(req, timeout=180) as r:
                     body = r.read()

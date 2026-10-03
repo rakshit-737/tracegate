@@ -1,7 +1,7 @@
 # Getting started
 
 ```bash
-git clone https://github.com/rakshit-737/tracegate && cd tracegate
+git clone https://github.com/rakshit-737/tracegate-cicd-security-gate && cd tracegate-cicd-security-gate
 python -m venv .venv && . .venv/bin/activate   # Windows: .venv\Scripts\activate (Git Bash: . .venv/Scripts/activate)
 pip install -e ".[dev]"            # the core gate is stdlib-only; extras add crypto/osv/api
 python -m pytest -q                # about 100 tests; real-data tests skip without datasets

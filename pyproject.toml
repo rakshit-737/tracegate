@@ -31,7 +31,7 @@ dev = ["pytest>=7", "ruff>=0.16,<0.17", "cryptography>=42", "packaging>=23", "fa
 tracegate = "tracegate.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/rakshit-737/tracegate"
+Homepage = "https://github.com/rakshit-737/tracegate-cicd-security-gate"
 
 [tool.setuptools]
 packages = ["tracegate", "tracegate.ui"]

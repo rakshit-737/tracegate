@@ -11,7 +11,7 @@
 | **Commit-message oracle** | At the labelled commit TRACEGATE is right on 458/458 by construction, as is `git blame` (458/458). At the last later snapshot still pinning the version: TRACEGATE 436/436 (one-sided 95% exact lower bound 99.3%), `git blame` 419/436 (96.1%). The oracle tests version tracking under line rewrites, not attribution independent of the lock-file reader. |
 | **Typosquat (PyPI, supporting signal)** | F1 0.133 at the dev-tuned threshold, 0.153 FPR-matched, vs Damerau-1 0.147; recall is low for every detector. |
 
-Backtracking: run [37091106360](https://github.com/rakshit-737/tracegate/actions/runs/37091106360); oracle: run [37091106360](https://github.com/rakshit-737/tracegate/actions/runs/37091106360); typosquat: run [37003433022](https://github.com/rakshit-737/tracegate/actions/runs/37003433022).
+Backtracking: run [37091106360](https://github.com/rakshit-737/tracegate-cicd-security-gate/actions/runs/37091106360); oracle: run [37091106360](https://github.com/rakshit-737/tracegate-cicd-security-gate/actions/runs/37091106360); typosquat: run [37003433022](https://github.com/rakshit-737/tracegate-cicd-security-gate/actions/runs/37003433022).
 <!-- /results:hero -->
 
 [![Lineage explorer after backtracking CVE-2020-14343](img/demo.png)](demo/index.html)

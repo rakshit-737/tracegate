@@ -227,7 +227,7 @@ def from_dsse_json(d: dict) -> Envelope:
     return env
 
 
-def intoto_statement(build: dict[str, Any], builder_id: str = "https://github.com/rakshit-737/tracegate",
+def intoto_statement(build: dict[str, Any], builder_id: str = "https://github.com/rakshit-737/tracegate-cicd-security-gate",
                      repo: str | None = None) -> dict[str, Any]:
     """in-toto v1 Statement + SLSA provenance v1 predicate for a build payload."""
     img = build.get("image") or {}
@@ -244,7 +244,7 @@ def intoto_statement(build: dict[str, Any], builder_id: str = "https://github.co
         "subject": subject,
         "predicateType": "https://slsa.dev/provenance/v1",
         "predicate": {
-            "buildDefinition": {"buildType": "https://github.com/rakshit-737/tracegate/build@v1",
+            "buildDefinition": {"buildType": "https://github.com/rakshit-737/tracegate-cicd-security-gate/build@v1",
                                 "externalParameters": {"build_id": build.get("build_id")},
                                 "resolvedDependencies": deps},
             "runDetails": {"builder": {"id": builder_id},

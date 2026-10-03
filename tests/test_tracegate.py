@@ -200,7 +200,7 @@ def test_pubkey_bundle_needs_identity_and_cosign(tmp_path, monkeypatch, capsys):
     monkeypatch.setenv("TRACEGATE_PUBKEY_BUNDLE", str(tmp_path / "missing.sigstore.json"))
     monkeypatch.delenv("TRACEGATE_SIGSTORE_IDENTITY", raising=False)
     assert main(["gate", str(p)]) == 2
-    monkeypatch.setenv("TRACEGATE_SIGSTORE_IDENTITY", "^https://github.com/rakshit-737/tracegate/")
+    monkeypatch.setenv("TRACEGATE_SIGSTORE_IDENTITY", "^https://github.com/rakshit-737/tracegate-cicd-security-gate/")
     monkeypatch.setenv("PATH", str(tmp_path))  # no cosign -> fail closed
     assert main(["gate", str(p)]) == 2
     assert "cosign" in capsys.readouterr().err

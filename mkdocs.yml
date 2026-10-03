@@ -1,8 +1,8 @@
 site_name: TRACEGATE
 site_description: Provenance-aware CI/CD security gate
-site_url: https://rakshit-737.github.io/tracegate/
-repo_url: https://github.com/rakshit-737/tracegate
-repo_name: rakshit-737/tracegate
+site_url: https://rakshit-737.github.io/tracegate-cicd-security-gate/
+repo_url: https://github.com/rakshit-737/tracegate-cicd-security-gate
+repo_name: rakshit-737/tracegate-cicd-security-gate
 edit_uri: edit/main/docs/
 theme:
   name: material

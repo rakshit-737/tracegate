@@ -102,6 +102,9 @@ def test_oracle_strata_can_fail(tmp_path):
     for s in ("single_package", "multi_version", "revert", "re_bump"):
         assert sc[s]["tracegate"]["at_bump"]["correct"] == sc[s]["tracegate"]["at_bump"]["total"], s
     assert sc["multi_version"]["tracegate-single-version"]["at_bump"]["correct"] == 0
+    # without the recency rule the oldest introduction wins, which is wrong for reverts and re-bumps
+    assert sc["revert"]["first-introduction"]["at_bump"]["correct"] == 0
+    assert sc["re_bump"]["first-introduction"]["at_bump"]["correct"] == 0
     # re-bump: 4.3.5 came back in "Pin debug to 4.3.5 again"; still pinned at the last commit
     assert sc["re_bump"]["tracegate"]["later_snapshot"] == {"correct": 1, "total": 1}
     rep = oracle_report([o])

@@ -29,6 +29,8 @@ continuously. Methods (the ablation):
   pickaxe-package-specific  `git log --first-parent -1 -S'<package line(s) .. version line>'`
   pickaxe-version-line      `git log --first-parent -1 -S'<version line>'` (not package-specific
                             in Cargo.lock / yarn.lock / package-lock.json)
+  first-introduction        ablation of the recency rule: the oldest commit at or before the
+                            snapshot whose diff added X@V (wrong whenever X@V was removed and re-added)
 
 What it tests: at C every verified label is right for `tracegate` by construction (the label
 check is its own criterion), so the information is in (1) the later-snapshot point, where line
@@ -63,7 +65,8 @@ from tracegate.models import NodeKind
 from tracegate.signing import HmacSigner, Verifier
 
 KEY = b"bench-key"
-METHODS = ("tracegate", "tracegate-single-version", "blame", "pickaxe-package-specific", "pickaxe-version-line")
+METHODS = ("tracegate", "tracegate-single-version", "first-introduction", "blame", "pickaxe-package-specific",
+           "pickaxe-version-line")
 STRATA = ("single_package", "multi_version", "grouped", "revert", "re_bump")
 SOURCES = ("bot_single", "grouped", "revert")
 POINTS = ("at_bump", "later_snapshot")
@@ -175,6 +178,7 @@ class _Repo:
         got: dict[str, str | None] = {m: None for m in METHODS}
         got["tracegate"] = self.graph_answer(j, name, ver, single=False)
         got["tracegate-single-version"] = self.graph_answer(j, name, ver, single=True)
+        got["first-introduction"] = next((mc_.sha for mc_ in self.hist[: j + 1] if (name, ver) in mc_.added), None)
         if ent is None:
             return got
         lines = text.splitlines()
@@ -236,8 +240,10 @@ def _labels(r: _Repo, j: int) -> list[tuple[str, str, str]]:
 def _resolve(r: _Repo, j: int, name: str, ver: str) -> tuple[str | None, str | None, str | None]:
     """(lock-file name, lock-file version, exclusion reason) for a label at hist[j]."""
     mc = r.hist[j]
-    want = r.key(name)
-    names = {n for n, _ in mc.entries if r.key(n) == want or r.key(n).endswith("/" + want)}
+    want = r.key(re.sub(r"\[[^\]]*\]$", "", name))  # "celery[sqs]" -> "celery"
+    names = {n for n, _ in mc.entries if r.key(n) == want}
+    if not names:  # Go subjects may abbreviate a module path
+        names = {n for n, _ in mc.entries if r.key(n).endswith("/" + want)}
     if len(names) > 1:
         return None, None, "ambiguous_name"
     if not names:
@@ -312,7 +318,7 @@ def oracle_repo(repo: Path, manifest: str, max_cases: int = MAX_CASES, seed: int
             rows[s][m][point][0] += ok
             rows[s][m][point][1] += 1
             oks[s][point][m].append(ok)
-            if not ok and len(misses) < 60:
+            if not ok and (m != "pickaxe-version-line" or sum(x["method"] == m for x in misses) < 40):
                 misses.append({"stratum": s, "method": m, "point": point, "package": pn, "version": ver,
                                "label": truth[:10], "snapshot": r.hist[jj].sha[:10], "got": (sha or "")[:10],
                                "label_subject": r.hist[j].subject[:100]})

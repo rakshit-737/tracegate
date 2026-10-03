@@ -16,6 +16,9 @@ on:
       lineage:
         description: run the lineage, oracle and materialized legs
         default: "true"
+      legs:
+        description: which of those legs (JSON list)
+        default: '["lineage", "oracle", "materialized"]'
       typosquat:
         description: run the typosquat legs too
         default: "false"
@@ -84,7 +87,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        leg: [lineage, oracle, materialized]
+        leg: ${{ fromJSON(inputs.legs) }}
     env:
       TRACEGATE_DATA: ${{ github.workspace }}/../data
     steps:

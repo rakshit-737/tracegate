@@ -83,9 +83,17 @@ async function staticApi(path) {
   return d.backtrack[(u.searchParams.get("q") || "").toLowerCase()] || [];
 }
 
-async function api(path, opts) {
+// When the server sets TRACEGATE_API_TOKEN every /v1 route needs it: ask once, keep it for this tab.
+function token() { try { return sessionStorage.getItem("tracegate-token") || ""; } catch (e) { return ""; } }
+async function api(path, opts = {}, retried = false) {
   if (STATIC) return staticApi(path);
-  const r = await fetch(path, opts);
+  const headers = {...(opts.headers || {})};
+  if (token()) headers.Authorization = `Bearer ${token()}`;
+  const r = await fetch(path, {...opts, headers});
+  if (r.status === 401 && !retried) {
+    const t = prompt("This TRACEGATE server needs its API token (TRACEGATE_API_TOKEN):");
+    if (t) { try { sessionStorage.setItem("tracegate-token", t); } catch (e) { /* storage blocked */ } return api(path, opts, true); }
+  }
   if (!r.ok) throw new Error(await r.text());
   return r.json();
 }

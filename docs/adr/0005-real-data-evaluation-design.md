@@ -11,10 +11,14 @@
   5,000. A deterministic 50/50 split by sha256(name) gives a dev half for choosing thresholds and a
   test half for reporting. Candidate download counts are **not** used as a feature. They would
   separate the two classes trivially, because the negatives were chosen by popularity.
-- **Backtracking.** The ground truth is `git blame --first-parent` on the pin line, which is
-  computed independently of TRACEGATE's diff-based lineage. The baselines are "last manifest
-  commit" and "first pickaxe mention". Any disagreement is listed with the commit subject so it can
-  be judged by hand.
+- **Backtracking.** The reference is `git blame --first-parent` on the pin's version line. It is
+  computed by a different algorithm from TRACEGATE's diff-based lineage but shares the lock-file
+  reader (which line holds a pin), so it measures agreement, not correctness. The baselines are
+  "last manifest commit", "first pickaxe mention" and two `git log -S` pickaxes (package-specific
+  token and version line). Every disagreement is stored with the commit subjects; a sample is
+  adjudicated by reading the diffs, and a commit-message oracle (bot bumps, grouped bumps,
+  reverts, re-bumps) checks attribution against labels that do not come from blame. *(Amended
+  after v1.1.0; the first version called blame the ground truth.)*
 - **Images.** Only official images, pinned, old, and Alpine-based: small downloads that share base
   layers and carry known CVEs. They are pulled as data with every blob checked against its sha256
   and are never run. On Windows, Syft's image source fails, so Syft scans each extracted layer

@@ -84,9 +84,47 @@ The introducing commit is found by version-aware diffing of the lock-file histor
 *changed version* in which first-parent commit), not by line blame, so a later commit that only
 re-formats or re-hashes the line does not take the credit. A CVE disclosed months after the
 merge still gets its origin story. The [Evaluation](evaluation.md) measures this against
-`git blame` and an exact-pin `git log -S` on real repositories.
+`git blame`, two `git log -S` pickaxes and commit-message labels on real repositories.
 
-## 7. Admission
+## 7. Version diff vs line blame
+
+This is the part that is new. A lock file is a list of (package, version) entries, and many
+commits rewrite its lines without changing any version: a package-manager upgrade, a format
+migration, a merge that re-sorts entries, another package's bump that moves a shared line.
+Line attribution (`git blame`, or `git log -S` on the pin line) credits whoever last wrote the
+line. TRACEGATE instead diffs the *set of (package, version) pairs* between consecutive
+first-parent commits and credits the commit where the pair appeared, keeping the newest such
+commit if a version was removed and re-added.
+
+```mermaid
+flowchart LR
+  A["Dependabot PR 14636 bumps browserify-sign 4.2.0 to 4.2.1<br/>yarn v1 entry, version 4.2.1"]
+  B["757d7c73c0 Upgrade to Yarn 4 (2023)<br/>same entry rewritten in Yarn 4 syntax, version 4.2.1"]
+  S["later snapshot: which commit introduced browserify-sign 4.2.1?"]
+  A -->|"lock file rewritten, no version change"| B
+  S -.->|"git blame / pickaxe on the line"| B
+  S ==>|"version diff: the pair browserify-sign@4.2.1 first appears here"| A
+```
+
+Two real cases from the benchmark repositories:
+
+- **mastodon `757d7c73c0` "Upgrade to Yarn 4, remove support for Node 16 (#27073)"** rewrote
+  `yarn.lock` (+17,813 / -12,955 lines) without changing the versions it pins. For packages
+  bumped before it, `git blame` at later snapshots names the Yarn-4 commit: in the bot-bump
+  oracle that happens for browserify-sign 4.2.1 (Dependabot #14636), cssnano 6.0.1, yargs 17.7.2,
+  mixin-deep 1.3.2 and the webpack-cli 3.3.12 revert. The version diff keeps the original bump
+  (`results/lineage_bot_bump_oracle.json`, `misses`).
+- **bat `ansi_term 0.11.0`** has been in `Cargo.lock` since the initial commit `8f5a80e`, next to
+  `ansi_term 0.10.2`. Commit `5b421b4` "Update dependencies" removed 0.10.2. The old
+  one-version-per-name readers saw the first entry switch from 0.10.2 to 0.11.0 there and
+  credited `5b421b4`, which is wrong; `git blame` was right. Since the readers keep every
+  version, the version diff credits `8f5a80e` as well.
+
+The second case is the price of the approach: it is only as good as the lock-file reader. The
+[Evaluation](evaluation.md) reports both readers on the same data and checks every attribution
+against `git blame`, a package-specific `git log -S` and commit-message labels.
+
+## 8. Admission
 
 The `kind-admission` CI workflow shows the last step: two images are built and pushed to a
 localhost registry, only one is signed keylessly, and each is applied to a kind cluster only if

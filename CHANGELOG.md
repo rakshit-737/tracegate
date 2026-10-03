@@ -6,6 +6,33 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Security
+- Scanner findings that match no SBOM node now reach the verdict: rule `unattributed_finding` blocks on HIGH/CRITICAL and warns on the rest (Python DSL and Rego, parity-checked). Before, a CRITICAL CVE on a package missing from the SBOM, or with a differently spelled version, gave PASS. Trivy rows without a PURL are matched by the ecosystem of their result type instead of defaulting to PyPI.
+- With `TRACEGATE_API_TOKEN` set, every `/v1` route requires the token (constant-time comparison); before, `/v1/runs/{rid}/graph`, `backtrack`, `blast` and `cypher` were open, and unauthenticated demo calls could evict gate runs. Demo runs now have their own store; the explorer UI sends the token.
+- Envelopes with wrongly typed fields (non-string or non-hex `sig`, object `keyid`) are rejected instead of crashing the API (500) or the CLI (exit 2 with no verdict); the CLI gate blocks with the reason.
+- SECURITY.md: release verification pinned to `release.yml@refs/tags/vX.Y.Z` (cosign blob and image, `gh attestation verify`).
+
+### Changed (published numbers; several worse)
+- Backtracking now reads every version of a package name and pins the repositories to the committed run's commits: agreement with blame 92.4% of 3,969 pairs (old readers on the same data 88.5%; v1.1.0 88.8%).
+- The exact-pin pickaxe baseline is now package-specific: it ties TRACEGATE on Cargo and Go, is ahead (on agreement) on pip, and behind on npm with a clustered interval that includes 0. The v1.1.0 Cargo lead (95.0% vs 54.7%) was an artefact of a version-line token; that arm is kept and labelled `version line`.
+- The bot-bump oracle is replaced by a commit-message oracle with five strata and checked labels: at later snapshots TRACEGATE 436/436, blame 419/436; at the labelled commit both are right on every case (TRACEGATE by construction). Two v1.1.0 labels were wrong and blame was right on both.
+- Reachability: the audit found every downgraded pin loaded, and static downgrades now need recorded dependency edges, so the reduction on the benchmark repositories is 0% (was -5.7%, unaudited).
+- Real images re-run in CI with Syft and Trivy on Linux: Trivy finds 511 rows (was 507); Syft's Linux image scan matches Trivy's SBOM more closely (Jaccard 0.94-1.00).
+- Synthetic scale latency re-run on the CI runner.
+
+### Added
+- Lock-file readers keep every version of a package name (yarn, pnpm, package-lock, Cargo, poetry, uv); `manifest_history` diffs (name, version) pairs; `--single-version` reproduces the old readers.
+- Commit-message oracle with five strata (single package, multi-version, grouped, revert, re-bump), a label check with the multi-version reader, two ablations (old readers, no recency rule), exact one-sided bounds and recorded sampling rule.
+- Package-specific `git log -S` baseline; exact McNemar tests and paired clustered bootstraps; Wilson and Clopper-Pearson intervals in every results file.
+- Adjudication of TRACEGATE-vs-blame disagreements from the diffs (`benchmarks/adjudicate.py`) and an audit of every reachability downgrade (`benchmarks/reach_audit.py`).
+- `scripts/render_results.py` renders every result table in README.md and docs/ from `results/*.json`; CI checks the tables and that every run link points at a run a results file carries. Images and scale benchmarks run in CI; the benchmarks workflow runs its legs in parallel and pins the repositories to the committed run's commits (`download_data.py repos --pin-from`).
+- How it works: version diff vs line blame, with the mastodon Yarn-4 and bat ansi_term cases.
+
+### Fixed
+- Static reachability read only the newer pip-compile `# via` layout, and downgraded pins in manifests without any dependency edges; both produced false `unreached` (all 17 audited pins were loaded). Pins without recorded edges are now `unknown` and never downgraded.
+- Binomial tails no longer underflow to p = 0; typosquat bootstrap p-values use (k+1)/(B+1) (the committed typosquat files of run 37003433022 still hold the old values; none is quoted).
+- `rekor_evidence.py --help`, `opa_parity.py` fails in CI when `opa` is missing, CONTRIBUTING runs the demo builder once, Windows venv activation and working `serve`/`compose` commands in the docs.
+
 ## [1.1.0] - 2026-10-02
 
 Supersedes v1.0.0, whose wheel and image trust the demo key implicitly (fail-open).

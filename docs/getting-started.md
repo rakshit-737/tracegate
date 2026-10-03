@@ -58,19 +58,16 @@ tracegate lineage path/to/app-repo package-lock.json -o npm-commits.json
 
 ## Reproducibility
 
-`make` is optional. Each target is a single command:
+Every benchmark command, its output file and its runtime on the GitHub runner are on the [Reproduce](reproduce.md) page. The short version:
 
 ```bash
-python scripts/download_data.py all      # make data   (OSV, popularity lists, tools, repos)
-trivy image --download-db-only --cache-dir <data>/trivy-cache   # Trivy vuln DB (not fetched by the script)
-python scripts/scan_real.py all          # make scans  (real Syft + Trivy over images and repos)
-python benchmarks/typosquat_eval.py      # -> results/typosquat_{pypi,npm}.json, typosquat_pr.png
-python benchmarks/lineage_eval.py --snapshots 12   # -> results/lineage_real_repos.json
-python benchmarks/images_eval.py         # -> results/images_real.json
-python benchmarks/scale_eval.py          # -> results/scale_synthetic.json
-python -m pytest -q -m realdata          # real-data tests (need the datasets)
+python scripts/download_data.py osv && python scripts/download_data.py popular
+python scripts/download_data.py repos --pin-from results/data_manifest.json
+python benchmarks/lineage_eval.py --snapshots 12            # backtracking
+python benchmarks/lineage_eval.py --oracle-only             # commit-message oracle
+python scripts/render_results.py --write                    # re-render the tables in README.md and docs/
 ```
 
-OSV dumps, popularity lists and the Trivy DB are live feeds, so a re-run on a later date can shift finding counts and typosquat numbers; the sha256 of what was used is in `results/data_manifest.json`. Re-running `images_eval.py` on the same data reproduced every count in `results/images_real.json` exactly (only latency changed).
+OSV dumps, popularity lists and the Trivy DB are live feeds, so a re-run on a later date can shift finding counts and typosquat numbers; the sha256 of what each run used is in its `results/data_manifest*.json`.
 
-Evaluation design, including the splits, ground truth and why download counts are *not* used as a typosquat feature, is in [ADR 0005](adr/0005-real-data-evaluation-design.md).
+Evaluation design, including the splits, the references and why download counts are *not* used as a typosquat feature, is in [ADR 0005](adr/0005-real-data-evaluation-design.md).

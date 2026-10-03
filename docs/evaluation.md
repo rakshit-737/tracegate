@@ -1,68 +1,188 @@
 # Evaluation
 
-Every number on this page is read from the committed JSON in [`results/`](https://github.com/rakshit-737/tracegate/tree/main/results), produced by the [`benchmarks` workflow run 36995342662](https://github.com/rakshit-737/tracegate/actions/runs/36995342662) on a GitHub `ubuntu-latest` runner. How to re-run it: [Reproduce](reproduce.md).
+Every number on this page is read from a committed JSON file in [`results/`](https://github.com/rakshit-737/tracegate/tree/main/results); the tables between generated markers are rendered from those files by `scripts/render_results.py`, and CI fails if a table and its file disagree. Each file records the GitHub Actions run that produced it:
+
+| Results | Files | Run |
+| --- | --- | --- |
+| Backtracking (multi-version and old readers on the same data), adjudication evidence, dataset manifest | `lineage_real_repos.json`, `lineage_real_repos_single_version.json`, `lineage_adjudication*.json`, `data_manifest.json` | [37091106360](https://github.com/rakshit-737/tracegate/actions/runs/37091106360) |
+| Bot-bump oracle | `lineage_bot_bump_oracle.json` | [37091106360](https://github.com/rakshit-737/tracegate/actions/runs/37091106360) |
+| Reachability, each snapshot against its own sources | `lineage_real_repos_materialized.json` (current), `..._audited.json` (the audited run), `..._v1.1.0.json` | [37091106360](https://github.com/rakshit-737/tracegate/actions/runs/37091106360), [37090410909](https://github.com/rakshit-737/tracegate/actions/runs/37090410909), [37003433022](https://github.com/rakshit-737/tracegate/actions/runs/37003433022) |
+| Reachability audit (evidence and verdicts, written locally from the audited run) | `reachability_audit.json` | generated locally from [37090410909](https://github.com/rakshit-737/tracegate/actions/runs/37090410909) |
+| Real images, synthetic scale | `images_real.json`, `scale_synthetic.json`, `data_manifest_images.json` | [37088867445](https://github.com/rakshit-737/tracegate/actions/runs/37088867445) |
+| Typosquat, original TypoGard / typomania, PR figure | `typosquat_*.json`, `typosquat_originals.json`, `data_manifest_typosquat.json`, `typosquat_pr.png` | [37003433022](https://github.com/rakshit-737/tracegate/actions/runs/37003433022) |
+| v1.1.0 backtracking and oracle, kept for the before/after comparison | `lineage_real_repos_v1.1.0.json`, `lineage_bot_bump_oracle_v1.1.0.json` | [37003433022](https://github.com/rakshit-737/tracegate/actions/runs/37003433022) |
+| kind admission, Sigstore evidence | `kind_admission.json`, `sigstore_evidence.json` | [37003568257](https://github.com/rakshit-737/tracegate/actions/runs/37003568257), [37003568357](https://github.com/rakshit-737/tracegate/actions/runs/37003568357) |
+
+How to re-run each: [Reproduce](reproduce.md).
 
 ## Methodology
 
-- **Backtracking.** For each repository, the first-parent history of its lock file is walked and 12 snapshots are spread evenly over it. At each snapshot the pins are matched against the offline OSV dump; for every vulnerable pin, TRACEGATE's answer (the commit whose diff introduced that version) is compared with `git blame --first-parent` on the pin's line. The unit is a (snapshot, vulnerable pin) pair, so one long-lived pin counts once per snapshot; pairs are clustered by repository, and the Wilson intervals below ignore that clustering, so they are too narrow; a bootstrap that resamples whole repositories (2,000 draws) is reported beside them, together with the per-repository spread (62% on vue-core to 100% on several pip and Go repos). Baselines: the last commit that touched the manifest, the first `git log -G` mention of the package name, and the exact-pin pickaxe `git log --first-parent -1 -S'<pin line>'`. Blame and the exact-pin pickaxe are near-identical line-based algorithms (B-SZZ style; Sliwerski, Zimmermann and Zeller, MSR 2005), so they agree with the ground truth by construction on manifests whose lines change only when the version changes.
-- **Reachability.** For the three Python repositories, every high/critical OSV finding is checked against static reachability (imports, entrypoints, `# via` edges, implied framework dependencies). Mode 1 analyses each snapshot against HEAD sources; mode 2 (`--materialize`) checks out each snapshot's own sources. No exploitability ground truth exists; see the audit note below.
+- **Backtracking.** For each repository the first-parent history of its lock file is walked and 12 snapshots are spread evenly over it. The repositories are cloned at the commits recorded in `results/data_manifest.json`, so re-runs walk the same histories. At each snapshot every pinned (package, version) pair is matched against the offline OSV dump; for every vulnerable pair, TRACEGATE's answer (the newest commit whose diff made that pair appear) is compared with `git blame --first-parent` on the pair's version line. The unit is a (snapshot, vulnerable pin) pair, so a long-lived pin counts once per snapshot; pairs are clustered by repository, so the Wilson and exact intervals are too narrow and a bootstrap that resamples whole repositories (2,000 draws) is reported beside them. Methods are compared on the same pairs with exact McNemar tests on the discordant pairs.
+- **Baselines.** The last commit that touched the manifest; the first `git log -G` mention of the package name; and two `git log --first-parent -1 -S` pickaxes: a *package-specific* token (the two-line `name = "x"` / `version = "y"` of a Cargo.lock entry, a yarn.lock block header plus its version line, a package-lock key plus version; pip, Go and pnpm pins are already one package-specific line) and the *version line* alone, which in Cargo.lock, yarn.lock and package-lock is shared by every package at that version. Blame and both pickaxes are line attribution, the B-SZZ idea (Śliwerski, Zimmermann and Zeller, MSR 2005).
+- **Blame is a reference, not ground truth.** It shares the lock-file reader and has the failure modes the SZZ literature names: it credits meta-changes such as merges (what MA-SZZ, da Costa et al., TSE 2017, filters out) and cosmetic rewrites (AG-SZZ, Kim et al., ASE 2006). Agreement is therefore checked two more ways: by reading the diffs of a sample of disagreements, and against labels taken from commit messages (the oracle), the idea behind the developer-informed SZZ oracle of Rosa et al. (ICSE 2021). Lyu et al. (IEEE TSE; arXiv 2308.05060) compare SZZ variants on the Linux kernel. `git log -L` and PyDriller's SZZ are further line-history tools; they are line-based like blame and are not run here.
+- **Reachability.** For the three Python repositories, every high/critical OSV finding is checked against static reachability (imports, entrypoints, pip-compile `# via` edges, implied framework dependencies), with each snapshot analysed against its own sources (`--materialize`). Every downgrade is then audited (below).
 - **Typosquat.** Positives are OSV `MAL-*` package names of the ecosystem that are not themselves popular; negatives are real packages ranked just below the reference list. Hash split: 50/50 by sha256(name), thresholds tuned on the dev half. The `FPR-matched` row picks the lowest threshold whose **dev** FPR is at most Damerau-1's dev FPR (no test data is used); the dev-tuned default (best dev F1 at dev FPR <= 2%) is shown beside it. Time split: positives first published before 2025-01-01 tune, later ones test (OSV `published` dates are dominated by bulk backfills); negatives stay hash-split. CIs are a seeded stratified bootstrap (1,000 resamples). Precision is also reported at 1% prevalence, because the test sets are mostly malicious.
 - **Design notes** are in [ADR 0005](adr/0005-real-data-evaluation-design.md).
 
 ## Backtracking: finding -> introducing commit
 
-| Repository | Ecosystem | Pairs | TRACEGATE | exact-pin `git log -S` | last manifest commit | first mention | gate median / max ms |
+<!-- results:lineage-repos -->
+| Repository | Lock file | Pairs | TRACEGATE | pickaxe, package-specific | pickaxe, version line | last manifest commit | first mention | gate median / max ms |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| healthchecks | `requirements.txt` | 20 | 100.0% | 100.0% | 100.0% | 40.0% | 20.0% | 7 / 13 |
+| netbox | `requirements.txt` | 108 | 100.0% | 100.0% | 100.0% | 39.8% | 14.8% | 14 / 26 |
+| warehouse | `requirements/main.txt` | 234 | 96.6% | 100.0% | 100.0% | 6.0% | 4.7% | 70 / 633 |
+| caddy | `go.sum` | 195 | 100.0% | 100.0% | 100.0% | 13.9% | 10.3% | 283 / 917 |
+| hugo | `go.mod` | 133 | 99.2% | 100.0% | 100.0% | 9.8% | 6.8% | 304 / 1251 |
+| ripgrep | `Cargo.lock` | 76 | 98.7% | 97.4% | 69.7% | 10.5% | 13.2% | 40 / 87 |
+| bat | `Cargo.lock` | 188 | 98.9% | 98.9% | 59.6% | 8.5% | 25.0% | 71 / 135 |
+| alacritty | `Cargo.lock` | 259 | 99.6% | 99.6% | 46.7% | 4.2% | 16.6% | 129 / 644 |
+| excalidraw | `yarn.lock` | 1265 | 99.7% | 89.3% | 74.9% | 20.7% | 10.4% | 126 / 583 |
+| mastodon | `yarn.lock` | 999 | 87.2% | 74.2% | 46.6% | 7.8% | 12.6% | 483 / 1619 |
+| vue-core | `pnpm-lock.yaml` | 492 | 68.1% | 97.2% | 97.2% | 14.0% | 20.5% | 147 / 780 |
+| **all** | 11 repos | 3969 | **92.4%** [Wilson 91.5-93.2; repo-clustered 82.7-99.5] | 89.6% [clustered 82.2-99.4] | 72.2% | 13.8% | 13.1% | |
+
+Source: `results/lineage_real_repos.json`, run [37091106360](https://github.com/rakshit-737/tracegate/actions/runs/37091106360).
+<!-- /results:lineage-repos -->
+
+Per ecosystem, with the paired comparison against the package-specific pickaxe:
+
+<!-- results:lineage-ecosystems -->
+| Ecosystem | Pairs | TRACEGATE [Wilson 95%] | pickaxe, package-specific [Wilson 95%] | discordant pairs (TRACEGATE only : pickaxe only) | exact McNemar p | pickaxe, version line |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Cargo | 523 | 99.2% [98.0-99.7] | 99.0% [97.8-99.6] | 1 : 0 | 1.00 | 54.7% |
+| Go | 328 | 99.7% [98.3-100.0] | 100.0% [98.8-100.0] | 0 : 1 | 1.00 | 100.0% |
+| npm (yarn, pnpm) | 2756 | 89.5% [88.3-90.6] | 85.2% [83.9-86.5] | 360 : 242 | 1.7e-06 | 68.6% |
+| pip | 362 | 97.8% [95.7-98.9] | 100.0% [99.0-100.0] | 0 : 8 | 0.008 | 100.0% |
+| **all** | 3969 | 92.4% [91.5-93.2] | 89.6% [88.6-90.5] | 361 : 251 | 1.0e-05 | 72.2% |
+<!-- /results:lineage-ecosystems -->
+
+Reading: on pip requirements and go.mod the pin line changes only with the version, so blame and both pickaxes coincide and TRACEGATE disagrees only where a commit rewrote the line without changing the version (warehouse: a merge that added hashes, a pip-compile run that lower-cased names; hugo: a `go.mod` restructuring). On Cargo.lock the package-specific pickaxe and TRACEGATE are tied; the old version-line token is far behind because `version = "x"` is shared by every crate at that version. On yarn and pnpm lock files, header lines change whenever a range is added, so even the package-specific token follows rewrites; TRACEGATE agrees more often, but by a margin the clustered interval cannot separate from 0. Latency is per snapshot graph (verify, build, enrich, decide).
+
+### Before and after the multi-version readers
+
+Until this release the yarn, pnpm, package-lock and Cargo readers kept one version per package name, so a lock file holding debug 2.6.9 and debug 4.3.4 contributed one of them. The old readers are kept behind `--single-version` and were run on the same clones and the same OSV dump as the new ones:
+
+<!-- results:before-after -->
+| Ecosystem | v1.1.0 as published (run 37003433022) | old readers, this run (37091106360) | multi-version readers, this run (37091106360) |
+| --- | ---: | ---: | ---: |
+| Cargo | 459/483 = 95.0% | 459/483 = 95.0% | 519/523 = 99.2% |
+| Go | 327/328 = 99.7% | 327/328 = 99.7% | 327/328 = 99.7% |
+| npm (yarn, pnpm) | 1704/2030 = 83.9% | 1709/2045 = 83.6% | 2467/2756 = 89.5% |
+| pip | 354/362 = 97.8% | 354/362 = 97.8% | 354/362 = 97.8% |
+| **all** | 2844/3203 = 88.8% | 2849/3218 = 88.5% | 3667/3969 = 92.4% |
+| multi-version entries dropped by the old readers at HEAD |  |  | ripgrep 1/63 (1.6%), bat 11/317 (3.5%), alacritty 33/292 (11.3%), excalidraw 201/1444 (13.9%), mastodon 102/1354 (7.5%), vue-core 56/642 (8.7%) |
+<!-- /results:before-after -->
+
+On the same data the new readers agree with blame on 92.4% of 3,969 pairs and the old ones on 88.5% of 3,218; the v1.1.0 figure was 88.8% of 3,203 (run 37003433022, older OSV data and the old readers). The denominators differ because the new readers find vulnerable versions that sat in second copies of a package name. The last row counts, per repository at the pinned HEAD, the lock-file entries the old readers dropped; it replaces the "7-14%" range quoted in v1.1.0, which had no committed source.
+
+### Reading the disagreements
+
+The disagreements between TRACEGATE and blame were read against the lock-file diffs: every pip and Go disagreement, and a uniform random sample (seed 0) of 50 Cargo and npm ones. For each case the correct introducer is the newest first-parent commit at or before the snapshot whose diff makes the pinned version appear. The evidence (each candidate commit's subject, the hunks that mention the package, and the versions before and after) is in `results/lineage_adjudication_evidence.json`; the verdicts, one line of reasoning each, are in `results/lineage_adjudication.json`.
+
+<!-- results:adjudication -->
+| Sample | cases | TRACEGATE | `git blame` | pickaxe, package-specific | pickaxe, version line | undecided |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| pypi+golang | 9 | 9/9 [70-100] | 0/9 [0-30] | 0/9 [0-30] | 0/9 [0-30] | 0 |
+| cargo+npm | 50 | 50/50 [93-100] | 0/50 [0-7] | 3/50 [2-16] | 1/50 [0-10] | 0 |
+| all | 59 | 59/59 [94-100] | 0/59 [0-6] | 3/59 [2-14] | 1/59 [0-9] | 0 |
+
+Wilson 95% intervals in brackets. Source: `results/lineage_adjudication.json`.
+<!-- /results:adjudication -->
+
+In every sampled case the commit `git blame` names already pinned the version at its first parent, so it rewrote the line rather than introduced the version; the `note` field of each case records which kind of rewrite (merge, lock-file format migration, unrelated update). Both pickaxes coincide with blame except where they found TRACEGATE's commit. The reading rule is TRACEGATE's own definition, so the adjudication shows that the disagreements are rewrites; it cannot show that the reader is right where every method agrees (that is what the oracle and the multi-version tests are for). One case was decided by reading the repository by hand (a manifest renamed after the introducing commit); it is marked in the file.
+
+### Bot-bump oracle
+
+Labels come from commit messages only: a Dependabot or Renovate subject that names one package and its target version, the per-package lines of a grouped bump's body ("Updates `X` from A to B", Renovate's table), `Revert "Bump X from A to B"` (the revert restores X@A), and any message that re-introduces an earlier version (A -> B -> C -> B, labelled with the second B commit). Merge commits of bot branches are labelled from the PR title in the merge body. Each label is checked with the multi-version reader: X@V must be absent at the commit's first parent and present after it. Cases are scored at the labelled commit and at the last later manifest commit that still pins X@V.
+
+**What it tests, and what it does not.** At the labelled commit TRACEGATE is right on every verified label *by construction*: the label check is its own criterion. The oracle can fail TRACEGATE at later snapshots (line rewrites, reader glitches between the two points), and it does fail the two ablations: the old one-version-per-name readers on the multi-version stratum, and "first introduction" (no recency rule) on reverts and re-bumps. It does not test attribution independently of the lock-file reader.
+
+**Sample.** Per repository and stratum, a uniform random sample without replacement of at most 40 usable cases (`random.Random(0).shuffle`, then chronological order); `max_cases`, `seed` and `selection` are recorded in the JSON.
+
+<!-- results:oracle-strata -->
+| Stratum | usable / scored | TRACEGATE | old one-version readers | first introduction (no recency rule) | `git blame` | pickaxe, package-specific | pickaxe, version line |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| healthchecks | pypi | 20 | 100.0% | 100.0% | 40.0% | 20.0% | 6 / 10 |
-| netbox | pypi | 108 | 100.0% | 100.0% | 39.8% | 14.8% | 12 / 21 |
-| warehouse | pypi | 234 | 96.6% | 100.0% | 6.0% | 4.7% | 62 / 554 |
-| caddy | golang | 195 | 100.0% | 100.0% | 13.9% | 10.3% | 291 / 893 |
-| hugo | golang | 133 | 99.2% | 100.0% | 9.8% | 6.8% | 290 / 773 |
-| ripgrep | cargo | 72 | 97.2% | 68.1% | 11.1% | 13.9% | 36 / 76 |
-| bat | cargo | 178 | 94.4% | 60.7% | 12.4% | 24.7% | 63 / 121 |
-| alacritty | cargo | 233 | 94.8% | 45.9% | 3.0% | 21.9% | 110 / 227 |
-| excalidraw | npm | 925 | 97.2% | 75.3% | 20.4% | 11.7% | 99 / 510 |
-| mastodon | npm | 720 | 78.5% | 50.1% | 10.0% | 16.0% | 440 / 880 |
-| vue-core | npm | 385 | 62.3% | 97.4% | 14.3% | 22.9% | 120 / 708 |
-| **all** | 4 | 3203 | **88.8%** [87.7-89.8]; repo-clustered bootstrap [79.0-97.5] | 74.5% [73.0-76.0]; clustered [61.1-91.2] | 14.3% | 14.9% | |
+| single package, at the labelled commit | 4022 / 264 | 264/264 | 264/264 | 264/264 | 264/264 | 264/264 | 264/264 |
+| single package, last later snapshot | 4022 / 251 | 251/251 | 249/251 | 251/251 | 240/251 | 233/251 | 218/251 |
+| multi version, at the labelled commit | 340 / 67 | 67/67 | 13/67 | 67/67 | 67/67 | 67/67 | 67/67 |
+| multi version, last later snapshot | 340 / 66 | 66/66 | 13/66 | 66/66 | 63/66 | 56/66 | 44/66 |
+| grouped, at the labelled commit | 130 / 87 | 87/87 | 87/87 | 87/87 | 87/87 | 87/87 | 87/87 |
+| grouped, last later snapshot | 130 / 85 | 85/85 | 85/85 | 85/85 | 84/85 | 83/85 | 80/85 |
+| revert, at the labelled commit | 19 / 19 | 19/19 | 19/19 | 0/19 | 19/19 | 19/19 | 19/19 |
+| revert, last later snapshot | 19 / 16 | 16/16 | 16/16 | 0/16 | 15/16 | 15/16 | 14/16 |
+| re bump, at the labelled commit | 21 / 21 | 21/21 | 21/21 | 0/21 | 21/21 | 21/21 | 20/21 |
+| re bump, last later snapshot | 21 / 18 | 18/18 | 18/18 | 0/18 | 17/18 | 16/18 | 15/18 |
+| **all**, at the labelled commit | 4532 / 458 | 458/458 | 404/458 | 418/458 | 458/458 | 458/458 | 457/458 |
+| **all**, last later snapshot | 4532 / 436 | 436/436 | 381/436 | 402/436 | 419/436 | 403/436 | 371/436 |
 
-| Ecosystem | Pairs | TRACEGATE | exact-pin `git log -S` |
-| --- | ---: | ---: | ---: |
-| pypi | 362 | 97.8% [95.7-98.9] | 100.0% [99.0-100.0] |
-| golang | 328 | 99.7% [98.3-99.9] | 100.0% [98.8-100.0] |
-| cargo | 483 | 95.0% [92.7-96.6] | 54.7% [50.2-59.0] |
-| npm | 2030 | 83.9% [82.3-85.5] | 70.6% [68.6-72.5] |
+Source: `results/lineage_bot_bump_oracle.json`, run [37091106360](https://github.com/rakshit-737/tracegate/actions/runs/37091106360).
+<!-- /results:oracle-strata -->
 
-Reading: on pip requirements and go.mod/go.sum the exact-pin pickaxe matches blame on every pair and TRACEGATE is slightly behind (pip: the 8 warehouse disagreements are merge commits and line rewrites without a version change). On Cargo.lock and npm-family lock files, lines are rewritten by unrelated updates, and version-aware diffing is far ahead of line-based attribution. vue-core (pnpm) and mastodon (yarn) are the weakest repositories: their lock files hold several versions of one package name and the parsers keep only one, so the commit TRACEGATE reports can belong to a different version than the line blame looks at. Go gate latency is the slowest per pin (median about 290 ms, max 893 ms). The earlier 3-repo result (97.5%, 356/365) is reproduced as 97.8% (354/362) with newer OSV data.
+Pooled over all strata, with exact one-sided lower bounds (Clopper-Pearson; they treat the cases as independent, and clustering by repository would widen them):
 
-The scanner-only baseline is not measured: scanner output carries no commit, so it cannot attribute.
+<!-- results:oracle-pooled -->
+| Method | at the labelled commit | one-sided 95% exact lower bound | last later snapshot | one-sided 95% exact lower bound | Wilson 95% (later) | repo-clustered bootstrap 95% (later) |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| TRACEGATE | 458/458 (100.0%) | 99.4% | 436/436 (100.0%) | 99.3% | 99.1-100.0 | 100.0-100.0 |
+| old one-version readers | 404/458 (88.2%) | 85.4% | 381/436 (87.4%) | 84.5% | 83.9-90.2 | 74.7-99.2 |
+| first introduction (no recency rule) | 418/458 (91.3%) | 88.8% | 402/436 (92.2%) | 89.8% | 89.3-94.4 | 89.2-95.4 |
+| `git blame` | 458/458 (100.0%) | 99.4% | 419/436 (96.1%) | 94.2% | 93.8-97.5 | 91.2-100.0 |
+| pickaxe, package-specific | 458/458 (100.0%) | 99.4% | 403/436 (92.4%) | 90.0% | 89.6-94.6 | 85.8-99.2 |
+| pickaxe, version line | 457/458 (99.8%) | 99.0% | 371/436 (85.1%) | 82.0% | 81.4-88.1 | 72.7-96.6 |
 
-### Independent oracle: single-package bot bumps
+Paired at later snapshots (TRACEGATE only : other only, exact McNemar, ignores clustering): vs `git blame`: 17 : 0, p 1.5e-05; vs pickaxe, package-specific: 33 : 0, p 2.3e-10; vs old one-version readers: 55 : 0, p 5.6e-17.
+<!-- /results:oracle-pooled -->
 
-Line blame shares TRACEGATE's pin parser, so agreement with it is not correctness. As an independent check, every Dependabot or Renovate commit whose subject names exactly one package and its target version ("bump X from A to B") is taken as ground truth: that commit introduced X@B. The label comes only from the commit author and subject; the parser is used only to select cases (the snapshot must still pin B). Up to 40 bumps per repository are scored (seeded sample), both at the bump commit and at the last later snapshot that still pins B, where unrelated rewrites of the line have had time to happen. TRACEGATE's version diff and blame's line attribution on the same pin form the ablation. Source: [`results/lineage_bot_bump_oracle.json`](https://github.com/rakshit-737/tracegate/blob/main/results/lineage_bot_bump_oracle.json) (benchmarks run 37003433022).
+Labels that failed the check are not scored:
 
-| Method | at the bump commit | at the last snapshot still pinning B | repo-clustered bootstrap 95% (later) |
-| --- | ---: | ---: | ---: |
-| TRACEGATE (version diff) | 243/243 (100%) | **231/231 (100%)** | [100, 100] |
-| `git blame` (line attribution) | 241/243 (99.2%) | 219/231 (94.8%) | [89.4, 98.6] |
-| exact-pin `git log -S` | 241/243 (99.2%) | 197/231 (85.3%) | [77.4, 94.7] |
+<!-- results:oracle-exclusions -->
+| Label source | labels | X@V already present at the parent | X@V not in the lock file | ambiguous name |
+| --- | ---: | ---: | ---: | ---: |
+| bot single | 4450 | 53 | 26 | 0 |
+| grouped | 143 | 0 | 9 | 0 |
+| revert | 19 | 0 | 0 | 0 |
 
-Usable bumps per repository: warehouse 923, mastodon 1,778, hugo 614, bat 288, excalidraw 135, vue-core 20, caddy 15, healthchecks 6, ripgrep 1, alacritty 1, netbox 0. The misses of blame and the pickaxe are on Cargo.lock, yarn.lock and pnpm-lock.yaml (bat, excalidraw, mastodon, vue-core) and one go.mod case, where later commits rewrote the pin line without changing the version. Limits: bot bumps are the easy, single-package case; grouped and human-authored upgrades are not covered, and only 10 of 11 repositories contribute (netbox has no bot bumps).
+Usable labelled cases per repository (all strata): healthchecks 8, netbox 1, warehouse 992, caddy 102, hugo 620, ripgrep 3, bat 361, alacritty 1, excalidraw 142, mastodon 2243, vue-core 59.
+<!-- /results:oracle-exclusions -->
+
+Reading: at the labelled commit every method except the two ablations agrees with the label (TRACEGATE by construction; `git blame` and the package-specific pickaxe as well). At the later snapshot TRACEGATE keeps every case while `git blame` loses 17. Each of those 17 credits a commit that rewrote the line and kept the version: mastodon's "Upgrade to Yarn 4" (`757d7c73c0`) and "Force all NPM packages to their exact versions" (`95b782fcde`), vue-core's "chore: Merge branch 'main' into minor" merges (the meta-changes MA-SZZ filters out) and dependency updates that re-sorted `pnpm-lock.yaml`, and hugo's "Upgrade to deploy to use AWS SDK V2", which moved a `go.mod` line. The gap is significant if cases are treated as independent (exact McNemar above), but 16 of the 17 come from two repositories, so the repo-clustered interval for the difference starts at 0. The ablations fail where they should: the old one-version readers on the multi-version stratum, and attribution without the recency rule on every revert and re-bump.
+
+The v1.1.0 oracle (`results/lineage_bot_bump_oracle_v1.1.0.json`, 243 bumps) counted two blame "misses" at the bump that were label errors: bat's unicode-width 0.2.0 entered `Cargo.lock` with an earlier console bump, and excalidraw's loader-utils 2.0.4 was already locked through another range. The label check now excludes such cases (`already_present` above), and TRACEGATE's agreement with those wrong labels came from the first-entry reader.
 
 ## Reachability
 
-| Repository | high+ findings | actionable, HEAD sources | actionable, own sources |
-| --- | ---: | ---: | ---: |
-| healthchecks | 139 | 138 | 139 |
-| netbox | 324 | 313 | 322 |
-| warehouse | 424 | 345 | 375 |
-| **all** | 887 | 796 (-10.3%) | 836 (-5.7%) |
+<!-- results:reachability -->
+| Run | Static rule | high+ findings | actionable | downgraded [exact 95%] |
+| --- | --- | ---: | ---: | ---: |
+| [37003433022](https://github.com/rakshit-737/tracegate/actions/runs/37003433022) | v1.1.0: static tiers; `# via` read only below the pin | 887 | 836 | 51 (5.7%) [4.3-7.5] |
+| [37090410909](https://github.com/rakshit-737/tracegate/actions/runs/37090410909) | + inline `# via` (older pip-compile layout) | 887 | 842 | 45 (5.1%) [3.7-6.7] |
+| [37091106360](https://github.com/rakshit-737/tracegate/actions/runs/37091106360) | + no downgrade when the manifest records no dependency edges | 887 | 887 | 0 (0.0%) [0.0-0.4] |
 
-Audit note: the previous release reported -15.1% (HEAD) and -25.8% (own sources). A manual audit found that most downgraded packages were loaded after all: `pycrypto` is imported as `Crypto`, `ecdsa`/`pycrypto` come in through paramiko, `lxml` through ncclient, `bleach` through readme_renderer, `mako` through alembic, and Django loads Pillow for `ImageField`. Those rules are now in `reach.py`. The HEAD-sources column is kept only for transparency and is **not** a headline figure: it judges historical pins against present-day code and still downgrades packages the audit showed were imported at those snapshots (netbox: CVE-2013-7459 / CVE-2018-6594 pycrypto==2.6.1, CVE-2018-1000805 / CVE-2018-7750 paramiko==1.15.2; healthchecks: CVE-2018-18074 requests==2.9.1). The reported figure is the own-sources column (-5.7%). Its 51 downgrades (netbox: pyyaml 3.11; warehouse: rsa, pyasn1, cbor2, pygments, bleach, httplib2, future, pyyaml) have not been audited, so the false-unreached rate is not measured; treat static downgrades as advisory. A published reference point with a different method and ecosystem: Pashchenko et al. (ESEM 2018) found about 20% of vulnerable dependencies of Java libraries are not deployed.
+Current run per repository (36 snapshots, each against its own sources): healthchecks 139 -> 139, netbox 324 -> 324, warehouse 424 -> 424. Files: `results/lineage_real_repos_materialized*.json`.
+<!-- /results:reachability -->
+
+### Audit of every downgrade
+
+`benchmarks/reach_audit.py` rebuilds, for each downgraded (snapshot, pin), the dependency edges its requirement file did not record (the pinned releases' own `requires_dist` metadata on PyPI, plus the snapshot's sources) and finds a chain from a package the app imports down to the pin. Each pin then gets a verdict by hand: `loaded` when such a chain exists or the sources load it, `not loaded` when the sources and every dependent were checked and nothing loads it.
+
+<!-- results:audit -->
+| Verdict | (snapshot, pin) rows | findings |
+| --- | ---: | ---: |
+| loaded | 17 | 45 |
+| not loaded | 0 | 0 |
+| undetermined | 0 | 0 |
+
+False-`unreached` rate among decided pins: 17/17 = 100.0% (exact 95% 80.5-100.0). Audited run: [37090410909](https://github.com/rakshit-737/tracegate/actions/runs/37090410909); verdicts and evidence: `results/reachability_audit.json`.
+<!-- /results:audit -->
+
+Every one of the 17 downgraded pins (45 findings) is loaded: warehouse imports `google.cloud.bigquery`, which requires google-auth, which requires rsa and pyasn1; webauthn requires cbor2 and future; readme-renderer 21.0 requires future; netbox lists `rest_framework_swagger` in `INSTALLED_APPS`, and the pinned django-rest-swagger 0.3.4 imports `yaml`. The requirement files at those snapshots record no dependency edges, so the gate could not tell a transitive dependency of an imported package from an unused pin. The earlier reductions (-5.7% in v1.1.0, -5.1% after the inline-`# via` fix) were therefore not useful triage, and static reachability now marks such pins `unknown` and downgrades nothing on these 36 snapshots. This is a result where TRACEGATE does worse than it claimed. A published reference point with a different method and ecosystem: Pashchenko et al. found about 20% of the vulnerable dependencies of Java libraries "not deployed" (ESEM 2018; arXiv 1808.09753v1, abstract and Sec. 6 RQ1, p. 7), where "not deployed" means test- or development-scope dependencies, a different notion from import reachability.
 
 ## Typosquat detection
 
-Detectors: TRACEGATE (multi-technique, threshold tuned on dev), Damerau-1 (TRACEGATE's own `typo1` technique alone, top-5k reference), re-implementations of **typomania / TypoGard** (Rust Foundation port of Taylor et al., *Defending Against Package Typosquatting*, NSS 2020) and **pypi-scan** (IQT Labs), and the original 14-name difflib heuristic. The re-implementations live in `tracegate/baselines.py`; the typomania/TypoGard port is now validated against the original code (below); the pypi-scan rows remain *our port of* that tool. The TypoGard paper (arXiv 2003.03471v1, Section 4.3 "Signal Detection Rates") states that its signals "detected approximately 60% of known past attacks reported by the npm security team as typosquatting"; on the OSV labels here, where most names are not look-alikes, every detector's recall is far lower.
+Source: run [37003433022](https://github.com/rakshit-737/tracegate/actions/runs/37003433022) (`results/typosquat_*.json`; inputs in `results/data_manifest_typosquat.json`).
+
+Detectors: TRACEGATE (multi-technique, threshold tuned on dev), Damerau-1 (TRACEGATE's own `typo1` technique alone, top-5k reference), re-implementations of **typomania / TypoGard** (Rust Foundation port of Taylor et al., *Defending Against Package Typosquatting*, NSS 2020) and **pypi-scan** (IQT Labs), and the original 14-name difflib heuristic. The re-implementations live in `tracegate/baselines.py`; the typomania/TypoGard port is validated against the original code (below); the pypi-scan rows remain *our port of* that tool. The TypoGard paper states that its signals "detected approximately 60% of known past attacks reported by the npm security team as typosquatting" (Taylor et al., NSS 2020; arXiv 2003.03471v1, where the tool is named SpellBound, Sec. 4.3 "Signal Detection Rates", p. 9); on the OSV labels here, where most names are not look-alikes, every detector's recall is far lower.
 
 ### Original TypoGard and typomania on the same splits
 
@@ -153,6 +273,8 @@ The port reproduces the original typomania to within a handful of names per spli
 | tracegate (th=0.54) | 0.739 | 0.039 | 0.075 [0.060, 0.091] | 0.0117 | 0.033 | 0.000 |
 | tracegate (th=0.46, FPR-matched to lev1) | 0.626 | 0.042 | 0.078 [0.063, 0.095] | 0.0210 | 0.020 | 0.000 |
 
+On RubyGems the simplest baseline wins: the 14-name difflib check beats every top-5k detector, TRACEGATE included (F1 0.213 vs 0.075 on the hash split, 0.234 vs 0.074 on the time split; paired F1 difference vs Damerau-1 +0.115 to +0.156), because the `MAL-*` names there are floods of variants of a few top gems (mostly `bundler`). This is a result where TRACEGATE does worse.
+
 ### RubyGems, time split
 
 3430 test positives (0 labelled typosquat), 2479 test negatives; reference = top 5000.
@@ -194,6 +316,8 @@ The port reproduces the original typomania to within a handful of names per spli
 | pypi-scan (top-5k) | 0.015 | 0.067 | 0.025 [0.000, 0.083] | 0.0254 | 0.026 | 0.167 |
 | tracegate (th=0.68) | 0.250 | 0.067 | 0.105 [0.000, 0.316] | 0.0012 | 0.360 | 0.167 |
 | tracegate (th=0.48, FPR-matched to lev1) | 0.015 | 0.067 | 0.024 [0.000, 0.081] | 0.0262 | 0.025 | 0.167 |
+
+No detector is useful on crates.io (7 and 15 test positives) or NuGet (CIs reach 0 for every detector).
 
 ### NuGet, hash split
 
@@ -238,34 +362,42 @@ The port reproduces the original typomania to within a handful of names per spli
 
 Edit distance 1 (`typo1`) carries almost all of the signal; the other techniques add a fraction of a point of recall. On this data TRACEGATE is close to a scored Damerau-1 check, which is why typosquat detection is a supporting component, not the novelty claim.
 
-![Typosquat precision/recall](img/typosquat_pr.png)
+![Typosquat precision/recall, rendered from the typosquat_pypi/npm JSON of run 37003433022](img/typosquat_pr.png)
 
 ## Signing and admission
 
-- [`results/sigstore_evidence.json`](https://github.com/rakshit-737/tracegate/blob/main/results/sigstore_evidence.json): wheel and sdist signed keylessly with the `sigstore` workflow's GitHub OIDC identity; each Rekor entry fetched by logIndex and checked to record the artefact's sha256.
+- [`results/sigstore_evidence.json`](https://github.com/rakshit-737/tracegate/blob/main/results/sigstore_evidence.json): the wheel and sdist of dev build `cfd215e` (`1.0.0.post0.dev11+gcfd215e`), signed keylessly with the `sigstore` workflow's GitHub OIDC identity; each Rekor entry fetched by logIndex and checked to record the artefact's sha256. The v1.1.0 release artefacts carry their own `*.sigstore.json` bundles on the [release page](https://github.com/rakshit-737/tracegate/releases/tag/v1.1.0); how to verify them is in [Security](security.md).
 - [`results/kind_admission.json`](https://github.com/rakshit-737/tracegate/blob/main/results/kind_admission.json): in a kind cluster the signed image is admitted and Running; the unsigned one is denied by cosign (`no signatures found`); a third image with a valid keyless signature but signed provenance missing the build and scan stages passes cosign and is denied by `tracegate gate` (`missing signed provenance for stages ['build', 'scan']`).
 
 ## Real images: what the gate sees
 
-| Image | Syft pkgs | Layers | Trivy findings | Matched to SBOM node | Syft/Trivy SBOM Jaccard |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| alpine:3.14.2 | 15 | 1 | 43 | 43 | 0.93 |
-| httpd:2.4.49-alpine3.14 | 36 | 5 | 99 | 99 | 0.94 |
-| memcached:1.6.10-alpine3.14 | 20 | 6 | 44 | 44 | 0.90 |
-| nginx:1.21.3-alpine | 45 | 6 | 105 | 105 | 0.93 |
-| node:14.17.6-alpine3.14 | 417 | 4 | 90 | 90 | 0.995 |
-| python:3.9.7-alpine3.14 | 51 | 5 | 83 | 83 | 0.95 |
-| redis:6.2.5-alpine3.14 | 19 | 6 | 43 | 43 | 0.89 |
+Seven pinned official images are pulled as data (sha256-verified, never run) and scanned with real Syft and Trivy on the runner. Identity matters only against raw purl strings: Trivy and Syft spell the same package's purl differently (qualifiers, namespaces), while naive name@version matching and TRACEGATE's canonical purls both attach every finding on these images.
 
-When the 7 images are merged into one graph, the result has 538 nodes and 556 edges. The 507 per-image Trivy rows collapse into 215 unique finding nodes (142 unique CVEs), a 2.4x de-duplication. The gate verdict is `block`.
+<!-- results:images -->
+| Image | Syft pkgs | Layers | Trivy findings | matched, naive name@version | matched, raw purl string | matched, canonical purl | Syft/Trivy SBOM Jaccard |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| alpine:3.14.2 | 14 | 1 | 43 | 43 | 0 | 43 | 1.00 |
+| httpd:2.4.49-alpine3.14 | 49 | 5 | 99 | 99 | 0 | 99 | 0.97 |
+| memcached:1.6.10-alpine3.14 | 33 | 6 | 44 | 44 | 0 | 44 | 0.95 |
+| nginx:1.21.3-alpine | 56 | 6 | 105 | 105 | 0 | 105 | 1.00 |
+| node:14.17.6-alpine3.14 | 430 | 4 | 94 | 94 | 51 | 94 | 1.00 |
+| python:3.9.7-alpine3.14 | 64 | 5 | 83 | 83 | 12 | 83 | 0.97 |
+| redis:6.2.5-alpine3.14 | 32 | 6 | 43 | 43 | 0 | 43 | 0.94 |
+
+All 511 Trivy rows: naive 100.0%, raw purl 12.3%, canonical 100.0%. Merged graph: 535 nodes, 637 edges; 219 unique finding nodes (146 CVEs), a 2.33x de-duplication; verdict `block`; 0 unattributed findings. Source: `results/images_real.json`, run [37088867445](https://github.com/rakshit-737/tracegate/actions/runs/37088867445).
+<!-- /results:images -->
 
 Warden (dependency-risk) scoring of the 401 language packages flags 3. One is `npm-cli-docs`: OSV has an all-versions MAL record for that public name, and npm bundles an internal package with the same name. The other two are typosquat-heuristic false positives on legitimate packages (`ansistyles`, `uid-number`). An earlier name-only MAL lookup flagged 13 more clean packages (`chalk 2.4.1`, `debug 3.1.0`, ...). The cause was the Sept-2025 npm hijack records, which list only the trojanised versions. The fix is covered in [ADR 0006](adr/0006-version-aware-malicious-package-matching.md).
 
 ## Scale (synthetic, for graph growth only)
 
+<!-- results:scale -->
 | Services | Deps | Events | Nodes | Edges | Gate median |
 | ---: | ---: | ---: | ---: | ---: | ---: |
-| 10 | 50 | 41 | 104 | 562 | 0.014 s |
-| 50 | 100 | 201 | 354 | 5,302 | 0.17 s |
-| 100 | 200 | 401 | 704 | 20,602 | 0.55 s |
-| 200 | 400 | 801 | 1,404 | 81,202 | 1.63 s |
+| 10 | 50 | 41 | 104 | 562 | 0.004 s |
+| 50 | 100 | 201 | 354 | 5,302 | 0.038 s |
+| 100 | 200 | 401 | 704 | 20,602 | 0.132 s |
+| 200 | 400 | 801 | 1,404 | 81,202 | 0.622 s |
+
+Synthetic data; source `results/scale_synthetic.json`, run [37088867445](https://github.com/rakshit-737/tracegate/actions/runs/37088867445).
+<!-- /results:scale -->

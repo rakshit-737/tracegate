@@ -33,3 +33,20 @@ signal, but most pipelines do not collect them.
 - The mapping from distribution name to import name is a curated table plus heuristics, because
   wheel `top_level.txt` metadata is not fetched. A wrong mapping can only cause a false
   "unreached", and that outcome is still reported as a warning.
+
+## Amendment (after the v1.1.0 audit)
+
+An audit of every static downgrade in the per-snapshot reachability benchmark (45 findings on 17
+pins of warehouse and netbox) found all 17 pins loaded: each is required by a package the
+snapshot's sources import (`google-cloud-bigquery -> google-auth -> rsa / pyasn1`,
+`webauthn -> cbor2`, `django-rest-swagger -> PyYAML`). Those requirement files record no
+dependency edges, so a third failure mode dominates: a transitive dependency of an imported
+package looks exactly like an unused pin. Two changes follow:
+
+1. `via_graph` also reads the older inline layout (`pyyaml==3.11  # via pymlconf`).
+2. Without any pip-compile `# via` annotation in the manifest, a pin that is not imported gets the
+   status `unknown`, which never downgrades. `unreached` now requires recorded dependency edges.
+
+On the benchmark's 36 snapshots the static rule therefore downgrades nothing. Evidence and
+verdicts: `results/reachability_audit.json`.
+

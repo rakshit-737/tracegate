@@ -52,4 +52,4 @@ Graph shape: `commit -introduced-> dependency -installed_in-> layer -layer_of-> 
 | Exports | `export.py` | Neo4j Cypher, JSON, OPA input, in-toto |
 | Service | `api.py`, `ui/index.html` | FastAPI + dependency-free lineage explorer |
 
-Reachability tiers: `imported` (AST imports and dotted strings), `entrypoint` (named in the Dockerfile, Procfile, CI or config), `transitive` (pip-compile `# via` edges, and implied framework dependencies such as `django.db.backends.postgresql` -> psycopg), `referenced` (bare string constants such as passlib's `"argon2"`), and `unreached`. Only `unreached` findings are downgraded.
+Reachability tiers: `imported` (AST imports and dotted strings), `entrypoint` (named in the Dockerfile, Procfile, CI or config), `transitive` (pip-compile `# via` edges, and implied framework dependencies such as `django.db.backends.postgresql` -> psycopg), `referenced` (bare string constants such as passlib's `"argon2"`), `unreached` (none of these, in a manifest that records dependency edges) and `unknown` (none of these, without recorded edges). Only `unreached` findings are downgraded.

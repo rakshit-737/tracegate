@@ -271,7 +271,7 @@ def main() -> int:
     for f in FILES:
         text = f.read_text(encoding="utf-8")
 
-        def sub(m: re.Match) -> str:
+        def sub(m: re.Match, f: Path = f) -> str:
             name = m.group(2)
             if name not in RENDER:
                 stale.append(f"{f.name}: unknown block {name}")

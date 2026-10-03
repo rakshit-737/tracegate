@@ -13,7 +13,11 @@ fall back to a conservative *static* estimate from the repository itself:
               names such as passlib's "argon2"): weaker evidence, still reachable
   transitive  required (per pip-compile `# via` annotations) by a package that
               is itself reachable
-  unreached   none of the above -> findings on it are downgraded block -> warn
+  unreached   none of the above, in a manifest whose dependency edges are recorded
+              (pip-compile `# via`) -> findings on it are downgraded block -> warn
+  unknown     none of the above, but the manifest records no dependency edges, so the
+              package may be required by something the app imports -> no downgrade
+              (an audit of 45 such downgrades found every one loaded; see the Evaluation)
 
 The estimate over-approximates (anything imported counts, even on a cold path)
 except for plugins loaded purely by entry points or by computed import strings;
@@ -211,13 +215,13 @@ def via_graph(req_text: str) -> dict[str, set[str]]:
 @dataclass
 class ReachReport:
     """Per-distribution reachability status of one repository snapshot."""
-    status: dict[str, str] = field(default_factory=dict)  # dist -> imported|entrypoint|transitive|unreached
+    status: dict[str, str] = field(default_factory=dict)  # imported|entrypoint|referenced|transitive|unreached|unknown
     evidence: dict[str, str] = field(default_factory=dict)
 
     def reachable(self, dist: str) -> bool | None:
         """True if imported or loaded, False if unreached, None if unknown."""
         s = self.status.get(normalize_name(dist))
-        return None if s is None else s != "unreached"
+        return None if s in (None, "unknown") else s != "unreached"
 
 
 def static_reachability(pins: dict[str, str], src_dirs: list[Path], repo: Path,
@@ -267,13 +271,19 @@ def static_reachability(pins: dict[str, str], src_dirs: list[Path], repo: Path,
         if dist not in rep.status and any("." not in m and m.lower() in strings for m in import_names(dist)):
             rep.status[dist], rep.evidence[dist] = "referenced", "module name used as a string (plugin/scheme config)"
     propagate()
+    edges_known = "# via" in req_text  # pip-compile annotations, either layout
     for dist in pins:
         if dist not in rep.status:
-            rep.status[dist] = "unreached"
-            rep.evidence[dist] = "no import, entrypoint or reachable dependent found"
+            if edges_known:
+                rep.status[dist] = "unreached"
+                rep.evidence[dist] = "no import, entrypoint or reachable dependent found"
+            else:
+                rep.status[dist] = "unknown"
+                rep.evidence[dist] = ("not imported, but the manifest records no dependency edges (no pip-compile "
+                                      "`# via`), so a reachable package may require it: not downgraded")
     return rep
 
 
 def reachability_facts(rep: ReachReport) -> dict[str, bool]:
     """Map each distribution to whether it is considered reachable."""
-    return {d: s != "unreached" for d, s in rep.status.items()}
+    return {d: s != "unreached" for d, s in rep.status.items() if s != "unknown"}

@@ -308,7 +308,7 @@ def eval_repo(name: str, osvs: dict[str, OsvIndex], n_snap: int, warden,
             head_stats = {
                 "pins": len(pins),
                 "reach_status_counts": {st: list(rep.status.values()).count(st)
-                                        for st in ("imported", "entrypoint", "referenced", "transitive", "unreached")},
+                                        for st in ("imported", "entrypoint", "referenced", "transitive", "unreached", "unknown")},
                 "unreached": sorted(d for d, st in rep.status.items() if st == "unreached"),
                 "direct_deps": None if direct is None else len(direct),
                 "direct_deps_marked_unreached": sorted(d for d in (direct or set())

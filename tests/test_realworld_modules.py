@@ -261,7 +261,8 @@ def test_static_reachability_implied_and_referenced(tmp_path):
     assert rep.status["google-cloud-storage"] == "imported"
     assert rep.status["psycopg2-binary"] == "transitive"
     assert rep.status["argon2-cffi"] == "referenced"
-    assert rep.status["lxml"] == "unreached"
+    assert rep.status["lxml"] == "unknown"  # no `# via` edges recorded: never downgraded
+    assert rep.reachable("lxml") is None
 
 
 def test_static_reachability_downgrades_block_to_warn(tmp_path, osv):
@@ -274,7 +275,11 @@ def test_static_reachability_downgrades_block_to_warn(tmp_path, osv):
            StageEvent("scan", "r", osv.scan_payload([("pyyaml", "5.3")]))]
     res = Collector(Verifier(KEY)).collect([s.sign(e) for e in evs])
     assert evaluate(res).verdict == Verdict.BLOCK
-    rep = static_reachability({"pyyaml": "5.3", "flask": "3.0.0"}, [tmp_path], tmp_path)
+    req = "flask==3.0.0" + chr(10) + "    # via -r requirements.in" + chr(10) + "pyyaml==5.3" + chr(10) + "    # via -r requirements.in" + chr(10)
+    assert enrich_static_reachability(res, static_reachability(
+        {"pyyaml": "5.3", "flask": "3.0.0"}, [tmp_path], tmp_path)) == 0  # no edges: no downgrade
+    assert evaluate(res).verdict == Verdict.BLOCK
+    rep = static_reachability({"pyyaml": "5.3", "flask": "3.0.0"}, [tmp_path], tmp_path, req)
     assert enrich_static_reachability(res, rep) == 1
     assert evaluate(res).verdict == Verdict.WARN
 

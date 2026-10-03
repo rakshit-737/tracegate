@@ -6,6 +6,8 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-10-03
+
 ### Security
 - Scanner findings that match no SBOM node now reach the verdict: rule `unattributed_finding` blocks on HIGH/CRITICAL and warns on the rest (Python DSL and Rego, parity-checked). Before, a CRITICAL CVE on a package missing from the SBOM, or with a differently spelled version, gave PASS. Trivy rows without a PURL are matched by the ecosystem of their result type instead of defaulting to PyPI.
 - With `TRACEGATE_API_TOKEN` set, every `/v1` route requires the token (constant-time comparison); before, `/v1/runs/{rid}/graph`, `backtrack`, `blast` and `cypher` were open, and unauthenticated demo calls could evict gate runs. Demo runs now have their own store; the explorer UI sends the token.

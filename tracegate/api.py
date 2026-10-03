@@ -20,10 +20,13 @@ Trust: the same roots as the CLI (TRACEGATE_PUBKEY Ed25519 and/or TRACEGATE_KEY 
 TRACEGATE_KEYID). With none configured /v1/gate answers 503 (fail closed); the public demo
 key is trusted only with TRACEGATE_DEMO=1. Limits: request bodies over TRACEGATE_MAX_BODY
 bytes (default 10 MB) get 413, more than MAX_ENVELOPES envelopes get 413. If
-TRACEGATE_API_TOKEN is set, /v1/gate and /v1/runs* require `Authorization: Bearer <token>`.
+TRACEGATE_API_TOKEN is set, every /v1 route (gate, runs, runs/{rid}/*, demo) requires
+`Authorization: Bearer <token>` (constant-time comparison); the explorer UI asks for it once.
+Demo runs live in their own bounded store, so demo calls cannot evict gate runs.
 """
 from __future__ import annotations
 
+import hmac
 import os
 import uuid
 from collections import OrderedDict
@@ -49,7 +52,8 @@ MAX_BODY = int(os.environ.get("TRACEGATE_MAX_BODY", 10 * 1024 * 1024))
 
 app = FastAPI(title="TRACEGATE", version=__version__,
               description="Provenance-aware CI/CD security gate: signed lineage graph, backtracking, policy.")
-_runs: OrderedDict[str, tuple[CollectResult, Decision]] = OrderedDict()
+_runs: OrderedDict[str, tuple[CollectResult, Decision]] = OrderedDict()  # gate runs
+_demo_runs: OrderedDict[str, tuple[CollectResult, Decision]] = OrderedDict()  # demo runs, separate quota
 
 
 class _BodyLimit:
@@ -82,7 +86,11 @@ app.add_middleware(_BodyLimit)
 
 def _auth(authorization: str | None) -> None:
     token = os.environ.get("TRACEGATE_API_TOKEN")
-    if token and authorization != f"Bearer {token}":
+    if not token:
+        return
+    want = f"Bearer {token}".encode()
+    got = (authorization or "").encode("utf-8", "surrogateescape")
+    if not hmac.compare_digest(got, want):
         raise HTTPException(401, "missing or wrong bearer token")
 
 
@@ -95,18 +103,20 @@ def _trusted() -> dict[str, Any]:
         raise HTTPException(503, str(e)) from e
 
 
-def _store(res: CollectResult, d: Decision) -> str:
-    rid = uuid.uuid4().hex[:12]
-    _runs[rid] = (res, d)
-    while len(_runs) > MAX_RUNS:
-        _runs.popitem(last=False)
+def _store(res: CollectResult, d: Decision, demo: bool = False) -> str:
+    store = _demo_runs if demo else _runs
+    rid = ("demo-" if demo else "") + uuid.uuid4().hex[:12]
+    store[rid] = (res, d)
+    while len(store) > MAX_RUNS:
+        store.popitem(last=False)
     return rid
 
 
 def _get(rid: str) -> tuple[CollectResult, Decision]:
-    if rid not in _runs:
-        raise HTTPException(404, f"unknown run {rid}")
-    return _runs[rid]
+    for store in (_runs, _demo_runs):
+        if rid in store:
+            return store[rid]
+    raise HTTPException(404, f"unknown run {rid}")
 
 
 def _summary(rid: str, res: CollectResult, d: Decision) -> dict[str, Any]:
@@ -142,7 +152,7 @@ def gate(envelopes: list[dict] = Body(...), authorization: str | None = Header(N
 
 
 @app.post("/v1/demo/{scenario}")
-def demo(scenario: str) -> dict[str, Any]:
+def demo(scenario: str, authorization: str | None = Header(None)) -> dict[str, Any]:
     """Run a built-in synthetic scenario through the gate.
 
     Args:
@@ -151,10 +161,11 @@ def demo(scenario: str) -> dict[str, Any]:
     Returns:
         The run id, verdict, reasons and graph summary of the new run.
     """
+    _auth(authorization)
     if scenario not in synth.SCENARIOS:
         raise HTTPException(404, f"scenarios: {sorted(synth.SCENARIOS)}")
     res, d = run(synth.signed(synth.SCENARIOS[scenario]), {synth.DEMO_KEYID: synth.DEMO_KEY})
-    rid = _store(res, d)
+    rid = _store(res, d, demo=True)
     return _summary(rid, res, d)
 
 
@@ -162,11 +173,12 @@ def demo(scenario: str) -> dict[str, Any]:
 def runs(authorization: str | None = Header(None)) -> list[dict[str, Any]]:
     """Stored runs with verdict and graph size."""
     _auth(authorization)
-    return [{"run": rid, "verdict": d.verdict.value, **res.graph.stats()} for rid, (res, d) in _runs.items()]
+    return [{"run": rid, "verdict": d.verdict.value, **res.graph.stats()}
+            for store in (_runs, _demo_runs) for rid, (res, d) in store.items()]
 
 
 @app.get("/v1/runs/{rid}/graph")
-def graph(rid: str) -> dict[str, Any]:
+def graph(rid: str, authorization: str | None = Header(None)) -> dict[str, Any]:
     """Return the verified provenance graph of a stored run as JSON.
 
     Args:
@@ -175,12 +187,13 @@ def graph(rid: str) -> dict[str, Any]:
     Returns:
         Nodes, edges and findings of the run.
     """
+    _auth(authorization)
     res, d = _get(rid)
     return {**to_json(res.graph), "decision": d.to_dict()}
 
 
 @app.get("/v1/runs/{rid}/backtrack")
-def backtrack(rid: str, q: str) -> list[dict[str, Any]]:
+def backtrack(rid: str, q: str, authorization: str | None = Header(None)) -> list[dict[str, Any]]:
     """Trace a CVE, OSV id or package of a stored run to its introducing commit.
 
     Args:
@@ -190,11 +203,12 @@ def backtrack(rid: str, q: str) -> list[dict[str, Any]]:
     Returns:
         One origin story per matching finding.
     """
+    _auth(authorization)
     return origin_story(_get(rid)[0].graph, q)
 
 
 @app.get("/v1/runs/{rid}/blast")
-def blast(rid: str, layer: str) -> dict[str, list[str]]:
+def blast(rid: str, layer: str, authorization: str | None = Header(None)) -> dict[str, list[str]]:
     """List what inherits an image layer in a stored run.
 
     Args:
@@ -204,6 +218,7 @@ def blast(rid: str, layer: str) -> dict[str, list[str]]:
     Returns:
         Downstream node ids grouped by kind.
     """
+    _auth(authorization)
     try:
         return layer_blast_radius(_get(rid)[0].graph, layer)
     except KeyError as e:
@@ -211,7 +226,7 @@ def blast(rid: str, layer: str) -> dict[str, list[str]]:
 
 
 @app.get("/v1/runs/{rid}/cypher", response_class=PlainTextResponse)
-def cypher(rid: str) -> str:
+def cypher(rid: str, authorization: str | None = Header(None)) -> str:
     """Export a stored run's graph as Neo4j Cypher statements.
 
     Args:
@@ -220,4 +235,5 @@ def cypher(rid: str) -> str:
     Returns:
         A Cypher script.
     """
+    _auth(authorization)
     return to_cypher(_get(rid)[0].graph)

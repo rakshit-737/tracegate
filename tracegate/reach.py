@@ -175,7 +175,10 @@ def entrypoint_text(repo: Path) -> str:
 
 
 def via_graph(req_text: str) -> dict[str, set[str]]:
-    """pip-compile annotations -> {package: set(packages that require it)}."""
+    """pip-compile annotations -> {package: set(packages that require it)}.
+
+    Reads both layouts: `# via a` / `#   b` lines after the pin (pip-tools >= 5) and the older
+    inline form on the pin line itself (`pyyaml==3.11    # via pymlconf, other`)."""
     pin = re.compile(r"^([A-Za-z0-9][A-Za-z0-9._-]*)\s*(?:\[[^\]]*\])?\s*==")
     out: dict[str, set[str]] = {}
     cur = None
@@ -185,6 +188,13 @@ def via_graph(req_text: str) -> dict[str, set[str]]:
         if m:
             cur, in_via = normalize_name(m.group(1)), False
             out.setdefault(cur, set())
+            _, hash_, comment = raw.partition("#")
+            comment = comment.strip()
+            if hash_ and comment.startswith("via "):
+                for parent in comment[4:].split(","):
+                    tok = parent.strip().split()
+                    if tok and not tok[0].startswith(("-r", "(")):
+                        out[cur].add(normalize_name(tok[0]))
             continue
         s = raw.strip()
         if cur is None or not s.startswith("#"):

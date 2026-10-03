@@ -99,6 +99,22 @@ jobs:
           test "$code" = 503 || { echo "expected fail-closed 503 without a trust root, got $code"; exit 1; }
           curl -sf -X POST http://127.0.0.1:8080/v1/demo/cve-origin | grep -q '"verdict":"block"'
 
+  traceability:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - run: pip install -e .
+      - name: Every results file records its run; docs link only runs that committed results carry
+        run: python scripts/check_results.py
+      - name: README and docs result tables match results/*.json
+        run: python scripts/render_results.py --check
+
   opa-parity:
     runs-on: ubuntu-latest
     timeout-minutes: 10

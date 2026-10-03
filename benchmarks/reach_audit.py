@@ -45,6 +45,7 @@ from tracegate.ids import normalize_name  # noqa: E402
 from tracegate.reach import ENTRYPOINT_FILES, app_imports, entrypoint_text, static_reachability  # noqa: E402
 
 RESULTS = Path(__file__).resolve().parents[1] / "results"
+SOURCE = "lineage_real_repos_materialized_audited.json"  # the run whose downgrades were audited
 ENV = {"python_version": "3.8", "python_full_version": "3.8.0", "sys_platform": "linux", "platform_system": "Linux",
        "os_name": "posix", "implementation_name": "cpython", "platform_python_implementation": "CPython",
        "platform_machine": "x86_64", "extra": ""}
@@ -95,7 +96,7 @@ def requires(name: str, version: str, cache: dict) -> list[str] | None:
 
 
 def evidence(out_path: Path) -> None:
-    mat = json.loads((RESULTS / "lineage_real_repos_materialized.json").read_text())
+    mat = json.loads((RESULTS / SOURCE).read_text())
     cache_p = data_root() / "pypi_requires_cache.json"
     cache = json.loads(cache_p.read_text()) if cache_p.exists() else {}
     rows = []
@@ -139,7 +140,7 @@ def evidence(out_path: Path) -> None:
                              "chain_from_app_import": chain,
                              "metadata_missing": sorted(n for n, v in deps.items() if v is None)})
             print(f"{r['repo']} {snap}: {len(ds)} downgraded findings checked", flush=True)
-    out_path.write_text(json.dumps({**run_meta(), "source": "lineage_real_repos_materialized.json",
+    out_path.write_text(json.dumps({**run_meta(), "source": SOURCE,
                                     "source_run_id": mat.get("run_id"), "edges": "PyPI requires_dist of each "
                                     "pinned release, markers for CPython 3.8 / Linux, extras off", "rows": rows},
                                    indent=1))

@@ -31,7 +31,7 @@ Backtracking: run [37091106360](https://github.com/rakshit-737/tracegate-cicd-se
 
    ```bash
    python -m venv .venv && . .venv/bin/activate        # Windows: .venv\Scripts\activate (Git Bash: . .venv/Scripts/activate)
-   pip install "git+https://github.com/rakshit-737/tracegate-cicd-security-gate@v1.1.1"
+   pip install "git+https://github.com/rakshit-737/tracegate-cicd-security-gate@v1.1.2"
    tracegate demo                                      # six scenarios, about 2 seconds
    tracegate synth cve-origin ev.json
    tracegate --demo backtrack ev.json CVE-2020-14343   # "introduced_by": {"pr": 42, ...}
@@ -39,7 +39,7 @@ Backtracking: run [37091106360](https://github.com/rakshit-737/tracegate-cicd-se
    ```
 
    `--demo` (accepted before or after the subcommand) trusts the public demo key. Without a configured key the gate refuses to run (exit 2). The v1.0.0 release (wheel and `:1.0.0` image) predates both: it trusts the demo key implicitly (fail-open) and is superseded by v1.1.0.
-3. **Container (build from source):** `docker build -t tracegate . && docker run --rm -p 127.0.0.1:8080:8080 tracegate`, then open http://127.0.0.1:8080 and run a scenario. Or pull `ghcr.io/rakshit-737/tracegate-cicd-security-gate:1.1.1` (verify it as shown in [SECURITY.md](SECURITY.md)); the `:1.0.0` image is the superseded fail-open build.
+3. **Container (build from source):** `docker build -t tracegate . && docker run --rm -p 127.0.0.1:8080:8080 tracegate`, then open http://127.0.0.1:8080 and run a scenario. Or pull `ghcr.io/rakshit-737/tracegate-cicd-security-gate:1.1.2` (verify it as shown in [SECURITY.md](SECURITY.md)); the `:1.0.0` image is the superseded fail-open build.
 
 **TRACEGATE is a provenance-aware CI/CD security gate.** It merges real Syft SBOMs, Trivy scans, git history and OSV data into one signed, content-addressed provenance graph, then answers the question most scanners leave open: *which commit, and which PR, put this CVE in production, and what else inherits it?*
 

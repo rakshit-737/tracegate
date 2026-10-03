@@ -6,6 +6,8 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [1.1.2] - 2026-10-03
+
 ### Changed
 - Repository renamed to `rakshit-737/tracegate-cicd-security-gate`; docs moved to https://rakshit-737.github.io/tracegate-cicd-security-gate/ and the image is now `ghcr.io/rakshit-737/tracegate-cicd-security-gate`. Older entries below keep the old names; links to the old repository redirect, the old Pages URL does not.
 

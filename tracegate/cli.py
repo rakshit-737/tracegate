@@ -176,7 +176,8 @@ def _main(argv: list[str] | None = None) -> int:
         return 0
     if a.cmd == "gate":
         res, d = _gate(a)
-        print(pr_comment(d) if a.comment else json.dumps(d.to_dict(), indent=2))
+        print(pr_comment(d) if a.comment else json.dumps(
+            {**d.to_dict(), "unattributed_findings": res.unmatched_findings}, indent=2))
         _report_rejected(res)
         return 1 if d.verdict.value == "block" else 0
     if a.cmd == "backtrack":

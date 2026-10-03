@@ -7,8 +7,12 @@ for the adapters that produce them from real Syft / CycloneDX / Trivy JSON):
   sast    : {commit, findings:[{file, rule, severity, title}]}
   build   : {build_id, commit?, image?:{name, digest, layers:[{digest, created_by}]},
              sbom:{artifacts:[{name, version, purl?, locations:[{layerID}]}]}}  # Syft
-  scan    : {image_digest?, Results:[{Vulnerabilities:[{VulnerabilityID, PkgName,
-             InstalledVersion, Severity, Title, PURL?, LayerDiffID?}]}]}        # Trivy
+  scan    : {image_digest?, Results:[{Type?, Vulnerabilities:[{VulnerabilityID, PkgName,
+             InstalledVersion, Severity, Title, PURL?, Ecosystem?, LayerDiffID?}]}]}  # Trivy
+
+A scanner finding that lands on no SBOM node is kept in `CollectResult.unmatched_findings`;
+the policy blocks on unmatched HIGH/CRITICAL findings (rule `unattributed_finding`), so a
+finding can never disappear from the verdict because its package is missing from the SBOM.
   deploy  : {service, image_digest, containers:[id]}
   runtime : {container, loaded_modules:[name]}
 """
@@ -18,7 +22,7 @@ from collections.abc import Iterable
 from dataclasses import dataclass, field
 
 from .graph import ProvenanceGraph
-from .ids import canonical_purl, dep_id, dep_id_from_purl, digest, purl
+from .ids import canonical_purl, dep_id_from_purl, digest, normalize_name, purl
 from .models import Envelope, Finding, Node, NodeKind, Severity, StageEvent
 from .signing import SignatureError, Verifier
 
@@ -39,7 +43,8 @@ class CollectResult:
     rejected: list[str] = field(default_factory=list)
     stages_seen: set[str] = field(default_factory=set)
     runtime: dict[str, set[str]] = field(default_factory=dict)  # container id -> modules
-    unmatched: list[str] = field(default_factory=list)  # scanner findings with no SBOM node
+    unmatched: list[str] = field(default_factory=list)  # "CVE pkg@version" of scanner findings with no SBOM node
+    unmatched_findings: list[dict] = field(default_factory=list)  # the same findings, structured (policy input)
 
     @property
     def missing_stages(self) -> set[str]:
@@ -162,15 +167,42 @@ class Collector:
             for t in targets:
                 g.add_edge(did, t, "installed_in")
 
+    @staticmethod
+    def _dep_index(g: ProvenanceGraph) -> dict[tuple[str, str, str], list[str]]:
+        idx: dict[tuple[str, str, str], list[str]] = {}
+        for n in g.of_kind(NodeKind.DEPENDENCY):
+            eco = str(n.attrs.get("ecosystem") or "")
+            name, ver = str(n.attrs.get("name", "")), str(n.attrs.get("version", ""))
+            idx.setdefault((eco, normalize_name(name, eco or "pypi").lower(), ver), []).append(n.id)
+            idx.setdefault(("*", name.lower(), ver), []).append(n.id)
+        return idx
+
+    def _match(self, g: ProvenanceGraph, v: dict, idx: dict) -> str | None:
+        """Dependency node of a scanner row: its PURL, else a unique (ecosystem, name, version) match."""
+        if v.get("PURL"):
+            did = dep_id_from_purl(v["PURL"])
+            return did if did in g.nodes else None
+        eco = (v.get("Ecosystem") or "").lower()
+        name, ver = str(v.get("PkgName", "")), str(v.get("InstalledVersion", ""))
+        hits = idx.get((eco, normalize_name(name, eco).lower(), ver)) if eco else idx.get(("*", name.lower(), ver))
+        return hits[0] if hits and len(set(hits)) == 1 else None
+
     def _on_scan(self, res: CollectResult, ev: StageEvent) -> None:
         g, p = res.graph, ev.payload
+        idx = self._dep_index(g)
         for r in p.get("Results", []):
             for v in r.get("Vulnerabilities") or []:
-                did = (dep_id_from_purl(v["PURL"]) if v.get("PURL")
-                       else dep_id(v["PkgName"], v["InstalledVersion"]))
-                if did not in g.nodes:
-                    # finding for a package the SBOM never saw: recorded, not silently dropped
+                did = self._match(g, v, idx)
+                if did is None:
+                    # finding for a package the SBOM never saw: kept as a policy input (rule
+                    # unattributed_finding), never silently dropped
                     res.unmatched.append(f"{v['VulnerabilityID']} {v['PkgName']}@{v['InstalledVersion']}")
+                    res.unmatched_findings.append({
+                        "id": f"{v['VulnerabilityID']}@{v['PkgName']}@{v['InstalledVersion']}",
+                        "cve": v["VulnerabilityID"], "package": v["PkgName"], "version": v["InstalledVersion"],
+                        "ecosystem": v.get("Ecosystem"), "purl": v.get("PURL"), "source": p.get("tool", "trivy"),
+                        "severity": _sev(v.get("Severity", "medium")).value,
+                        "title": v.get("Title", v["VulnerabilityID"])})
                     continue
                 fid = f"{v['VulnerabilityID']}@{did}"
                 if g.has_finding(fid):

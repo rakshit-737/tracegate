@@ -64,6 +64,23 @@ def vulnerable_dependency(res: CollectResult):
 
 
 @rule
+def unattributed_finding(res: CollectResult):
+    """Block on HIGH/CRITICAL scanner findings that match no SBOM node; warn on the rest.
+
+    A finding the graph cannot attribute has no path, no reachability and no origin, so it
+    cannot be triaged; it must not vanish from the verdict either."""
+    seen: set[str] = set()
+    for u in getattr(res, "unmatched_findings", []):
+        if u["id"] in seen:
+            continue
+        seen.add(u["id"])
+        v = Verdict.BLOCK if u["severity"] in ("high", "critical") else Verdict.WARN
+        yield v, {"rule": "unattributed_finding", "finding": u["cve"], "severity": u["severity"],
+                  "msg": f"scanner finding not attributable to an SBOM node: {u['cve']} in "
+                         f"{u['package']}@{u['version']} ({u['severity']})"}
+
+
+@rule
 def sast(res: CollectResult):
     """Turn SAST findings into reasons by severity."""
     for f in res.graph.findings:

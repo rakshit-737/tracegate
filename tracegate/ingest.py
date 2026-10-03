@@ -22,6 +22,30 @@ def _load(src: str | Path | dict) -> dict:
     return json.loads(Path(src).read_text(encoding="utf-8"))
 
 
+# Trivy result Type -> purl type, for rows that carry no PkgIdentifier.PURL
+TRIVY_TYPE_ECOSYSTEM = {
+    "alpine": "apk", "wolfi": "apk", "chainguard": "apk",
+    "debian": "deb", "ubuntu": "deb",
+    "redhat": "rpm", "centos": "rpm", "rocky": "rpm", "alma": "rpm", "amazon": "rpm", "oracle": "rpm",
+    "fedora": "rpm", "photon": "rpm", "cbl-mariner": "rpm", "azurelinux": "rpm", "suse linux enterprise server": "rpm",
+    "opensuse.leap": "rpm", "opensuse.tumbleweed": "rpm",
+    "python-pkg": "pypi", "pip": "pypi", "pipenv": "pypi", "poetry": "pypi", "uv": "pypi",
+    "npm": "npm", "yarn": "npm", "pnpm": "npm", "node-pkg": "npm", "bun": "npm",
+    "gomod": "golang", "gobinary": "golang",
+    "cargo": "cargo", "rust-binary": "cargo",
+    "bundler": "gem", "gemspec": "gem",
+    "nuget": "nuget", "dotnet-core": "nuget", "packages-props": "nuget",
+    "jar": "maven", "pom": "maven", "gradle": "maven", "sbt": "maven",
+    "composer": "composer", "composer-vendor": "composer", "conan": "conan", "cocoapods": "cocoapods",
+    "swift": "swift", "pub": "pub", "hex": "hex", "conda-pkg": "conda",
+}
+
+
+def trivy_ecosystem(result_type: str | None) -> str | None:
+    """purl type for a Trivy result ``Type`` (``alpine`` -> ``apk``, ``python-pkg`` -> ``pypi``), else None."""
+    return TRIVY_TYPE_ECOSYSTEM.get((result_type or "").strip().lower())
+
+
 def _eco_from_purl(p: str | None) -> str | None:
     if not p or not p.startswith("pkg:"):
         return None
@@ -117,6 +141,7 @@ def trivy_json_to_scan(src: str | Path | dict) -> dict[str, Any]:
     results = []
     for r in doc.get("Results", []) or []:
         vulns = []
+        eco = trivy_ecosystem(r.get("Type"))
         for v in r.get("Vulnerabilities") or []:
             ident = v.get("PkgIdentifier") or {}
             p = ident.get("PURL")
@@ -128,7 +153,7 @@ def trivy_json_to_scan(src: str | Path | dict) -> dict[str, Any]:
                 "VulnerabilityID": v["VulnerabilityID"], "PkgName": v["PkgName"],
                 "InstalledVersion": v.get("InstalledVersion", ""), "FixedVersion": v.get("FixedVersion"),
                 "Severity": v.get("Severity", "UNKNOWN"), "Title": v.get("Title") or v["VulnerabilityID"],
-                "PURL": p, "LayerDiffID": (v.get("Layer") or {}).get("DiffID"),
+                "PURL": p, "Ecosystem": _eco_from_purl(p) or eco, "LayerDiffID": (v.get("Layer") or {}).get("DiffID"),
             })
         results.append({"Target": r.get("Target"), "Class": r.get("Class"), "Type": r.get("Type"),
                         "Vulnerabilities": vulns})
@@ -136,4 +161,4 @@ def trivy_json_to_scan(src: str | Path | dict) -> dict[str, Any]:
             "diff_ids": md.get("DiffIDs", []), "tool": "trivy", "Results": results}
 
 
-__all__ = ["syft_json_to_build", "cyclonedx_to_build", "trivy_json_to_scan", "_eco_from_purl"]
+__all__ = ["syft_json_to_build", "cyclonedx_to_build", "trivy_json_to_scan", "trivy_ecosystem", "_eco_from_purl"]

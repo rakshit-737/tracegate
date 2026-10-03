@@ -20,6 +20,10 @@ vuln_verdict(f) := "warn" if f.reachable == false
 
 vuln_verdict(f) := "block" if f.reachable != false
 
+unmatched_verdict(sev) := "block" if sev in high_plus
+
+unmatched_verdict(sev) := "warn" if not sev in high_plus
+
 sast_verdict(sev) := "block" if sev in high_plus
 
 sast_verdict(sev) := "warn" if not sev in high_plus
@@ -55,6 +59,12 @@ reasons contains r if {
 	f.source in scanners
 	f.severity == "medium"
 	r := {"rule": "vulnerable_dependency", "verdict": "warn", "finding": f.id}
+}
+
+# scanner findings that match no SBOM node (collector.unmatched_findings)
+reasons contains r if {
+	some u in input.unmatched
+	r := {"rule": "unattributed_finding", "verdict": unmatched_verdict(u.severity), "finding": u.id}
 }
 
 reasons contains r if {

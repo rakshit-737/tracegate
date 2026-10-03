@@ -99,4 +99,5 @@ def opa_input(res: CollectResult) -> dict[str, Any]:
         "rejected": list(res.rejected),
         "missing_stages": sorted(res.missing_stages),
         "findings": [{**f.to_dict(), "path": _path(res, f)} for f in g.findings],
+        "unmatched": list({u["id"]: u for u in res.unmatched_findings}.values()),
     }

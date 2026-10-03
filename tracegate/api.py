@@ -111,7 +111,7 @@ def _get(rid: str) -> tuple[CollectResult, Decision]:
 
 def _summary(rid: str, res: CollectResult, d: Decision) -> dict[str, Any]:
     return {"run": rid, **d.to_dict(), "graph": res.graph.stats(), "coverage": res.coverage,
-            "rejected": res.rejected, "comment": pr_comment(d)}
+            "rejected": res.rejected, "unattributed_findings": res.unmatched_findings, "comment": pr_comment(d)}
 
 
 @app.get("/", response_class=HTMLResponse)
